@@ -1,9 +1,7 @@
-import React from "react";
+import LoginPage from "./feature/auth/pages/LoginPage";
 
 export default function App() {
   return (
-    <div>
-      <h2>Loan Tracker</h2>
-    </div>
+    <LoginPage />
   );
 }
