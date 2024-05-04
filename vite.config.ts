@@ -7,6 +7,8 @@ export default defineConfig({
     alias: {
       '@': '/src',
       '@components': '/src/components',
+      '@shared': '/src/shared',
+      '@firebaseConfig': '/src/firebaseConfig',
     },
   },
 });
