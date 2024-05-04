@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import CssBaseline from '@mui/material/CssBaseline';
-import appFirebase from "../../../../firebaseConfig";
+import appFirebase from "../../../firebaseConfig";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';

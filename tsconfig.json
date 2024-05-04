@@ -23,7 +23,9 @@
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"],
-      "@components/*": ["components/*"]
+      "@components/*": ["components/*"],
+      "@shared/*": ["shared/*"],
+      "@firebaseConfig": ["firebaseConfig"],
     }
   },
   "include": ["src"],
