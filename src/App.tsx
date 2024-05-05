@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import appFirebase from "./firebaseConfig";
 import Navbar from "@/shared/components/Navbar";
 import HomePage from "./feature/home/pages/HomePage";
@@ -18,9 +18,11 @@ export default function App() {
   })
 
   return (
-    <section>
+    <React.Fragment>
       {user && <Navbar />}
-      {user ? <HomePage userEmail={user.email} /> : <LoginPage />}
-    </section>
+      <section className="container mt-4">
+        {user ? <HomePage userEmail={user.email} /> : <LoginPage />}
+      </section>
+    </React.Fragment>
   );
 }
