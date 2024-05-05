@@ -6,7 +6,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': '/src',
-      '@components': '/src/components',
+      '@feature': '/src/feature',
       '@shared': '/src/shared',
       '@firebaseConfig': '/src/firebaseConfig',
     },

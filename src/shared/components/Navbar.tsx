@@ -1,4 +1,4 @@
-import useUsers from "@/feature/users/services/useUsers"
+import useUsers from "@feature/users/services/useUsers"
 
 export default function Navbar() {
 
