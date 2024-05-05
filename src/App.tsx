@@ -21,7 +21,7 @@ export default function App() {
     <React.Fragment>
       {user && <Navbar />}
       <section className="container mt-4">
-        {user ? <HomePage userEmail={user.email} /> : <LoginPage />}
+        {user ? <HomePage /> : <LoginPage />}
       </section>
     </React.Fragment>
   );
