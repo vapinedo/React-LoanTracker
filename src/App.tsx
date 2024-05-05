@@ -1,6 +1,6 @@
 import { useState } from "react";
 import appFirebase from "./firebaseConfig";
-import Navbar from "@shared/components/Navbar";
+import Navbar from "@/shared/components/Navbar";
 import HomePage from "./feature/home/pages/HomePage";
 import LoginPage from "./feature/auth/pages/LoginPage";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
@@ -19,7 +19,7 @@ export default function App() {
 
   return (
     <section>
-      <Navbar />
+      {user && <Navbar />}
       {user ? <HomePage userEmail={user.email} /> : <LoginPage />}
     </section>
   );
