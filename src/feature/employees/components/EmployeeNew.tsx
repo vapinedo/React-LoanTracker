@@ -1,17 +1,20 @@
 import * as Yup from "yup";
 import { Button } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
 import CustomTextField from '@shared/formik/CustomTextField';
 import { Employee } from '@feature/employees/models/Employee';
+import useEmployee from "@feature/employees/services/useEmployee";
 
 const defaultValues: Employee = {
+    uuid: null,
     nombres: "",
     apellidos: "",
     correo: null,
     celular: "",
     direccion: "",
-}
+};
 
 const validationSchema = Yup.object().shape({
     nombres: Yup
@@ -33,16 +36,22 @@ const validationSchema = Yup.object().shape({
 
 export default function EmployeeNew() {
 
+    const { createEmployee } = useEmployee();
+    const navigate = useNavigate();
+
     const form = useForm<Employee>({
         defaultValues,
         mode: "onTouched",
         resolver: yupResolver(validationSchema),
     });
-    const { register, formState, handleSubmit,  } = form;
+
+    const { register, formState, handleSubmit } = form;
     const { errors, isSubmitting, isValid } = formState;
 
-    const onSubmit = (values: any) => {
-        console.log({ values });
+    const onSubmit = (employee: Employee) => {
+        console.log({ employee });
+        createEmployee(employee);
+        navigate("/empleados");
     };
 
     const onError = (errors: FieldErrors<any>) => {
