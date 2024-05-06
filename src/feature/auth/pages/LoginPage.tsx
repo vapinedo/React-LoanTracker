@@ -1,6 +1,5 @@
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
-import appFirebase from "@firebaseConfig";
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -9,29 +8,22 @@ import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import Box from '@mui/material/Box';
-
-const AUTH = getAuth(appFirebase);
+import useUsers from '@/feature/users/services/useUsers';
 
 export default function LoginPage() {
+
+  const { login } = useUsers();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const authData = {
-      email: data.get("email"),
-      password: data.get("password")
-    }
-    loginToFirebase(authData);
-  };
-
-  const loginToFirebase = async ({ email, password }: any) => {
-    try {
-      await signInWithEmailAndPassword(AUTH, email, password);
-    } catch (error) {
-      alert("El correo o contraseña son incorrectos");
+    const email = data.get("email");
+    const password = data.get("password");
+    if (typeof email === "string" && typeof password === "string") {
+      login(email, password);
+    } else {
+      alert("Email o Contraseña inválidos");
     }
   };
 

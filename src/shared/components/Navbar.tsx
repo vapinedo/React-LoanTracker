@@ -1,9 +1,9 @@
-import appFirebase from "@firebaseConfig";
-import { getAuth, signOut } from "firebase/auth";
-
-const AUTH = getAuth(appFirebase);
+import useUsers from "@feature/users/services/useUsers"
 
 export default function Navbar() {
+
+    const { logout } = useUsers();
+    
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary bg-dark" data-bs-theme="dark">
             <div className="container-fluid">
@@ -33,7 +33,7 @@ export default function Navbar() {
                         </li>
                     </ul>
 
-                    <button onClick={() => signOut(AUTH)} className="btn btn-danger">Cerrar Sesión</button>
+                    <button onClick={logout} className="btn btn-danger">Cerrar Sesión</button>
                 </div>
             </div>
         </nav>

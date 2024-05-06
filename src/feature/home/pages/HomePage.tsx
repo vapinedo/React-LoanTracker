@@ -1,8 +1,7 @@
-export default function HomePage(props: any) {
+export default function HomePage() {
     return (
         <div>
-            <p>Home Page {props.userEmail}</p>
+            Home Page
         </div>
-
     )
 }
