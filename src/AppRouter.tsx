@@ -6,6 +6,7 @@ import UserNew from "@feature/users/components/UserNew";
 import NotFoundPage from '@shared/components/NotFoundPage';
 import UserAdminPage from "@feature/users/pages/UserAdminPage";
 import EmployeeNew from "@feature/employees/components/EmployeeNew";
+import EmployeeEdit from "@feature/employees/components/EmployeeEdit";
 import CustomerAdminPage from "@feature/customers/pages/CustomerAdminPage";
 import EmployeeAdminPage from "@feature/employees/pages/EmployeeAdminPage";
 
@@ -44,6 +45,7 @@ export default function AppRouter() {
                     <Route path="/clientes" element={ <CustomerAdminPage /> } />
                     <Route path="/empleados" element={ <EmployeeAdminPage /> } />
                     <Route path="/empleados/nuevo" element={ <EmployeeNew /> } />
+                    <Route path="/empleados/editar/:id" element={ <EmployeeEdit /> } />
                     <Route path="*" element={ <NotFoundPage /> } />
                 </Routes>
             </section>

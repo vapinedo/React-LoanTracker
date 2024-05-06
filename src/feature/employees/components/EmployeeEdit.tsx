@@ -1,8 +1,9 @@
 import * as Yup from "yup";
+import { useEffect } from "react";
 import { Button } from '@mui/material';
-import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from "react-router-dom";
 import CustomTextField from '@shared/formik/CustomTextField';
 import { Employee } from '@feature/employees/models/Employee';
 import useEmployee from "@feature/employees/services/useEmployee";
@@ -34,10 +35,11 @@ const validationSchema = Yup.object().shape({
         .required("Dirección es requerido"),
 });
 
-export default function EmployeeNew() {
+export default function EmployeeEdit() {
 
-    const { createEmployee } = useEmployee();
+    const params = useParams();
     const navigate = useNavigate();
+    const { getEmployeeById, updateEmployee } = useEmployee();
 
     const form = useForm<Employee>({
         defaultValues,
@@ -49,7 +51,7 @@ export default function EmployeeNew() {
     const { errors, isSubmitting, isValid } = formState;
 
     const onSubmit = (employee: Employee) => {
-        createEmployee(employee);
+        updateEmployee(employee);
         navigate("/empleados");
     };
 
@@ -57,10 +59,24 @@ export default function EmployeeNew() {
         console.log({ errors });
     };
 
+    useEffect(() => {
+        const employeeId = params.id;
+        const fetchEmployee = async (employeeId: string) => {
+            const employee = await getEmployeeById(employeeId);
+            form.setValue("id", employee?.id);
+            form.setValue("nombres", employee?.nombres);
+            form.setValue("apellidos", employee?.apellidos);
+            form.setValue("correo", employee?.correo);
+            form.setValue("celular", employee?.celular);
+            form.setValue("direccion", employee?.direccion);
+        }
+        employeeId && fetchEmployee(employeeId);
+    }, [params.id])
+
     return (
         <section>
             <header className='mb-4 d-flex justify-content-between align-items-center'>
-                <h2>Nuevo empleado</h2>
+                <h2>Editar empleado</h2>
                 <button className="btn btn-outline-danger">Volver Atrás</button>
             </header>
 
@@ -120,9 +136,10 @@ export default function EmployeeNew() {
 
                 <Button
                     type="submit"
+                    color="success"
                     variant="contained"
                     sx={{ marginTop: 2 }}
-                    disabled={!isValid || isSubmitting}
+                    // disabled={!isValid || isSubmitting}
                 >
                     Guardar
                 </Button>

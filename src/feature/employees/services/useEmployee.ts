@@ -1,8 +1,7 @@
 import { v4 as createUuid } from 'uuid';
 import firebaseApp from "@firebaseConfig";
 import { Employee } from "../models/Employee";
-import { doc, getDocs, setDoc } from "firebase/firestore"; 
-import { collection, getFirestore } from "firebase/firestore";
+import { doc, getDocs, getDoc, setDoc, updateDoc, collection, getFirestore, runTransaction } from "firebase/firestore";
 
 const COLLECTION = "EMPLOYEES";
 const db = getFirestore(firebaseApp);
@@ -22,6 +21,20 @@ export default function useEmployee() {
         return employees;
     };
 
+    const getEmployeeById = async (documentId: string) => {
+        let employee = null;
+        try {
+            const docRef = doc(db, COLLECTION, documentId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                employee = docSnap.data();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        return employee;
+    };
+
     const createEmployee = async (document: Employee) => {
         try {
             const documentId = createUuid();
@@ -32,5 +45,25 @@ export default function useEmployee() {
         }
     };
 
-    return { getAllEmployees, createEmployee };
+    const updateEmployee = async (document: any) => {
+        const docRef = doc(db, COLLECTION, document.id);
+        try {
+            await runTransaction(db, async (transaction) => {
+                const sfDoc = await transaction.get(docRef);
+                if (!sfDoc.exists()) {
+                    throw "No existe el empleado que quiere editar";
+                }
+                transaction.update(docRef, document);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    return {
+        getAllEmployees,
+        getEmployeeById,
+        createEmployee,
+        updateEmployee
+    };
 }

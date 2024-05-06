@@ -1,7 +1,6 @@
 import { useState } from "react";
 import firebaseApp from "@firebaseConfig";
-import { doc, setDoc } from "firebase/firestore"; 
-import { getFirestore } from "firebase/firestore";
+import { doc, setDoc, getFirestore } from "firebase/firestore"; 
 import { getAuth, signOut, signInWithEmailAndPassword, onAuthStateChanged, User } from "firebase/auth";
 
 const COLLECTION = "users";
