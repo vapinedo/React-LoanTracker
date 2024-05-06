@@ -5,6 +5,8 @@ import HomePage from "@feature/home/pages/HomePage";
 import UserNew from "@feature/users/components/UserNew";
 import NotFoundPage from '@shared/components/NotFoundPage';
 import UserAdminPage from "@feature/users/pages/UserAdminPage";
+import CustomerAdminPage from "@feature/customers/pages/CustomerAdminPage";
+import EmployeeAdminPage from "@feature/employees/pages/EmployeeAdminPage";
 
 // const APP_ROUTER = createBrowserRouter([
 //     {
@@ -38,6 +40,8 @@ export default function AppRouter() {
                     <Route path="/" element={ <HomePage /> } />
                     <Route path="/usuarios" element={ <UserAdminPage /> } />
                     <Route path="/usuarios/nuevo" element={ <UserNew /> } />
+                    <Route path="/clientes" element={ <CustomerAdminPage /> } />
+                    <Route path="/empleados" element={ <EmployeeAdminPage /> } />
                     <Route path="*" element={ <NotFoundPage /> } />
                 </Routes>
             </section>

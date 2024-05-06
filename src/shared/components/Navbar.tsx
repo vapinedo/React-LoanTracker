@@ -31,11 +31,11 @@ export default function Navbar() {
                         </li>
 
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Empleados</a>
+                            <NavLink className="nav-link" to="/empleados">Empleados</NavLink>
                         </li>
 
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Clientes</a>
+                            <NavLink className="nav-link" to="/clientes">Clientes</NavLink>
                         </li>
                     </ul>
 
