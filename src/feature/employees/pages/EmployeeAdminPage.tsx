@@ -1,7 +1,42 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Employee } from "@feature/employees/models/Employee";
 import useEmployee from "@feature/employees/services/useEmployee";
+import { Box } from "@mui/material";
+
+const columns: GridColDef<any>[] = [
+  {
+    field: 'nombres',
+    headerName: 'Nombre',
+    width: 150,
+    editable: true,
+  },
+  {
+    field: 'apellidos',
+    headerName: 'Apellidos',
+    width: 150,
+    editable: true,
+  },
+  {
+    field: 'correo',
+    headerName: 'Correo',
+    width: 110,
+    editable: true,
+  },
+  {
+    field: 'celular',
+    headerName: 'Celular',
+    width: 110,
+    editable: true,
+  },
+  {
+    field: 'direccion',
+    headerName: 'Dirección',
+    width: 280,
+    editable: true,
+  },
+];
 
 export default function EmployeeAdminPage() {
 
@@ -24,11 +59,22 @@ export default function EmployeeAdminPage() {
         <button onClick={() => navigate("/empleados/nuevo")} className="btn btn-primary">Crear empleado</button>
       </header>
 
-      <div>
-        {employees.map((employee: Employee) => (
-          <div key={employee.uuid}>{employee.nombres}</div>
-        ))}
-      </div>
+      <Box sx={{ height: 400, width: '100%', marginTop: 3 }}>
+        <DataGrid
+          rows={employees}
+          columns={columns}
+          checkboxSelection
+          pageSizeOptions={[5]}
+          disableRowSelectionOnClick
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5,
+              },
+            },
+          }}
+        />
+      </Box>
     </div>
   )
 }

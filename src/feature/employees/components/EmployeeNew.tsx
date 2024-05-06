@@ -8,7 +8,7 @@ import { Employee } from '@feature/employees/models/Employee';
 import useEmployee from "@feature/employees/services/useEmployee";
 
 const defaultValues: Employee = {
-    uuid: null,
+    id: null,
     nombres: "",
     apellidos: "",
     correo: null,

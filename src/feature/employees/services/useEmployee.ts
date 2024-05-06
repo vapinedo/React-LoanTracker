@@ -22,11 +22,11 @@ export default function useEmployee() {
         return employees;
     };
 
-    const createEmployee = async (employee: Employee) => {
+    const createEmployee = async (document: Employee) => {
         try {
-            const UUID = createUuid();
-            employee.uuid = UUID;
-            await setDoc(doc(db, COLLECTION, UUID), employee);
+            const documentId = createUuid();
+            document.id = documentId;
+            await setDoc(doc(db, COLLECTION, documentId), document);
         } catch (error) {
             console.log(error);
         }
