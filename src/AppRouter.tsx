@@ -37,7 +37,7 @@ export default function AppRouter() {
         <React.Fragment>
             <Navbar />
 
-            <section className="container mt-4">
+            <section className="container mt-4 mb-5">
                 <Routes>
                     <Route path="/" element={ <HomePage /> } />
                     <Route path="/usuarios" element={ <UserAdminPage /> } />

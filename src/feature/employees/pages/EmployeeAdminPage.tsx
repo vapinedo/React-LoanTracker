@@ -74,13 +74,14 @@ export default function EmployeeAdminPage() {
         <button onClick={() => navigate("/empleados/nuevo")} className="btn btn-primary">Crear empleado</button>
       </header>
 
-      <Box sx={{ height: 400, width: '100%', marginTop: 3 }}>
+      <Box sx={{ height: "100%", width: '100%', marginTop: 3 }}>
         <DataGrid
           rows={employees}
           columns={columns}
+          density="compact"
           checkboxSelection
           disableColumnFilter
-          pageSizeOptions={[5]}
+          pageSizeOptions={[12]}
           disableColumnSelector
           disableDensitySelector
           disableRowSelectionOnClick
@@ -93,7 +94,7 @@ export default function EmployeeAdminPage() {
           initialState={{
             pagination: {
               paginationModel: {
-                pageSize: 5,
+                pageSize: 12,
               },
             },
           }}
