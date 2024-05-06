@@ -1,7 +1,8 @@
+import { useState } from "react";
 import firebaseApp from "@firebaseConfig";
 import { doc, setDoc } from "firebase/firestore"; 
 import { getFirestore } from "firebase/firestore";
-import { getAuth, signOut, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signOut, signInWithEmailAndPassword, onAuthStateChanged, User } from "firebase/auth";
 
 const COLLECTION = "users";
 const db = getFirestore(firebaseApp);
@@ -14,6 +15,8 @@ const newDocument = {
 };
 
 export default function useUsers() {
+
+    const [user, setUser] = useState<User | null>(null);
 
     const create = async () => {
         try {
@@ -33,6 +36,15 @@ export default function useUsers() {
     //     }
     // };
 
+    const isUserLoggedIn = () => {
+        onAuthStateChanged(AUTH_DATA, (firebaseUser) => {
+            firebaseUser 
+              ? setUser(firebaseUser)
+              : setUser(null);
+          })
+        return user;
+    };
+
     const login = async (email: string, password: string) => {
         try {
             await signInWithEmailAndPassword(AUTH_DATA, email, password);
@@ -42,8 +54,8 @@ export default function useUsers() {
     };
 
     const logout = async () => {
-        await signOut(AUTH_DATA);
+        return await signOut(AUTH_DATA);
     }
 
-    return { create, login, logout };
+    return { create, login, logout, isUserLoggedIn };
 }
