@@ -22,7 +22,7 @@ export default function CustomTextField(props: InputProps): any {
             {...rest}
             size="small"
             label={label}
-            helperText={error}
+            helperText={<span className="text-danger">{error}</span>}
             {...register(name)}
             sx={{ width: '100%' }}
         />
