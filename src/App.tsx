@@ -6,7 +6,7 @@ export default function App() {
   return (
     <React.Fragment>
       <BrowserRouter>
-        <AppRouter />
+          <AppRouter />
       </BrowserRouter>
     </React.Fragment>
   );
