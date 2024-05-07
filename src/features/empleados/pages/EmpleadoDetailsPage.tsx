@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import useEmployee from "@feature/employees/services/useEmployee";
+import useEmpleados from "@services/useEmpleados";
 
-export default function EmployeeDetails() {
+export default function EmpleadoDetailsPage() {
 
     const params = useParams();
-    const { getEmployeeById } = useEmployee();
-    const [employee, setEmployee] = useState<any>(null)
+    const { getEmpleadoById } = useEmpleados();
+    const [empleado, setEmpleado] = useState<any>(null)
 
     useEffect(() => {
-        const employeeId = params.id;
-        const fetchEmployee = async (employeeId: string) => {
-            const newEmployee = await getEmployeeById(employeeId);
-            setEmployee(newEmployee);
+        const empleadoId = params.id;
+        const fetchEmployee = async (empleadoId: string) => {
+            const newEmpleado = await getEmpleadoById(empleadoId);
+            setEmpleado(newEmpleado);
         };
-        employeeId && fetchEmployee(employeeId);
+        empleadoId && fetchEmployee(empleadoId);
     }, []);
 
     return (
@@ -29,23 +29,23 @@ export default function EmployeeDetails() {
                     <tbody>
                         <tr>
                             <th>Nombres</th>
-                            <td>{employee?.nombres}</td> 
+                            <td>{empleado?.nombres}</td> 
                         </tr>
                         <tr>
                             <th>Apellidos</th>
-                            <td>{employee?.apellidos}</td> 
+                            <td>{empleado?.apellidos}</td> 
                         </tr>
                         <tr>
                             <th>Celular</th>
-                            <td>{employee?.celular}</td> 
+                            <td>{empleado?.celular}</td> 
                         </tr>
                         <tr>
                             <th>Correo</th>
-                            <td>{employee?.correo}</td> 
+                            <td>{empleado?.correo}</td> 
                         </tr>
                         <tr>
                             <th>Dirección</th>
-                            <td>{employee?.direccion}</td> 
+                            <td>{empleado?.direccion}</td> 
                         </tr>
                     </tbody>
                 </table>

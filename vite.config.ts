@@ -5,10 +5,10 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': '/src',
-      '@shared': '/src/shared',
-      '@feature': '/src/feature',
+      '@app': '/src',
+      '@features': '/src/features',
       '@services': '/src/services',
+      '@components': '/src/components',
       '@firebaseConfig': '/src/firebaseConfig',
     },
   },

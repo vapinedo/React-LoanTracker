@@ -1,18 +1,18 @@
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
+import useEmpleados from "@services/useEmpleados";
 import { NavLink, useNavigate } from "react-router-dom"
 import { IconEdit, IconTrash } from '@tabler/icons-react';
-import useNotifications from "@services/useNotifications";
-import { Employee } from "@feature/employees/models/Employee";
-import useEmployee from "@feature/employees/services/useEmployee";
+import useNotificaciones from "@services/useNotificaciones";
+import { Empleado } from "@feature/empleados/models/Empleado";
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 
-export default function EmployeeAdminPage() {
+export default function EmpleadosAdminPage() {
 
   const navigate = useNavigate();
-  const { dialogConfirm } = useNotifications();
-  const { getAllEmployees, deleteEmployee } = useEmployee();
-  const [employees, setEmployees] = useState<Employee[] | []>([]);
+  const { dialogConfirm } = useNotificaciones();
+  const { getAllEmpleados, deleteEmpleado } = useEmpleados();
+  const [empleados, setEmpleados] = useState<Empleado[] | []>([]);
 
   const handleDetails = (params: any) => {
     return (
@@ -49,7 +49,7 @@ export default function EmployeeAdminPage() {
   const handleDelete = async (id: string, nombres: string, apellidos: string) => {
     const text = `Vas a eliminar a ${nombres} ${apellidos}`;
     const { isConfirmed } = await dialogConfirm(text);
-    isConfirmed && deleteEmployee(id);
+    isConfirmed && deleteEmpleado(id);
   };
 
   const columns: GridColDef<any>[] = [
@@ -91,11 +91,11 @@ export default function EmployeeAdminPage() {
   ];
 
   useEffect(() => {
-    const fetchEmployees = async () => {
-      const employeeList = await getAllEmployees();
-      setEmployees(employeeList);
+    const fetchEmpleados = async () => {
+      const empleadoList = await getAllEmpleados();
+      setEmpleados(empleadoList);
     };
-    fetchEmployees();
+    fetchEmpleados();
   }, []);
 
   return (
@@ -107,7 +107,7 @@ export default function EmployeeAdminPage() {
 
       <Box sx={{ height: "100%", width: '100%', marginTop: 3 }}>
         <DataGrid
-          rows={employees}
+          rows={empleados}
           columns={columns}
           density="compact"
           checkboxSelection

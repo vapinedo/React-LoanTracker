@@ -22,10 +22,10 @@
 
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["*"],
-      "@shared/*": ["shared/*"],
-      "@feature/*": ["feature/*"],
+      "@app/*": ["*"],
+      "@features/*": ["features/*"],
       "@services/*": ["services/*"],
+      "@components/*": ["components/*"],
       "@firebaseConfig": ["firebaseConfig"],
     }
   },

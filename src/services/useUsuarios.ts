@@ -3,7 +3,7 @@ import firebaseApp from "@firebaseConfig";
 import { doc, setDoc, getFirestore } from "firebase/firestore"; 
 import { getAuth, signOut, signInWithEmailAndPassword, onAuthStateChanged, User } from "firebase/auth";
 
-const COLLECTION = "users";
+const COLLECTION = "USUARIOS";
 const db = getFirestore(firebaseApp);
 const AUTH_DATA = getAuth(firebaseApp);
 
@@ -13,7 +13,7 @@ const newDocument = {
     country: "Colombia"
 };
 
-export default function useUsers() {
+export default function useUsuarios() {
 
     const [user, setUser] = useState<User | null>(null);
 

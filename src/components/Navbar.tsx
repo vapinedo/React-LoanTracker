@@ -1,9 +1,9 @@
-import useUsers from "@feature/users/services/useUsers"
+import useUsuarios from "@services/useUsuarios"
 import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
 
-    const { logout } = useUsers();
+    const { logout } = useUsuarios();
 
     const handleLogout = () => {
         logout();
