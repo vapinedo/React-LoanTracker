@@ -1,7 +1,7 @@
 import { v4 as createUuid } from 'uuid';
 import firebaseApp from "@firebaseConfig";
 import { Employee } from "../models/Employee";
-import { doc, getDocs, getDoc, setDoc, updateDoc, collection, getFirestore, runTransaction } from "firebase/firestore";
+import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction } from "firebase/firestore";
 
 const COLLECTION = "EMPLOYEES";
 const db = getFirestore(firebaseApp);

@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 import { IconEdit } from '@tabler/icons-react';
 import { Employee } from "@feature/employees/models/Employee";
 import useEmployee from "@feature/employees/services/useEmployee";
@@ -11,6 +11,18 @@ export default function EmployeeAdminPage() {
   const navigate = useNavigate();
   const { getAllEmployees } = useEmployee();
   const [employees, setEmployees] = useState<Employee[] | []>([]);
+
+  const handleDetails = (params: any) => {
+    return (
+      <NavLink
+        title="Ver detalles"
+        className="grid-table-linkable-column"
+        to={`/empleados/detalles/${params.id}`} 
+      >
+        {params.formattedValue}
+      </NavLink>
+    )
+  }
 
   const handleEdit = (params: any) => {
     return (
@@ -28,6 +40,7 @@ export default function EmployeeAdminPage() {
       headerName: 'Nombre',
       width: 150,
       editable: true,
+      renderCell: handleDetails,
     },
     {
       field: 'apellidos',
@@ -65,7 +78,7 @@ export default function EmployeeAdminPage() {
       setEmployees(employeeList);
     };
     fetchEmployees();
-  }, [employees]);
+  }, []);
 
   return (
     <div>
