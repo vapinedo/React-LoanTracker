@@ -2,6 +2,7 @@ import { v4 as createUuid } from 'uuid';
 import firebaseApp from "@firebaseConfig";
 import { Employee } from "../models/Employee";
 import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction } from "firebase/firestore";
+import toast from 'react-hot-toast';
 
 const COLLECTION = "EMPLOYEES";
 const db = getFirestore(firebaseApp);
@@ -54,6 +55,7 @@ export default function useEmployee() {
                     throw "No existe el empleado que quiere editar";
                 }
                 transaction.update(docRef, document);
+                toast.success("Empleado actualizado exitosamente!");
             });
         } catch (error) {
             console.error(error);
