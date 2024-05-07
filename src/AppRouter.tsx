@@ -3,6 +3,7 @@ import Navbar from "@shared/components/Navbar";
 import { Route, Routes } from 'react-router-dom'
 import HomePage from "@feature/home/pages/HomePage";
 import UserNew from "@feature/users/components/UserNew";
+import Breadcrumbs from "@shared/components/Breadcrumbs";
 import NotFoundPage from '@shared/components/NotFoundPage';
 import UserAdminPage from "@feature/users/pages/UserAdminPage";
 import EmployeeNew from "@feature/employees/components/EmployeeNew";
@@ -10,29 +11,7 @@ import EmployeeEdit from "@feature/employees/components/EmployeeEdit";
 import EmployeeDetails from "@feature/employees/pages/EmployeeDetails";
 import CustomerAdminPage from "@feature/customers/pages/CustomerAdminPage";
 import EmployeeAdminPage from "@feature/employees/pages/EmployeeAdminPage";
-import Breadcrumbs from "@shared/components/Breadcrumbs";
-
-// const APP_ROUTER = createBrowserRouter([
-//     {
-//         path: "/",
-//         element: <HomePage />,
-//         errorElement: <NotFoundPage />
-//     },
-//     {
-//         path: "/usuarios/*",
-//         element: <UserRouter />,
-//     },
-//     {
-//         path: "/user-profiles",
-//         element: <UserProfilesPage />,
-//         children: [
-//             {
-//                 path: "/user-profiles/:profileId",
-//                 element: <UserProfilePage />
-//             }
-//         ]
-//     }
-// ]);
+import { Toaster } from "react-hot-toast";
 
 export default function AppRouter() {
     return (
@@ -40,6 +19,7 @@ export default function AppRouter() {
             <Navbar />
 
             <section className="container mt-4 mb-5">
+                <Toaster />
                 <Breadcrumbs />
                 <Routes>
                     <Route path="/" element={ <HomePage /> } />
