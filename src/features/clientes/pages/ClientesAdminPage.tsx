@@ -1,4 +1,4 @@
-export default function CustomerAdminPage() {
+export default function ClientesAdmin() {
   return (
     <div>
         <header>

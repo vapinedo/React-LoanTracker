@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 
-export default function useNotifications() {
+export default function useNotificaciones() {
 
     const dialogConfirm = (text: string) => {
         return Swal.fire({

@@ -1,82 +1,49 @@
-import * as Yup from "yup";
-import { useEffect } from "react";
 import { Button } from '@mui/material';
-import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from "react-router-dom";
-import CustomTextField from '@shared/formik/CustomTextField';
-import { Employee } from '@feature/employees/models/Employee';
-import useEmployee from "@feature/employees/services/useEmployee";
+import CustomTextField from '@components/form/CustomTextField';
 
-const defaultValues: Employee = {
-    id: null,
+interface Usuario {
+    nombres: string;
+    apellidos: string;
+    correo: string;
+    celular: string;
+    direccion: string;
+    password: string;
+    password_confirm: string;
+}
+
+const defaultValues = {
     nombres: "",
     apellidos: "",
-    correo: null,
+    correo: "",
     celular: "",
     direccion: "",
-};
+    password: "",
+    password_confirm: "",
+}
 
-const validationSchema = Yup.object().shape({
-    nombres: Yup
-        .string()
-        .required("Nombres es requerido"),
-    apellidos: Yup
-        .string()
-        .required("Apellidos es requerido"),
-    correo: Yup
-        .string()
-        .notRequired(),
-    celular: Yup
-        .string()
-        .required("Celular es requerido"),
-    direccion: Yup
-        .string()
-        .required("Dirección es requerido"),
-});
+export default function UsuarioCrear() {
 
-export default function EmployeeEdit() {
-
-    const params = useParams();
-    const navigate = useNavigate();
-    const { getEmployeeById, updateEmployee } = useEmployee();
-
-    const form = useForm<Employee>({
+    const form = useForm<Usuario>({
         defaultValues,
         mode: "onTouched",
-        resolver: yupResolver(validationSchema),
+        // resolver: yupResolver(validationSchema),
     });
-
     const { register, formState, handleSubmit } = form;
-    const { errors, isSubmitting, isValid } = formState;
+    const { errors } = formState;
 
-    const onSubmit = (employee: Employee) => {
-        updateEmployee(employee);
-        navigate("/empleados");
+    const onSubmit = (values: any) => {
+        console.log({ values });
     };
 
     const onError = (errors: FieldErrors<any>) => {
         console.log({ errors });
     };
 
-    useEffect(() => {
-        const employeeId = params.id;
-        const fetchEmployee = async (employeeId: string) => {
-            const employee = await getEmployeeById(employeeId);
-            form.setValue("id", employee?.id);
-            form.setValue("nombres", employee?.nombres);
-            form.setValue("apellidos", employee?.apellidos);
-            form.setValue("correo", employee?.correo);
-            form.setValue("celular", employee?.celular);
-            form.setValue("direccion", employee?.direccion);
-        }
-        employeeId && fetchEmployee(employeeId);
-    }, [params.id])
-
     return (
         <section>
             <header className='mb-4 d-flex justify-content-between align-items-center'>
-                <h2>Editar empleado</h2>
+                <h2>Crear nuevo usuario</h2>
                 <button className="btn btn-outline-danger">Volver Atrás</button>
             </header>
 
@@ -132,16 +99,34 @@ export default function EmployeeEdit() {
                             error={errors.direccion?.message}
                         />
                     </div>
+
+                    <div className="col-md-8 mb-3">
+                        <CustomTextField
+                            type="password"
+                            name="password"
+                            label="Contraseña"
+                            register={register}
+                            error={errors.password?.message}
+                        />
+                    </div>
+
+                    <div className="col-md-8 mb-3">
+                        <CustomTextField
+                            type="password"
+                            name="password_confirm"
+                            label="Repetir Contraseña"
+                            register={register}
+                            error={errors.password_confirm?.message}
+                        />
+                    </div>
                 </div>
 
                 <Button
                     type="submit"
-                    color="success"
                     variant="contained"
                     sx={{ marginTop: 2 }}
-                    // disabled={!isValid || isSubmitting}
                 >
-                    Guardar
+                    Crear usuario
                 </Button>
             </form>
         </section>

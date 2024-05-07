@@ -1,15 +1,15 @@
 import toast from 'react-hot-toast';
 import { v4 as createUuid } from 'uuid';
 import firebaseApp from "@firebaseConfig";
-import { Employee } from "../models/Employee";
+import { Empleado } from "@feature/empleados/models/Empleado";
 import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction, deleteDoc } from "firebase/firestore";
 
-const COLLECTION = "EMPLOYEES";
+const COLLECTION = "EMPLEADOS";
 const db = getFirestore(firebaseApp);
 
-export default function useEmployee() {
+export default function useEmpleados() {
 
-    const getAllEmployees = async () => {
+    const getAllEmpleados = async () => {
         const documents: any[] = [];
         try {
             const querySnapshot = await getDocs(collection(db, COLLECTION));
@@ -22,7 +22,7 @@ export default function useEmployee() {
         return documents;
     };
 
-    const getEmployeeById = async (documentId: string) => {
+    const getEmpleadoById = async (documentId: string) => {
         let document = null;
         try {
             const docRef = doc(db, COLLECTION, documentId);
@@ -36,7 +36,7 @@ export default function useEmployee() {
         return document;
     };
 
-    const createEmployee = async (document: Employee) => {
+    const createEmpleado = async (document: Empleado) => {
         try {
             const documentId = createUuid();
             document.id = documentId;
@@ -47,7 +47,7 @@ export default function useEmployee() {
         }
     };
 
-    const updateEmployee = async (document: any) => {
+    const updateEmpleado = async (document: any) => {
         const docRef = doc(db, COLLECTION, document.id);
         try {
             await runTransaction(db, async (transaction) => {
@@ -63,7 +63,7 @@ export default function useEmployee() {
         }
     };
     
-    const deleteEmployee = async (documentId: string) => {
+    const deleteEmpleado = async (documentId: string) => {
         try {
             const docRef = doc(db, COLLECTION, documentId);
             const response = await deleteDoc(docRef);
@@ -75,10 +75,10 @@ export default function useEmployee() {
     };
 
     return {
-        getAllEmployees,
-        getEmployeeById,
-        createEmployee,
-        updateEmployee,
-        deleteEmployee,
+        getAllEmpleados,
+        getEmpleadoById,
+        createEmpleado,
+        updateEmpleado,
+        deleteEmpleado,
     };
 }

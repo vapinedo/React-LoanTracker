@@ -1,17 +1,17 @@
 import React from "react";
-import Navbar from "@shared/components/Navbar";
-import { Route, Routes } from 'react-router-dom'
-import HomePage from "@feature/home/pages/HomePage";
-import UserNew from "@feature/users/components/UserNew";
-import Breadcrumbs from "@shared/components/Breadcrumbs";
-import NotFoundPage from '@shared/components/NotFoundPage';
-import UserAdminPage from "@feature/users/pages/UserAdminPage";
-import EmployeeNew from "@feature/employees/components/EmployeeNew";
-import EmployeeEdit from "@feature/employees/components/EmployeeEdit";
-import EmployeeDetails from "@feature/employees/pages/EmployeeDetails";
-import CustomerAdminPage from "@feature/customers/pages/CustomerAdminPage";
-import EmployeeAdminPage from "@feature/employees/pages/EmployeeAdminPage";
+import Navbar from "@components/Navbar";
 import { Toaster } from "react-hot-toast";
+import { Route, Routes } from 'react-router-dom'
+import Breadcrumbs from "@components/Breadcrumbs";
+import NotFoundPage from '@components/NotFoundPage';
+import HomePage from "@features/home/pages/HomePage";
+import UsuarioCrear from "@features/usuarios/components/UsuarioCrear";
+import EmpleadoCrear from "@features/empleados/components/EmpleadoCrear";
+import EmpleadoEditar from "@features/empleados/components/EmpleadoEditar";
+import UsuariosAdminPage from "@features/usuarios/pages/UsuariosAdminPage";
+import ClientesAdminPage from "@features/clientes/pages/ClientesAdminPage";
+import EmpleadosAdminPage from "@features/empleados/pages/EmpleadosAdminPage";
+import EmpleadoDetailsPage from "@features/empleados/pages/EmpleadoDetailsPage";
 
 export default function AppRouter() {
     return (
@@ -23,13 +23,13 @@ export default function AppRouter() {
                 <Breadcrumbs />
                 <Routes>
                     <Route path="/" element={ <HomePage /> } />
-                    <Route path="/usuarios" element={ <UserAdminPage /> } />
-                    <Route path="/usuarios/nuevo" element={ <UserNew /> } />
-                    <Route path="/clientes" element={ <CustomerAdminPage /> } />
-                    <Route path="/empleados" element={ <EmployeeAdminPage /> } />
-                    <Route path="/empleados/nuevo" element={ <EmployeeNew /> } />
-                    <Route path="/empleados/detalles/:id" element={ <EmployeeDetails /> } />
-                    <Route path="/empleados/editar/:id" element={ <EmployeeEdit /> } />
+                    <Route path="/usuarios" element={ <UsuariosAdminPage /> } />
+                    <Route path="/usuarios/nuevo" element={ <UsuarioCrear /> } />
+                    <Route path="/clientes" element={ <ClientesAdminPage /> } />
+                    <Route path="/empleados" element={ <EmpleadosAdminPage /> } />
+                    <Route path="/empleados/nuevo" element={ <EmpleadoCrear /> } />
+                    <Route path="/empleados/detalles/:id" element={ <EmpleadoDetailsPage /> } />
+                    <Route path="/empleados/editar/:id" element={ <EmpleadoEditar /> } />
                     <Route path="*" element={ <NotFoundPage /> } />
                 </Routes>
             </section>
