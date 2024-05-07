@@ -1,7 +1,8 @@
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom"
-import { IconEdit } from '@tabler/icons-react';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
+import useNotifications from "@services/useNotifications";
 import { Employee } from "@feature/employees/models/Employee";
 import useEmployee from "@feature/employees/services/useEmployee";
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
@@ -9,7 +10,8 @@ import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 export default function EmployeeAdminPage() {
 
   const navigate = useNavigate();
-  const { getAllEmployees } = useEmployee();
+  const { dialogConfirm } = useNotifications();
+  const { getAllEmployees, deleteEmployee } = useEmployee();
   const [employees, setEmployees] = useState<Employee[] | []>([]);
 
   const handleDetails = (params: any) => {
@@ -24,15 +26,31 @@ export default function EmployeeAdminPage() {
     )
   }
 
-  const handleEdit = (params: any) => {
+  const handleActions = (params: any) => {
+    const { id, row } = params;
+    const { nombres, apellidos } = row;
     return (
-      <IconEdit 
-        color="#00abfb" 
-        cursor="pointer" 
-        onClick={() => navigate(`/empleados/editar/${params.id}`)} 
-      />
+      <>
+        <IconEdit 
+          color="#00abfb" 
+          cursor="pointer" 
+          onClick={() => navigate(`/empleados/editar/${params.id}`)} 
+        />
+        <IconTrash 
+          color="#ff2825" 
+          cursor="pointer"
+          style={{ marginLeft: 15 }}
+          onClick={() => handleDelete(id, nombres, apellidos)} 
+        />
+      </>
     )
-  }
+  };
+
+  const handleDelete = async (id: string, nombres: string, apellidos: string) => {
+    const text = `Vas a eliminar a ${nombres} ${apellidos}`;
+    const { isConfirmed } = await dialogConfirm(text);
+    isConfirmed && deleteEmployee(id);
+  };
 
   const columns: GridColDef<any>[] = [
     {
@@ -68,7 +86,7 @@ export default function EmployeeAdminPage() {
     },
     {
       field: " ",
-      renderCell: handleEdit,
+      renderCell: handleActions,
     }
   ];
 
