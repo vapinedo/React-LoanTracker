@@ -6,3 +6,15 @@ body, html {
 .grid-table-linkable-column {
     text-decoration: none;
 }
+
+.breadcrumbs {
+    gap: 5px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+    justify-content: flex-start;
+}
+
+.breadcrumbs a {
+    text-decoration: none;
+}

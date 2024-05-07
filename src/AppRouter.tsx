@@ -10,6 +10,7 @@ import EmployeeEdit from "@feature/employees/components/EmployeeEdit";
 import EmployeeDetails from "@feature/employees/pages/EmployeeDetails";
 import CustomerAdminPage from "@feature/customers/pages/CustomerAdminPage";
 import EmployeeAdminPage from "@feature/employees/pages/EmployeeAdminPage";
+import Breadcrumbs from "@shared/components/Breadcrumbs";
 
 // const APP_ROUTER = createBrowserRouter([
 //     {
@@ -39,6 +40,7 @@ export default function AppRouter() {
             <Navbar />
 
             <section className="container mt-4 mb-5">
+                <Breadcrumbs />
                 <Routes>
                     <Route path="/" element={ <HomePage /> } />
                     <Route path="/usuarios" element={ <UserAdminPage /> } />
