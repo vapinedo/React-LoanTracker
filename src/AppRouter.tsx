@@ -5,11 +5,14 @@ import { Route, Routes } from 'react-router-dom'
 import Breadcrumbs from "@components/Breadcrumbs";
 import NotFoundPage from '@components/NotFoundPage';
 import HomePage from "@features/home/pages/HomePage";
+import ClienteCrear from "@features/clientes/components/ClienteCrear";
 import UsuarioCrear from "@features/usuarios/components/UsuarioCrear";
+import ClienteEditar from "@features/clientes/components/ClienteEditar";
 import EmpleadoCrear from "@features/empleados/components/EmpleadoCrear";
-import EmpleadoEditar from "@features/empleados/components/EmpleadoEditar";
 import UsuariosAdminPage from "@features/usuarios/pages/UsuariosAdminPage";
 import ClientesAdminPage from "@features/clientes/pages/ClientesAdminPage";
+import EmpleadoEditar from "@features/empleados/components/EmpleadoEditar";
+import ClienteDetailsPage from "@features/clientes/pages/ClienteDetailsPage";
 import EmpleadosAdminPage from "@features/empleados/pages/EmpleadosAdminPage";
 import EmpleadoDetailsPage from "@features/empleados/pages/EmpleadoDetailsPage";
 
@@ -25,11 +28,17 @@ export default function AppRouter() {
                     <Route path="/" element={ <HomePage /> } />
                     <Route path="/usuarios" element={ <UsuariosAdminPage /> } />
                     <Route path="/usuarios/nuevo" element={ <UsuarioCrear /> } />
+
                     <Route path="/clientes" element={ <ClientesAdminPage /> } />
+                    <Route path="/clientes/nuevo" element={ <ClienteCrear /> } />
+                    <Route path="/clientes/detalles/:id" element={ <ClienteDetailsPage /> } />
+                    <Route path="/clientes/editar/:id" element={ <ClienteEditar /> } />
+
                     <Route path="/empleados" element={ <EmpleadosAdminPage /> } />
                     <Route path="/empleados/nuevo" element={ <EmpleadoCrear /> } />
                     <Route path="/empleados/detalles/:id" element={ <EmpleadoDetailsPage /> } />
                     <Route path="/empleados/editar/:id" element={ <EmpleadoEditar /> } />
+
                     <Route path="*" element={ <NotFoundPage /> } />
                 </Routes>
             </section>

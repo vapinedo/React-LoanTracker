@@ -1,15 +1,15 @@
 import toast from 'react-hot-toast';
 import { v4 as createUuid } from 'uuid';
 import firebaseApp from "@firebaseConfig";
-import { Empleado } from "@features/empleados/models/Empleado";
+import { Cliente } from "@features/clientes/models/Cliente";
 import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction, deleteDoc } from "firebase/firestore";
 
-const COLLECTION = "EMPLEADOS";
+const COLLECTION = "CLIENTES";
 const db = getFirestore(firebaseApp);
 
-export default function useEmpleados() {
+export default function useClientes() {
 
-    const getAllEmpleados = async () => {
+    const getAllClientes = async () => {
         const documents: any[] = [];
         try {
             const querySnapshot = await getDocs(collection(db, COLLECTION));
@@ -22,7 +22,7 @@ export default function useEmpleados() {
         return documents;
     };
 
-    const getEmpleadoById = async (documentId: string) => {
+    const getClienteById = async (documentId: string) => {
         let document = null;
         try {
             const docRef = doc(db, COLLECTION, documentId);
@@ -36,49 +36,49 @@ export default function useEmpleados() {
         return document;
     };
 
-    const createEmpleado = async (document: Empleado) => {
+    const createCliente = async (document: Cliente) => {
         try {
             const documentId = createUuid();
             document.id = documentId;
             await setDoc(doc(db, COLLECTION, documentId), document);
-            toast.success("Empleado creado exitosamente!");
+            toast.success("Cliente creado exitosamente!");
         } catch (error) {
             console.log(error);
         }
     };
 
-    const updateEmpleado = async (document: any) => {
+    const updateCliente = async (document: any) => {
         const docRef = doc(db, COLLECTION, document.id);
         try {
             await runTransaction(db, async (transaction) => {
                 const sfDoc = await transaction.get(docRef);
                 if (!sfDoc.exists()) {
-                    throw "No existe el empleado que quiere editar";
+                    throw "No existe el cliente que quiere editar";
                 }
                 transaction.update(docRef, document);
-                toast.success("Empleado actualizado exitosamente!");
+                toast.success("Cliente actualizado exitosamente!");
             });
         } catch (error) {
             console.error(error);
         }
     };
     
-    const deleteEmpleado = async (documentId: string) => {
+    const deleteCliente = async (documentId: string) => {
         try {
             const docRef = doc(db, COLLECTION, documentId);
             const response = await deleteDoc(docRef);
             console.log({response});
-            toast.success("Empleado eliminado exitosamente!");
+            toast.success("Cliente eliminado exitosamente!");
         } catch (error) {
             console.error(error);
         }
     };
 
     return {
-        getAllEmpleados,
-        getEmpleadoById,
-        createEmpleado,
-        updateEmpleado,
-        deleteEmpleado,
+        getAllClientes,
+        getClienteById,
+        createCliente,
+        updateCliente,
+        deleteCliente,
     };
 }
