@@ -1,13 +1,14 @@
 import * as Yup from "yup";
+import { useEffect } from "react";
 import { Button } from '@mui/material';
-import { useNavigate } from "react-router-dom";
-import useEmpleados from "@services/useEmpleados";
+import useClientes from "@services/useClientes";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
-import { Empleado } from '@features/empleados/models/Empleado';
+import { useNavigate, useParams } from "react-router-dom";
+import { Cliente } from '@features/clientes/models/Cliente';
 import CustomTextField from '@components/form/CustomTextField';
 
-const defaultValues: Empleado = {
+const defaultValues: Cliente = {
     id: null,
     nombres: "",
     apellidos: "",
@@ -34,12 +35,13 @@ const validationSchema = Yup.object().shape({
         .required("Dirección es requerido"),
 });
 
-export default function EmpleadoCrear() {
+export default function ClienteEditar() {
 
-    const { createEmpleado } = useEmpleados();
+    const params = useParams();
     const navigate = useNavigate();
+    const { getClienteById, updateCliente } = useClientes();
 
-    const form = useForm<Empleado>({
+    const form = useForm<Cliente>({
         defaultValues,
         mode: "onTouched",
         resolver: yupResolver(validationSchema),
@@ -48,19 +50,33 @@ export default function EmpleadoCrear() {
     const { register, formState, handleSubmit } = form;
     const { errors, isSubmitting, isValid } = formState;
 
-    const onSubmit = (employee: Empleado) => {
-        createEmpleado(employee);
-        navigate("/empleados");
+    const onSubmit = (cliente: Cliente) => {
+        updateCliente(cliente);
+        navigate("/clientes");
     };
 
     const onError = (errors: FieldErrors<any>) => {
         console.log({ errors });
     };
 
+    useEffect(() => {
+        const employeeId = params.id;
+        const fetchEmployee = async (employeeId: string) => {
+            const cliente = await getClienteById(employeeId);
+            form.setValue("id", cliente?.id);
+            form.setValue("nombres", cliente?.nombres);
+            form.setValue("apellidos", cliente?.apellidos);
+            form.setValue("correo", cliente?.correo);
+            form.setValue("celular", cliente?.celular);
+            form.setValue("direccion", cliente?.direccion);
+        }
+        employeeId && fetchEmployee(employeeId);
+    }, [params.id])
+
     return (
         <section>
             <header className='mb-4 d-flex justify-content-between align-items-center'>
-                <h2>Nuevo empleado</h2>
+                <h2>Editar cliente</h2>
                 <button className="btn btn-outline-danger">Volver Atrás</button>
             </header>
 
@@ -120,9 +136,10 @@ export default function EmpleadoCrear() {
 
                 <Button
                     type="submit"
+                    color="success"
                     variant="contained"
                     sx={{ marginTop: 2 }}
-                    disabled={!isValid || isSubmitting}
+                    // disabled={!isValid || isSubmitting}
                 >
                     Guardar
                 </Button>

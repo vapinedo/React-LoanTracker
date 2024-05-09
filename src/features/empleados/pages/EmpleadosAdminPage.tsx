@@ -4,7 +4,7 @@ import useEmpleados from "@services/useEmpleados";
 import { NavLink, useNavigate } from "react-router-dom"
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import useNotificaciones from "@services/useNotificaciones";
-import { Empleado } from "@feature/empleados/models/Empleado";
+import { Empleado } from "@features/empleados/models/Empleado";
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 
 export default function EmpleadosAdminPage() {

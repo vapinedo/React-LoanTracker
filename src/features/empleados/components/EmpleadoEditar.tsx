@@ -5,7 +5,7 @@ import useEmpleados from "@services/useEmpleados";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from "react-router-dom";
-import { Empleado } from '@feature/empleados/models/Empleado';
+import { Empleado } from '@features/empleados/models/Empleado';
 import CustomTextField from '@components/form/CustomTextField';
 
 const defaultValues: Empleado = {
