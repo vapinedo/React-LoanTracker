@@ -1,10 +1,13 @@
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import usePrestamos from "@services/usePrestamos";
+import useDatetime from "@app/services/useDatetime";
 
 export default function PrestamoDetailsPage() {
 
     const params = useParams();
+    const { getHumanDate } = useDatetime();
     const { getPrestamoById } = usePrestamos();
     const [prestamo, setPrestamo] = useState<any>(null)
 
@@ -17,6 +20,10 @@ export default function PrestamoDetailsPage() {
         prestamoId && fetchPrestamo(prestamoId);
     }, []);
 
+    if (!prestamo) {
+        return <p>Cargando...</p>
+    }
+
     return (
         <div>
             <header className="d-flex justify-content-between align-items-center">
@@ -25,30 +32,46 @@ export default function PrestamoDetailsPage() {
             </header>
 
             <div className="mt-4">
-                <table className="table table-striped">
-                    <tbody>
-                        <tr>
-                            <th>Nombres</th>
-                            <td>{prestamo?.nombres}</td> 
-                        </tr>
-                        <tr>
-                            <th>Apellidos</th>
-                            <td>{prestamo?.apellidos}</td> 
-                        </tr>
-                        <tr>
-                            <th>Celular</th>
-                            <td>{prestamo?.celular}</td> 
-                        </tr>
-                        <tr>
-                            <th>Correo</th>
-                            <td>{prestamo?.correo}</td> 
-                        </tr>
-                        <tr>
-                            <th>Dirección</th>
-                            <td>{prestamo?.direccion}</td> 
-                        </tr>
-                    </tbody>
-                </table>
+                <div className="row">
+                    <div className="col-md-12">
+                        <table className="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <td>{prestamo?.clienteNombre}</td>
+                                </tr>
+                                <tr>
+                                    <th>Responsable</th>
+                                    <td>{prestamo?.empleadoNombre}</td>
+                                </tr>
+                                <tr>
+                                    <th>Valor</th>
+                                    <td>{prestamo?.monto}</td>
+                                </tr>
+                                <tr>
+                                    <th>Interés</th>
+                                    <td>{prestamo?.interes}</td>
+                                </tr>
+                                <tr>
+                                    <th>Estado</th>
+                                    <td>{prestamo?.estado}</td>
+                                </tr>
+                                <tr>
+                                    <th>Modo de pago</th>
+                                    <td>{prestamo?.modalidadDePago}</td>
+                                </tr>
+                                <tr>
+                                    <th>Fecha inicial</th>
+                                    <td>{getHumanDate(prestamo?.fechaInicio)}</td>
+                                </tr>
+                                <tr>
+                                    <th>Fecha límite</th>
+                                    <td>{getHumanDate(prestamo?.fechaFinal)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     )

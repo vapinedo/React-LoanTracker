@@ -17,7 +17,12 @@ import { AutocompleteOption } from "@models/AutocompleteOption";
 import { Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
 import { estadoPrestamoOptions, modalidadDePagoOptions } from '@app/mocks/DropdownOptions';
 
-const todayInTimeStamp = dayjs().valueOf();
+const currentDate = new Date();
+const newDate = new Date(currentDate);
+const currentDayOfMonth = newDate.getDate();
+newDate.setDate(currentDayOfMonth + 30);
+const todayTimestamp = dayjs(currentDate).valueOf();
+const todayPlus30DaysTimestamp = dayjs(newDate).valueOf();
 
 const defaultValues: Prestamo = {
     id: createUuid(),
@@ -27,8 +32,8 @@ const defaultValues: Prestamo = {
     empleadoNombre: null,
     monto: 0,
     interes: 0,
-    fechaInicio: todayInTimeStamp,
-    fechaFinal: todayInTimeStamp,
+    fechaInicio: todayTimestamp,
+    fechaFinal: todayPlus30DaysTimestamp,
     estado: "Activo",
     modalidadDePago: "Diario",
 }
@@ -191,11 +196,12 @@ export default function PrestamoCrear() {
                             name="fechaInicio"
                             sx={{ width: "100%" }}
                             label="Fecha de inicio" 
-                            minDate={dayjs(todayInTimeStamp)}
-                            defaultValue={dayjs(todayInTimeStamp)}
+                            minDate={dayjs(todayTimestamp)}
+                            defaultValue={dayjs(todayTimestamp)}
                             onChange={(newDate) => {
                                 const selectedDate = dayjs(newDate);
                                 const timeStamp = selectedDate.valueOf();
+                                console.log("inicio", timeStamp);
                                 form.setValue("fechaInicio", timeStamp);
                             }} 
                         />
@@ -206,12 +212,12 @@ export default function PrestamoCrear() {
                             name="fechaFinal"
                             sx={{ width: "100%" }}
                             label="Fecha limite" 
-                            minDate={dayjs(todayInTimeStamp)}
-                            maxDate={dayjs(todayInTimeStamp).add(31, "day")}
-                            defaultValue={dayjs(todayInTimeStamp).add(31, "day")}
+                            minDate={dayjs(todayTimestamp)}
+                            defaultValue={dayjs(todayTimestamp).add(30, "day")}
                             onChange={(newDate) => {
                                 const selectedDate = dayjs(newDate);
                                 const timeStamp = selectedDate.valueOf();
+                                console.log("final", timeStamp);
                                 form.setValue("fechaFinal", timeStamp);
                             }} 
                         />
