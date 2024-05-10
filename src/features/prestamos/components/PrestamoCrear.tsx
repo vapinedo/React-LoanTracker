@@ -23,6 +23,8 @@ const defaultValues: Prestamo = {
     id: createUuid(),
     clienteId: null,
     empleadoId: null,
+    clienteNombre: null,
+    empleadoNombre: null,
     monto: 0,
     interes: 0,
     fechaInicio: todayInTimeStamp,
@@ -110,6 +112,7 @@ export default function PrestamoCrear() {
                             options={clienteOptions}
                             onChange={(event: any, option: AutocompleteOption) => {
                                 form.setValue("clienteId", option.value);
+                                form.setValue("clienteNombre", option.label);
                             }}
                             renderInput={(params) => <TextField {...params} label="Cliente" />}
                         />
@@ -121,6 +124,7 @@ export default function PrestamoCrear() {
                             options={empleadoOptions}
                             onChange={(event: any, option: AutocompleteOption) => {
                                 form.setValue("empleadoId", option.value);
+                                form.setValue("empleadoNombre", option.label);
                             }}
                             renderInput={(params) => <TextField {...params} name="empleadoId" label="Empleado" />}
                         />

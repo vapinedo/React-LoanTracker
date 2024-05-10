@@ -54,14 +54,14 @@ export default function PrestamosAdminPage() {
 
   const columns: GridColDef<any>[] = [
     {
-      field: 'clienteId',
+      field: 'clienteNombre',
       headerName: 'Cliente',
       width: 240,
       editable: true,
       renderCell: handleDetails,
     },
     {
-      field: 'empleadoId',
+      field: 'empleadoNombre',
       headerName: 'Empleado',
       width: 240,
       editable: true,
@@ -69,7 +69,7 @@ export default function PrestamosAdminPage() {
     {
       field: 'monto',
       headerName: 'Valor',
-      width: 110,
+      width: 120,
       editable: true,
     },
     {
@@ -99,7 +99,6 @@ export default function PrestamosAdminPage() {
   useEffect(() => {
     const fetchPrestamos = async () => {
       const prestamoList = await getAllPrestamos();
-      console.log({prestamoList});
       setPrestamos(prestamoList);
     };
     fetchPrestamos();
