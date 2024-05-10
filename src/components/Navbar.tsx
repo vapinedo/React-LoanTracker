@@ -37,6 +37,10 @@ export default function Navbar() {
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/clientes">Clientes</NavLink>
                         </li>
+
+                        <li className="nav-item">
+                            <NavLink className="nav-link" to="/prestamos">Prestamos</NavLink>
+                        </li>
                     </ul>
 
                     <button onClick={handleLogout} className="btn btn-danger">Cerrar Sesión</button>
