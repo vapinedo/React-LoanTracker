@@ -54,34 +54,40 @@ export default function PrestamosAdminPage() {
 
   const columns: GridColDef<any>[] = [
     {
-      field: 'nombres',
-      headerName: 'Nombre',
-      width: 150,
+      field: 'clienteId',
+      headerName: 'Cliente',
+      width: 240,
       editable: true,
       renderCell: handleDetails,
     },
     {
-      field: 'apellidos',
-      headerName: 'Apellidos',
-      width: 150,
+      field: 'empleadoId',
+      headerName: 'Empleado',
+      width: 240,
       editable: true,
     },
     {
-      field: 'correo',
-      headerName: 'Correo',
+      field: 'monto',
+      headerName: 'Valor',
       width: 110,
       editable: true,
     },
     {
-      field: 'celular',
-      headerName: 'Celular',
+      field: 'estado',
+      headerName: 'Estado',
       width: 110,
       editable: true,
     },
     {
-      field: 'direccion',
-      headerName: 'Dirección',
-      width: 280,
+      field: 'modalidadDePago',
+      headerName: 'Modo de Pago',
+      width: 130,
+      editable: true,
+    },
+    {
+      field: 'fechaFinal',
+      headerName: 'Fecha Límite',
+      width: 250,
       editable: true,
     },
     {
@@ -93,6 +99,7 @@ export default function PrestamosAdminPage() {
   useEffect(() => {
     const fetchPrestamos = async () => {
       const prestamoList = await getAllPrestamos();
+      console.log({prestamoList});
       setPrestamos(prestamoList);
     };
     fetchPrestamos();
