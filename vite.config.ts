@@ -6,6 +6,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@app': '/src',
+      '@mocks': '/src/mocks',
+      '@models': '/src/models',
       '@features': '/src/features',
       '@services': '/src/services',
       '@components': '/src/components',

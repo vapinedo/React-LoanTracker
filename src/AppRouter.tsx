@@ -8,13 +8,17 @@ import HomePage from "@features/home/pages/HomePage";
 import ClienteCrear from "@features/clientes/components/ClienteCrear";
 import UsuarioCrear from "@features/usuarios/components/UsuarioCrear";
 import ClienteEditar from "@features/clientes/components/ClienteEditar";
+import PrestamoCrear from "@features/prestamos/components/PrestamoCrear";
 import EmpleadoCrear from "@features/empleados/components/EmpleadoCrear";
+import PrestamoEditar from "@features/prestamos/components/PrestamoEditar";
 import UsuariosAdminPage from "@features/usuarios/pages/UsuariosAdminPage";
 import ClientesAdminPage from "@features/clientes/pages/ClientesAdminPage";
 import EmpleadoEditar from "@features/empleados/components/EmpleadoEditar";
+import PrestamosAdminPage from "@features/prestamos/pages/PrestamoAdminPage";
 import ClienteDetailsPage from "@features/clientes/pages/ClienteDetailsPage";
 import EmpleadosAdminPage from "@features/empleados/pages/EmpleadosAdminPage";
 import EmpleadoDetailsPage from "@features/empleados/pages/EmpleadoDetailsPage";
+import PrestamoDetailsPage from "@features/prestamos/pages/PrestamoDetailsPage";
 
 export default function AppRouter() {
     return (
@@ -38,6 +42,11 @@ export default function AppRouter() {
                     <Route path="/empleados/nuevo" element={ <EmpleadoCrear /> } />
                     <Route path="/empleados/detalles/:id" element={ <EmpleadoDetailsPage /> } />
                     <Route path="/empleados/editar/:id" element={ <EmpleadoEditar /> } />
+
+                    <Route path="/prestamos" element={ <PrestamosAdminPage /> } />
+                    <Route path="/prestamos/nuevo" element={ <PrestamoCrear /> } />
+                    <Route path="/prestamos/detalles/:id" element={ <PrestamoDetailsPage /> } />
+                    <Route path="/prestamos/editar/:id" element={ <PrestamoEditar /> } />
 
                     <Route path="*" element={ <NotFoundPage /> } />
                 </Routes>

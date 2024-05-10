@@ -2,6 +2,7 @@ import toast from 'react-hot-toast';
 import { v4 as createUuid } from 'uuid';
 import firebaseApp from "@firebaseConfig";
 import { Empleado } from "@features/empleados/models/Empleado";
+import { AutocompleteOption } from '@models/AutocompleteOption';
 import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction, deleteDoc } from "firebase/firestore";
 
 const COLLECTION = "EMPLEADOS";
@@ -15,6 +16,23 @@ export default function useEmpleados() {
             const querySnapshot = await getDocs(collection(db, COLLECTION));
             querySnapshot.forEach((doc) => {
                 documents.push(doc.data());
+            });
+        } catch (error) {
+            console.log(error);
+        }
+        return documents;
+    };
+
+    const getEmpleadoOptions = async () => {
+        const documents: AutocompleteOption[] = [];
+        try {
+            const querySnapshot = await getDocs(collection(db, COLLECTION));
+            querySnapshot.forEach((doc) => {
+                const option = {
+                    label: `${doc.data().nombres} ${doc.data().apellidos}`,
+                    value: doc.data().id
+                }
+                documents.push(option);
             });
         } catch (error) {
             console.log(error);
@@ -76,6 +94,7 @@ export default function useEmpleados() {
 
     return {
         getAllEmpleados,
+        getEmpleadoOptions,
         getEmpleadoById,
         createEmpleado,
         updateEmpleado,

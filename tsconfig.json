@@ -23,6 +23,8 @@
     "baseUrl": "./src",
     "paths": {
       "@app/*": ["*"],
+      "@mocks/*": ["mocks/*"],
+      "@models/*": ["models/*"],
       "@features/*": ["features/*"],
       "@services/*": ["services/*"],
       "@components/*": ["components/*"],

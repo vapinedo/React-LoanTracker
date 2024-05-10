@@ -1,16 +1,15 @@
 import toast from 'react-hot-toast';
 import { v4 as createUuid } from 'uuid';
 import firebaseApp from "@firebaseConfig";
-import { Cliente } from "@features/clientes/models/Cliente";
-import { AutocompleteOption } from '@models/AutocompleteOption';
+import { Prestamo } from "@features/prestamos/models/Prestamo";
 import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction, deleteDoc } from "firebase/firestore";
 
-const COLLECTION = "CLIENTES";
+const COLLECTION = "PRESTAMOS";
 const db = getFirestore(firebaseApp);
 
-export default function useClientes() {
+export default function usePrestamos() {
 
-    const getAllClientes = async () => {
+    const getAllPrestamos = async () => {
         const documents: any[] = [];
         try {
             const querySnapshot = await getDocs(collection(db, COLLECTION));
@@ -23,24 +22,7 @@ export default function useClientes() {
         return documents;
     };
 
-    const getClienteOptions = async () => {
-        const documents: AutocompleteOption[] = [];
-        try {
-            const querySnapshot = await getDocs(collection(db, COLLECTION));
-            querySnapshot.forEach((doc) => {
-                const option = {
-                    label: `${doc.data().nombres} ${doc.data().apellidos}`,
-                    value: doc.data().id
-                }
-                documents.push(option);
-            });
-        } catch (error) {
-            console.log(error);
-        }
-        return documents;
-    };
-
-    const getClienteById = async (documentId: string) => {
+    const getPrestamoById = async (documentId: string) => {
         let document = null;
         try {
             const docRef = doc(db, COLLECTION, documentId);
@@ -54,50 +36,47 @@ export default function useClientes() {
         return document;
     };
 
-    const createCliente = async (document: Cliente) => {
+    const createPrestamo = async (document: Prestamo) => {
         try {
-            const documentId = createUuid();
-            document.id = documentId;
-            await setDoc(doc(db, COLLECTION, documentId), document);
-            toast.success("Cliente creado exitosamente!");
+            await setDoc(doc(db, COLLECTION, document.id), document);
+            toast.success("Prestamo creado exitosamente!");
         } catch (error) {
             console.log(error);
         }
     };
 
-    const updateCliente = async (document: any) => {
+    const updatePrestamo = async (document: any) => {
         const docRef = doc(db, COLLECTION, document.id);
         try {
             await runTransaction(db, async (transaction) => {
                 const sfDoc = await transaction.get(docRef);
                 if (!sfDoc.exists()) {
-                    throw "No existe el cliente que quiere editar";
+                    throw "No existe el prestamo que quiere editar";
                 }
                 transaction.update(docRef, document);
-                toast.success("Cliente actualizado exitosamente!");
+                toast.success("Prestamo actualizado exitosamente!");
             });
         } catch (error) {
             console.error(error);
         }
     };
     
-    const deleteCliente = async (documentId: string) => {
+    const deletePrestamo = async (documentId: string) => {
         try {
             const docRef = doc(db, COLLECTION, documentId);
             const response = await deleteDoc(docRef);
             console.log({response});
-            toast.success("Cliente eliminado exitosamente!");
+            toast.success("Prestamo eliminado exitosamente!");
         } catch (error) {
             console.error(error);
         }
     };
 
     return {
-        getAllClientes,
-        getClienteOptions,
-        getClienteById,
-        createCliente,
-        updateCliente,
-        deleteCliente,
+        getAllPrestamos,
+        getPrestamoById,
+        createPrestamo,
+        updatePrestamo,
+        deletePrestamo,
     };
 }
