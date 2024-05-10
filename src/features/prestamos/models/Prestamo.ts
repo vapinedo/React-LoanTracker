@@ -1,11 +1,11 @@
 export interface Prestamo {
-    id?: string | null;
+    id: string;
     clienteId: string | null;
     empleadoId: string | null;
     monto: number;
     interes: number;
-    fechaInicio: Date;
-    fechaFinal: Date;
+    fechaInicio: number;
+    fechaFinal: number;
     estado: string;
     modalidadDePago: string;
 }

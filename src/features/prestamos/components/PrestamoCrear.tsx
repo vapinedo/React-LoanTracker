@@ -1,26 +1,32 @@
+import dayjs from 'dayjs';
 // import * as Yup from "yup";
+import { v4 as createUuid } from 'uuid';
 import Select from '@mui/material/Select';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useClientes from "@services/useClientes";
 import useEmpleados from "@services/useEmpleados";
+import usePrestamos from '@services/usePrestamos';
 import Autocomplete from '@mui/material/Autocomplete';
 // import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Prestamo } from '@features/prestamos/models/Prestamo';
 import CustomTextField from '@components/form/CustomTextField';
 import { AutocompleteOption } from "@models/AutocompleteOption";
 import { Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
 import { estadoPrestamoOptions, modalidadDePagoOptions } from '@app/mocks/DropdownOptions';
 
+const todayInTimeStamp = dayjs().valueOf();
+
 const defaultValues: Prestamo = {
-    id: null,
+    id: createUuid(),
     clienteId: null,
     empleadoId: null,
     monto: 0,
     interes: 0,
-    fechaInicio: new Date(),
-    fechaFinal: new Date(),
+    fechaInicio: todayInTimeStamp,
+    fechaFinal: todayInTimeStamp,
     estado: "Activo",
     modalidadDePago: "Diario",
 }
@@ -49,6 +55,7 @@ const defaultValues: Prestamo = {
 export default function PrestamoCrear() {
 
     const navigate = useNavigate();
+    const { createPrestamo } = usePrestamos();
     const { getClienteOptions } = useClientes();
     const { getEmpleadoOptions } = useEmpleados();
     const [clienteOptions, setClienteOptions] = useState<AutocompleteOption[] | []>([]);
@@ -64,9 +71,8 @@ export default function PrestamoCrear() {
     const { errors, isSubmitting, isValid } = formState;
 
     const onSubmit = (prestamo: Prestamo) => {
-        console.log({ prestamo });
-        // createPrestamo(prestamo);
-        // navigate("/prestamos");
+        createPrestamo(prestamo);
+        navigate("/prestamos");
     };
 
     const onError = (errors: FieldErrors<any>) => {
@@ -101,7 +107,6 @@ export default function PrestamoCrear() {
                     <div className="col-md-8 mb-3">
                         <Autocomplete
                             fullWidth
-                            size="small"
                             options={clienteOptions}
                             onChange={(event: any, option: AutocompleteOption) => {
                                 form.setValue("clienteId", option.value);
@@ -113,7 +118,6 @@ export default function PrestamoCrear() {
                     <div className="col-md-8 mb-3">
                         <Autocomplete
                             fullWidth
-                            size="small"
                             options={empleadoOptions}
                             onChange={(event: any, option: AutocompleteOption) => {
                                 form.setValue("empleadoId", option.value);
@@ -176,6 +180,37 @@ export default function PrestamoCrear() {
                                 ))}
                             </Select>
                         </FormControl>
+                    </div>
+
+                    <div className="col-md-8 mb-3">
+                        <DatePicker
+                            name="fechaInicio"
+                            sx={{ width: "100%" }}
+                            label="Fecha de inicio" 
+                            minDate={dayjs(todayInTimeStamp)}
+                            defaultValue={dayjs(todayInTimeStamp)}
+                            onChange={(newDate) => {
+                                const selectedDate = dayjs(newDate);
+                                const timeStamp = selectedDate.valueOf();
+                                form.setValue("fechaInicio", timeStamp);
+                            }} 
+                        />
+                    </div>
+
+                    <div className="col-md-8 mb-3">
+                        <DatePicker
+                            name="fechaFinal"
+                            sx={{ width: "100%" }}
+                            label="Fecha limite" 
+                            minDate={dayjs(todayInTimeStamp)}
+                            maxDate={dayjs(todayInTimeStamp).add(31, "day")}
+                            defaultValue={dayjs(todayInTimeStamp).add(31, "day")}
+                            onChange={(newDate) => {
+                                const selectedDate = dayjs(newDate);
+                                const timeStamp = selectedDate.valueOf();
+                                form.setValue("fechaFinal", timeStamp);
+                            }} 
+                        />
                     </div>
                 </div>
 

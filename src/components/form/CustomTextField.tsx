@@ -20,7 +20,6 @@ export default function CustomTextField(props: InputProps): any {
     return (
         <TextField
             {...rest}
-            size="small"
             label={label}
             {...register(name)}
             sx={{ width: '100%' }}

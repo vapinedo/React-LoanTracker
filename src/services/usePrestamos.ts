@@ -38,9 +38,7 @@ export default function usePrestamos() {
 
     const createPrestamo = async (document: Prestamo) => {
         try {
-            const documentId = createUuid();
-            document.id = documentId;
-            await setDoc(doc(db, COLLECTION, documentId), document);
+            await setDoc(doc(db, COLLECTION, document.id), document);
             toast.success("Prestamo creado exitosamente!");
         } catch (error) {
             console.log(error);
