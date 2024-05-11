@@ -1,77 +1,82 @@
-import * as Yup from "yup";
-import { useEffect } from "react";
-import { Button } from '@mui/material';
-import usePrestamos from "@services/usePrestamos";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { FieldErrors, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from "react-router-dom";
-import { Prestamo } from '@features/prestamos/models/Prestamo';
-import CustomTextField from '@components/form/CustomTextField';
+// import * as Yup from "yup";
+// import { useEffect } from "react";
+// import { Button } from '@mui/material';
+// import usePrestamos from "@services/usePrestamos";
+// import { yupResolver } from "@hookform/resolvers/yup";
+// import { FieldErrors, useForm } from 'react-hook-form';
+// import { useNavigate, useParams } from "react-router-dom";
+// import { Prestamo } from '@features/prestamos/models/Prestamo';
+// import CustomTextField from '@components/form/CustomTextField';
 
-const defaultValues: Prestamo = {
-    id: null,
-    nombres: "",
-    apellidos: "",
-    correo: null,
-    celular: "",
-    direccion: "",
-};
+// const defaultValues: Prestamo = {
+//     id: null,
+//     clienteId: null,
+//     empleadoId: null,
+//     clienteNombre: null,
+//     empleadoNombre: null,
+//     monto: ,
+//     interes: ,
+//     fechaInicio: ,
+//     fechaFinal: ,
+//     estado: ,
+//     modalidadDePago: ,
+// };
 
-const validationSchema = Yup.object().shape({
-    nombres: Yup
-        .string()
-        .required("Nombres es requerido"),
-    apellidos: Yup
-        .string()
-        .required("Apellidos es requerido"),
-    correo: Yup
-        .string()
-        .notRequired(),
-    celular: Yup
-        .string()
-        .required("Celular es requerido"),
-    direccion: Yup
-        .string()
-        .required("Dirección es requerido"),
-});
+// const validationSchema = Yup.object().shape({
+//     nombres: Yup
+//         .string()
+//         .required("Nombres es requerido"),
+//     apellidos: Yup
+//         .string()
+//         .required("Apellidos es requerido"),
+//     correo: Yup
+//         .string()
+//         .notRequired(),
+//     celular: Yup
+//         .string()
+//         .required("Celular es requerido"),
+//     direccion: Yup
+//         .string()
+//         .required("Dirección es requerido"),
+// });
 
 export default function PrestamoEditar() {
 
-    const params = useParams();
-    const navigate = useNavigate();
-    const { getPrestamoById, updatePrestamo } = usePrestamos();
+    // const params = useParams();
+    // const navigate = useNavigate();
+    // const { getPrestamoById, updatePrestamo } = usePrestamos();
 
-    const form = useForm<Prestamo>({
-        defaultValues,
-        mode: "onTouched",
-        resolver: yupResolver(validationSchema),
-    });
+    // const form = useForm<Prestamo>({
+    //     defaultValues,
+    //     mode: "onTouched",
+    //     // resolver: yupResolver(validationSchema),
+    // });
 
-    const { register, formState, handleSubmit } = form;
-    const { errors, isSubmitting, isValid } = formState;
+    // const { register, formState, handleSubmit } = form;
+    // const { errors, isSubmitting, isValid } = formState;
 
-    const onSubmit = (prestamo: Prestamo) => {
-        updatePrestamo(prestamo);
-        navigate("/prestamos");
-    };
+    // const onSubmit = (prestamo: Prestamo) => {
+    //     updatePrestamo(prestamo);
+    //     navigate("/prestamos");
+    // };
 
-    const onError = (errors: FieldErrors<any>) => {
-        console.log({ errors });
-    };
+    // const onError = (errors: FieldErrors<any>) => {
+    //     console.log({ errors });
+    // };
 
-    useEffect(() => {
-        const employeeId = params.id;
-        const fetchEmployee = async (employeeId: string) => {
-            const prestamo = await getPrestamoById(employeeId);
-            form.setValue("id", prestamo?.id);
-            form.setValue("nombres", prestamo?.nombres);
-            form.setValue("apellidos", prestamo?.apellidos);
-            form.setValue("correo", prestamo?.correo);
-            form.setValue("celular", prestamo?.celular);
-            form.setValue("direccion", prestamo?.direccion);
-        }
-        employeeId && fetchEmployee(employeeId);
-    }, [params.id])
+    // useEffect(() => {
+    //     const employeeId = params.id;
+    //     const fetchEmployee = async (employeeId: string) => {
+    //         const prestamo = await getPrestamoById(employeeId);
+    //         form.setValue("id", prestamo?.id);
+    //         form.setValue("nombres", prestamo?.nombres);
+    //         form.setValue("apellidos", prestamo?.apellidos);
+    //         form.setValue("correo", prestamo?.correo);
+    //         form.setValue("celular", prestamo?.celular);
+    //         form.setValue("direccion", prestamo?.direccion);
+    //     }
+    //     employeeId && fetchEmployee(employeeId);
+    // }, [params.id])
 
     return (
         <section>
@@ -80,7 +85,7 @@ export default function PrestamoEditar() {
                 <button className="btn btn-outline-danger">Volver Atrás</button>
             </header>
 
-            <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
+            {/* <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
                 <div className="row">
                     <div className="col-md-8 mb-3">
                         <CustomTextField
@@ -143,7 +148,7 @@ export default function PrestamoEditar() {
                 >
                     Guardar
                 </Button>
-            </form>
+            </form> */}
         </section>
     )
 }

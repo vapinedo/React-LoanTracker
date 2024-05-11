@@ -1,14 +1,16 @@
-import useUsuarios from "@services/useUsuarios"
 import { NavLink } from "react-router-dom";
+import useAuth from "@app/services/useAuth";
 
 export default function Navbar() {
 
-    const { logout } = useUsuarios();
+    const { isUserLoggedIn, logout } = useAuth();
 
-    const handleLogout = () => {
-        logout();
+    console.log({isUserLoggedIn});
+
+    const handleLogout = async () => {
+        await logout();
     }
-    
+
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary bg-dark" data-bs-theme="dark">
             <div className="container-fluid">
@@ -43,7 +45,7 @@ export default function Navbar() {
                         </li>
                     </ul>
 
-                    <button onClick={handleLogout} className="btn btn-danger">Cerrar Sesión</button>
+                    {isUserLoggedIn && <button onClick={handleLogout} className="btn btn-danger">Cerrar Sesión</button>}
                 </div>
             </div>
         </nav>

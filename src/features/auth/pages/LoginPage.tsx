@@ -1,5 +1,4 @@
 import * as React from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -7,13 +6,14 @@ import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import CssBaseline from '@mui/material/CssBaseline';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Box from '@mui/material/Box';
-import useUsers from '@/feature/users/services/useUsers';
+import useAuth from '@services/useAuth';
 
 export default function LoginPage() {
 
-  const { login } = useUsers();
+  const { signIn } = useAuth();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -21,7 +21,7 @@ export default function LoginPage() {
     const email = data.get("email");
     const password = data.get("password");
     if (typeof email === "string" && typeof password === "string") {
-      login(email, password);
+      signIn(email, password);
     } else {
       alert("Email o Contraseña inválidos");
     }

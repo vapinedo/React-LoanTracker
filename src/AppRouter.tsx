@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom'
 import Breadcrumbs from "@components/Breadcrumbs";
 import NotFoundPage from '@components/NotFoundPage';
 import HomePage from "@features/home/pages/HomePage";
+import LoginPage from "@features/auth/pages/LoginPage";
 import ClienteCrear from "@features/clientes/components/ClienteCrear";
 import UsuarioCrear from "@features/usuarios/components/UsuarioCrear";
 import ClienteEditar from "@features/clientes/components/ClienteEditar";
@@ -19,8 +20,12 @@ import ClienteDetailsPage from "@features/clientes/pages/ClienteDetailsPage";
 import EmpleadosAdminPage from "@features/empleados/pages/EmpleadosAdminPage";
 import EmpleadoDetailsPage from "@features/empleados/pages/EmpleadoDetailsPage";
 import PrestamoDetailsPage from "@features/prestamos/pages/PrestamoDetailsPage";
+import useAuth from "./services/useAuth";
 
 export default function AppRouter() {
+
+    const { isUserLoggedIn } = useAuth();
+
     return (
         <React.Fragment>
             <Navbar />
@@ -29,7 +34,12 @@ export default function AppRouter() {
                 <Toaster />
                 <Breadcrumbs />
                 <Routes>
-                    <Route path="/" element={ <HomePage /> } />
+                    {
+                        isUserLoggedIn
+                        ? <Route path="/" element={ <HomePage /> } />
+                        : <Route path="/" element={ <LoginPage /> } />
+                    }
+                    
                     <Route path="/usuarios" element={ <UsuariosAdminPage /> } />
                     <Route path="/usuarios/nuevo" element={ <UsuarioCrear /> } />
 

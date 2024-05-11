@@ -10,7 +10,7 @@ export default function App() {
     <React.Fragment>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
         <BrowserRouter>
-            <AppRouter />
+          <AppRouter />
         </BrowserRouter>
       </LocalizationProvider>
     </React.Fragment>
