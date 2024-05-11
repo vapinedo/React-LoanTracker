@@ -6,10 +6,12 @@ import { IconEdit, IconTrash } from '@tabler/icons-react';
 import useNotificaciones from "@services/useNotificaciones";
 import { Prestamo } from "@features/prestamos/models/Prestamo";
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
+import useDatetime from "@app/services/useDatetime";
 
 export default function PrestamosAdminPage() {
 
   const navigate = useNavigate();
+  const { getHumanDate } = useDatetime();
   const { dialogConfirm } = useNotificaciones();
   const { getAllPrestamos, deletePrestamo } = usePrestamos();
   const [prestamos, setPrestamos] = useState<Prestamo[] | []>([]);
@@ -85,10 +87,18 @@ export default function PrestamosAdminPage() {
       editable: true,
     },
     {
+      field: 'fechaInicio',
+      headerName: 'Fecha Inicial',
+      width: 250,
+      editable: true,
+      renderCell: ({ formattedValue }) => getHumanDate(formattedValue),
+    },
+    {
       field: 'fechaFinal',
       headerName: 'Fecha Límite',
       width: 250,
       editable: true,
+      renderCell: ({ formattedValue }) => getHumanDate(formattedValue),
     },
     {
       field: " ",
