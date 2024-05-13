@@ -9,14 +9,16 @@ export default function useAuth() {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<User | null>(null);
 
     onAuthStateChanged(AUTH_DATA, (firebaseUser) => {
-        firebaseUser 
+        firebaseUser
             ? setIsUserLoggedIn(firebaseUser)
             : setIsUserLoggedIn(null);
     })
 
     const signIn = async (email: string, password: string) => {
         try {
-            await signInWithEmailAndPassword(AUTH_DATA, email, password);
+            const userCredential = await signInWithEmailAndPassword(AUTH_DATA, email, password);
+            const firebaseIdToken = await userCredential.user.getIdToken();
+            verifyToken(firebaseIdToken);
         } catch (error) {
             console.log("Error al hacer login", error);
         }
@@ -35,5 +37,33 @@ export default function useAuth() {
         return await signOut(AUTH_DATA);
     }
 
-    return { isUserLoggedIn, signUp, signIn, logout }
+    const verifyToken = async (token: string) => {
+        const baseUrl = "http://localhost:8000/verify-token/";
+        const url = new URL(baseUrl);
+        url.searchParams.append('token', token);
+
+        const payload = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            }
+            // No need to include body for a POST request with query parameters
+          };
+
+          try {
+            const response = await fetch(url.href, payload);
+        
+            if (!response.ok) {
+              const errorText = await response.text(); // Get error response body
+              throw new Error(`Network response was not ok: ${errorText}`);
+            }
+        
+            const data = await response.json();
+            console.log(data);
+          } catch (error) {
+            console.error("Fetch error:", error);
+          }
+    };
+
+    return { isUserLoggedIn, signUp, signIn, logout, verifyToken }
 }

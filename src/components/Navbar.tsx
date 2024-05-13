@@ -5,8 +5,6 @@ export default function Navbar() {
 
     const { isUserLoggedIn, logout } = useAuth();
 
-    console.log({isUserLoggedIn});
-
     const handleLogout = async () => {
         await logout();
     }
