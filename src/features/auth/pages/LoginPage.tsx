@@ -1,93 +1,111 @@
-import * as React from 'react';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Box from '@mui/material/Box';
-import useAuth from '@services/useAuth';
+import * as Yup from "yup";
+import useAuth from "@services/useAuth";
+import { Auth } from "@features/auth/models/Auth";
+import { Link, useNavigate } from "react-router-dom";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { FieldErrors, useForm } from 'react-hook-form';
+import CustomTextField from "@components/form/CustomTextField";
+import { Box, Button, Container, CssBaseline, Grid, Typography } from "@mui/material";
+
+const defaultValues: Auth = {
+    email: "",
+    password: ""
+};
+
+const validationSchema = Yup.object().shape({
+    email: Yup
+        .string()
+        .email('Correo inválido')
+        .required('Correo es requerido'),
+    password: Yup
+        .string()
+        .required("Contraseña es requerido"),
+});
 
 export default function LoginPage() {
 
-  const { signIn } = useAuth();
+    const { signIn } = useAuth();
+    const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get("email");
-    const password = data.get("password");
-    if (typeof email === "string" && typeof password === "string") {
-      signIn(email, password);
-    } else {
-      alert("Email o Contraseña inválidos");
-    }
-  };
+    const form = useForm<Auth>({
+        defaultValues,
+        mode: "onTouched",
+        resolver: yupResolver(validationSchema),
+    });
 
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Typography component="h1" variant="h5">
-          Iniciar Sesión
-        </Typography>
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                id="email"
-                label="Correo electrónico"
-                name="email"
-                autoComplete="email"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                label="Contraseña"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="Mantener sesión"
-              />
-            </Grid>
-          </Grid>
-          <Button
-            fullWidth
-            type="submit"
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Acceder
-          </Button>
-          <Grid container justifyContent="flex-end">
-            <Grid item>
-              <Link href="#" variant="body2">
-                Olvidé mi contraseña
-              </Link>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-    </Container>
-  );
+    const { register, formState, handleSubmit } = form;
+    const { errors, isValid, isSubmitting } = formState;
+
+    const onSubmit = (loginData: Auth) => {
+        const { email, password } = loginData;
+        if (email !== null && password != null) {
+            signIn(email, password);
+            navigate("/");
+        }
+    };
+
+    const onError = (errors: FieldErrors<any>) => {
+        console.log({ errors });
+    };
+
+    return (
+        <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                }}
+            >
+                <Typography component="h1" variant="h5">
+                    Iniciar Sesión
+                </Typography>
+
+                <Box component="form" onSubmit={handleSubmit(onSubmit, onError)} sx={{ mt: 3 }} noValidate>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <CustomTextField
+                                autoFocus
+                                type="text"
+                                name="email"
+                                label="Correo"
+                                register={register}
+                                error={errors.email?.message}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <CustomTextField
+                                type="password"
+                                name="password"
+                                label="Contraseña"
+                                register={register}
+                                error={errors.password?.message}
+                            />
+                        </Grid>
+                    </Grid>
+
+                    <Button
+                        fullWidth
+                        type="submit"
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                        disabled={!isValid || isSubmitting}
+                    >
+                        Acceder
+                    </Button>
+
+                    <Grid container justifyContent="flex-end">
+                        <Grid item>
+                            <Link to="/">
+                                Olvidé mi contraseña
+                            </Link>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Box>
+        </Container>
+    )
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "@components/Navbar";
+import useAuth from "@services/useAuth";
 import { Toaster } from "react-hot-toast";
 import { Route, Routes } from 'react-router-dom'
 import Breadcrumbs from "@components/Breadcrumbs";
@@ -20,7 +21,6 @@ import ClienteDetailsPage from "@features/clientes/pages/ClienteDetailsPage";
 import EmpleadosAdminPage from "@features/empleados/pages/EmpleadosAdminPage";
 import EmpleadoDetailsPage from "@features/empleados/pages/EmpleadoDetailsPage";
 import PrestamoDetailsPage from "@features/prestamos/pages/PrestamoDetailsPage";
-import useAuth from "./services/useAuth";
 
 export default function AppRouter() {
 
