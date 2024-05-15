@@ -16,7 +16,7 @@ export default function AuthRouter() {
     
     return (
         <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/auth" element={<HomePage />} />
             {/* <Route path="/" element={<LoginPage />} /> */}
         </Routes>
     );
