@@ -4,7 +4,7 @@ import useEmpleadoStore from "@store/useEmpleadoStore";
 
 export default function EmpleadoDetailsPage() {
     const params = useParams();
-    const { getEmpleadoById, empleados } = useEmpleadoStore();
+    const { getEmpleadoById, empleados, loading, error } = useEmpleadoStore();
 
     useEffect(() => {
         const empleadoId = params.id;
@@ -21,36 +21,40 @@ export default function EmpleadoDetailsPage() {
                 <h2>Detalles del empleado</h2>
             </header>
 
-            <div className="mt-4">
-                {empleado ? (
+            {loading ? (
+                <p>Cargando empleado...</p>
+            ) : error ? (
+                <p>Error al cargar empleado: {error}</p>
+            ) : empleado ? (
+                <div className="mt-4">
                     <table className="table table-striped">
                         <tbody>
                             <tr>
                                 <th>Nombres</th>
-                                <td>{empleado.nombres}</td> 
+                                <td>{empleado.nombres}</td>
                             </tr>
                             <tr>
                                 <th>Apellidos</th>
-                                <td>{empleado.apellidos}</td> 
+                                <td>{empleado.apellidos}</td>
                             </tr>
                             <tr>
                                 <th>Celular</th>
-                                <td>{empleado.celular}</td> 
+                                <td>{empleado.celular}</td>
                             </tr>
                             <tr>
                                 <th>Correo</th>
-                                <td>{empleado.correo}</td> 
+                                <td>{empleado.correo}</td>
                             </tr>
                             <tr>
                                 <th>Dirección</th>
-                                <td>{empleado.direccion}</td> 
+                                <td>{empleado.direccion}</td>
                             </tr>
                         </tbody>
                     </table>
-                ) : (
-                    <p>Cargando empleado...</p>
-                )}
-            </div>
+                </div>
+            ) : (
+                <p>No se encontró empleado con ID {params.id}</p>
+            )}
         </div>
     );
 }
