@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "@components/Navbar";
+import useAuth from "@services/useAuth";
 import { Toaster } from "react-hot-toast";
 import { Route, Routes } from 'react-router-dom'
 import Breadcrumbs from "@components/Breadcrumbs";
@@ -8,9 +9,13 @@ import EmpleadosRouter from "@routes/EmpleadosRouter";
 import LoginPage from "@features/auth/pages/LoginPage";
 
 export default function AppRouter() {
+
+
+    const { user } = useAuth();
+    
     return (
         <React.Fragment>
-            <Navbar />
+            {user && <Navbar />}
 
             <section className="container-fluid mt-4 mb-5 px-5">
                 <Toaster />
