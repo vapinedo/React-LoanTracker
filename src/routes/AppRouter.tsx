@@ -2,14 +2,13 @@ import React from "react";
 import Navbar from "@components/Navbar";
 import useAuth from "@services/useAuth";
 import { Toaster } from "react-hot-toast";
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from "react-router-dom"
 import Breadcrumbs from "@components/Breadcrumbs";
-import NotFoundPage from '@components/NotFoundPage';
+import NotFoundPage from "@components/NotFoundPage";
 import EmpleadosRouter from "@routes/EmpleadosRouter";
 import LoginPage from "@features/auth/pages/LoginPage";
 
 export default function AppRouter() {
-
 
     const { user } = useAuth();
     
