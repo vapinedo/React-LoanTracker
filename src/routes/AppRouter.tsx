@@ -1,14 +1,11 @@
 import React from "react";
 import Navbar from "@components/Navbar";
 import { Toaster } from "react-hot-toast";
+import AuthRouter from "@routes/AuthRouter";
 import { Route, Routes } from 'react-router-dom'
 import Breadcrumbs from "@components/Breadcrumbs";
-import AuthRouter from "@features/auth/AuthRouter";
 import NotFoundPage from '@components/NotFoundPage';
-import ClientesRouter from "@features/clientes/ClientesRouter";
-import UsuariosRouter from "@features/usuarios/UsuariosRouter";
-import EmpleadosRouter from "@features/empleados/EmpleadosRouter";
-import PrestamosRouter from "@features/prestamos/PrestamosRouter";
+import EmpleadosRouter from "@routes/EmpleadosRouter";
 
 export default function AppRouter() {
     return (
@@ -19,11 +16,8 @@ export default function AppRouter() {
                 <Toaster />
                 <Breadcrumbs />
                 <Routes>
-                    <AuthRouter />
-                    <ClientesRouter />
-                    <EmpleadosRouter />
-                    <PrestamosRouter />
-                    <UsuariosRouter />
+                    <Route path="*" element={ <AuthRouter /> } />
+                    <Route path="/empleados/*" element={ <EmpleadosRouter /> } />
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </section>

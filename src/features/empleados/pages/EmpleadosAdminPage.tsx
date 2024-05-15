@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import useEmpleados from "@services/useEmpleados";
 import { NavLink, useNavigate } from "react-router-dom"
 import { IconEdit, IconTrash } from '@tabler/icons-react';
@@ -99,11 +99,8 @@ export default function EmpleadosAdminPage() {
   }, []);
 
   return (
-    <div>
-      <header className="d-flex justify-content-between align-items-center">
-        <h2>Lista de Empleados</h2>
-        <button onClick={() => navigate("/empleados/nuevo")} className="btn btn-primary">Crear empleado</button>
-      </header>
+    <>
+      <h2>Lista de Empleados</h2>
 
       <Box sx={{ height: "100%", width: '100%', marginTop: 3 }}>
         <DataGrid
@@ -131,6 +128,6 @@ export default function EmpleadosAdminPage() {
           }}
         />
       </Box>
-    </div>
+    </>
   )
 }

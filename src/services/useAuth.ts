@@ -18,7 +18,7 @@ export default function useAuth() {
         try {
             const userCredential = await signInWithEmailAndPassword(AUTH_DATA, email, password);
             const firebaseIdToken = await userCredential.user.getIdToken();
-            verifyToken(firebaseIdToken);
+            // verifyToken(firebaseIdToken);
         } catch (error) {
             console.log("Error al hacer login", error);
         }

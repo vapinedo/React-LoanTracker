@@ -26,21 +26,21 @@ export default function Navbar() {
                             <NavLink className="nav-link active" aria-current="page" to="/">Inicio</NavLink>
                         </li>
 
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <NavLink className="nav-link" to="/usuarios">Usuarios</NavLink>
-                        </li>
+                        </li> */}
 
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/empleados">Empleados</NavLink>
                         </li>
 
-                        <li className="nav-item">
+                        {/* <li className="nav-item">
                             <NavLink className="nav-link" to="/clientes">Clientes</NavLink>
                         </li>
 
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/prestamos">Prestamos</NavLink>
-                        </li>
+                        </li> */}
                     </ul>
 
                     {isUserLoggedIn && <button onClick={handleLogout} className="btn btn-danger">Cerrar Sesión</button>}
