@@ -7,6 +7,7 @@ export default defineConfig({
     alias: {
       '@app': '/src',
       '@mocks': '/src/mocks',
+      '@utils': '/src/utils',
       '@store': '/src/store',
       '@models': '/src/models',
       '@features': '/src/features',
