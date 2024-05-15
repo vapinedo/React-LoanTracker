@@ -40,7 +40,7 @@ export default function LoginPage() {
         const { email, password } = loginData;
         if (email !== null && password != null) {
             signIn(email, password);
-            navigate("/");
+            navigate("/empleados");
         }
     };
 

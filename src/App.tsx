@@ -1,6 +1,6 @@
 import React from "react";
 import 'dayjs/locale/es';
-import AppRouter from "./AppRouter";
+import AppRouter from "./routes/AppRouter";
 import { BrowserRouter } from "react-router-dom";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
