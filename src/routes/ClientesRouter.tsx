@@ -7,10 +7,10 @@ import ClienteDetailsPage from "@features/clientes/pages/ClienteDetailsPage";
 export default function ClientesRouter() {
     return (
         <Routes>
-            <Route path="/clientes" element={<ClientesAdminPage />} />
-            <Route path="/clientes/nuevo" element={<ClienteCrear />} />
-            <Route path="/clientes/editar/:id" element={<ClienteEditar />} />
-            <Route path="/clientes/detalles/:id" element={<ClienteDetailsPage />} />
+            <Route path="/" element={<ClientesAdminPage />} />
+            <Route path="/nuevo" element={<ClienteCrear />} />
+            <Route path="/editar/:id" element={<ClienteEditar />} />
+            <Route path="/detalles/:id" element={<ClienteDetailsPage />} />
         </Routes>
     )
 }

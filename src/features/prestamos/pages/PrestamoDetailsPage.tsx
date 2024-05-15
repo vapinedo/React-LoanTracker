@@ -28,7 +28,6 @@ export default function PrestamoDetailsPage() {
         <div>
             <header className="d-flex justify-content-between align-items-center">
                 <h2>Detalles del prestamo</h2>
-                <button className="btn btn-outline-danger">Volver Atrás</button>
             </header>
 
             <div className="mt-4">
