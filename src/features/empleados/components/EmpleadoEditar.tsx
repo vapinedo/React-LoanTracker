@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import { useEffect } from "react";
 import { Button } from '@mui/material';
-import useEmpleados from "@services/useEmpleados";
+import useEmpleadoStore from "@store/useEmpleadoStore";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from "react-router-dom";
@@ -36,10 +36,9 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function EmpleadoEditar() {
-
     const params = useParams();
     const navigate = useNavigate();
-    const { getEmpleadoById, updateEmpleado } = useEmpleados();
+    const { getEmpleadoById, updateEmpleado, loading } = useEmpleadoStore();
 
     const form = useForm<Empleado>({
         defaultValues,
@@ -47,11 +46,11 @@ export default function EmpleadoEditar() {
         resolver: yupResolver(validationSchema),
     });
 
-    const { register, formState, handleSubmit } = form;
-    const { errors, isSubmitting, isValid } = formState;
+    const { register, formState, handleSubmit, setValue } = form;
+    const { errors, isValid } = formState;
 
-    const onSubmit = (empleado: Empleado) => {
-        updateEmpleado(empleado);
+    const onSubmit = async (empleado: Empleado) => {
+        await updateEmpleado(empleado);
         navigate("/empleados");
     };
 
@@ -61,17 +60,22 @@ export default function EmpleadoEditar() {
 
     useEffect(() => {
         const employeeId = params.id;
-        const fetchEmployee = async (employeeId: string) => {
-            const empleado = await getEmpleadoById(employeeId);
-            form.setValue("id", empleado?.id);
-            form.setValue("nombres", empleado?.nombres);
-            form.setValue("apellidos", empleado?.apellidos);
-            form.setValue("correo", empleado?.correo);
-            form.setValue("celular", empleado?.celular);
-            form.setValue("direccion", empleado?.direccion);
+        if (employeeId) {
+            getEmpleadoById(employeeId);
         }
-        employeeId && fetchEmployee(employeeId);
-    }, [params.id])
+    }, [getEmpleadoById, params.id]);
+
+    useEffect(() => {
+        const empleado = useEmpleadoStore.getState().empleados[0];
+        if (empleado) {
+            setValue("id", empleado.id);
+            setValue("nombres", empleado.nombres);
+            setValue("apellidos", empleado.apellidos);
+            setValue("correo", empleado.correo);
+            setValue("celular", empleado.celular);
+            setValue("direccion", empleado.direccion);
+        }
+    }, [useEmpleadoStore.getState().empleados, setValue]);
 
     return (
         <section>
@@ -138,11 +142,11 @@ export default function EmpleadoEditar() {
                     color="success"
                     variant="contained"
                     sx={{ marginTop: 2 }}
-                    // disabled={!isValid || isSubmitting}
+                    disabled={!isValid || loading}
                 >
-                    Guardar
+                    {loading ? "Guardando..." : "Guardar"}
                 </Button>
             </form>
         </section>
-    )
+    );
 }

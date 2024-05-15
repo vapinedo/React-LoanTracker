@@ -12,6 +12,7 @@ interface EmpleadosState {
   getEmpleadoOptions: () => Promise<void>;
   getEmpleadoById: (id: string) => Promise<void>;
   createEmpleado: (empleado: Empleado) => Promise<void>;
+  updateEmpleado: (empleado: Empleado) => Promise<void>;
   deleteEmpleado: (id: string) => Promise<void>;
 }
 
@@ -65,6 +66,18 @@ const useEmpleadoStore = create<EmpleadosState>((set) => ({
     } catch (error) {
       set({ loading: false, error: 'Error al crear empleado' });
       console.error('Error al crear empleado:', error);
+      throw error;
+    }
+  },
+
+  updateEmpleado: async (empleado: Empleado) => {
+    try {
+      set({ loading: true, error: null });
+      await useEmpleados().updateEmpleado(empleado);
+      set({ loading: false, error: null });
+    } catch (error) {
+      set({ loading: false, error: 'Error al actualizar empleado' });
+      console.error('Error al actualizar empleado:', error);
       throw error;
     }
   },
