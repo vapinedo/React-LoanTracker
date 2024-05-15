@@ -1,12 +1,12 @@
 import * as Yup from "yup";
 import { useEffect } from "react";
+import { Button, Typography } from '@mui/material';
 import useEmpleadoStore from "@store/useEmpleadoStore";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from "react-router-dom";
 import { Empleado } from '@features/empleados/models/Empleado';
 import CustomTextField from '@components/form/CustomTextField';
-import { Button, CircularProgress, Typography } from '@mui/material';
 
 const defaultValues: Empleado = {
     id: null,
