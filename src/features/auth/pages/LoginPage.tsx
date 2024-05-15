@@ -24,7 +24,7 @@ const validationSchema = Yup.object().shape({
 
 export default function LoginPage() {
 
-    // const { signIn } = useAuth();
+    const { signIn } = useAuth();
     const navigate = useNavigate();
 
     const form = useForm<Auth>({
@@ -38,11 +38,10 @@ export default function LoginPage() {
 
     const onSubmit = (loginData: Auth) => {
         const { email, password } = loginData;
-        console.log({loginData});
-        // if (email !== null && password != null) {
-        //     signIn(email, password);
-        //     navigate("/");
-        // }
+        if (email !== null && password != null) {
+            signIn(email, password);
+            navigate("/empleados");
+        }
     };
 
     const onError = (errors: FieldErrors<any>) => {

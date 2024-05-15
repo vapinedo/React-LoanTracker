@@ -1,12 +1,16 @@
-import { NavLink } from "react-router-dom";
-import useAuth from "@app/services/useAuth";
+import useAuth from "@services/useAuth";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
 
-    const { isUserLoggedIn, logout } = useAuth();
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
-        await logout();
+        const logoutResponse = await logout();
+        if (logoutResponse === undefined) {
+            navigate("/");
+        }
     }
 
     return (
@@ -43,7 +47,7 @@ export default function Navbar() {
                         </li> */}
                     </ul>
 
-                    {isUserLoggedIn && <button onClick={handleLogout} className="btn btn-danger">Cerrar Sesión</button>}
+                    {user && <button onClick={handleLogout} className="btn btn-danger">Cerrar Sesión</button>}
                 </div>
             </div>
         </nav>
