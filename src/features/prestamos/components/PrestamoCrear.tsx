@@ -106,7 +106,6 @@ export default function PrestamoCrear() {
         <section>
             <header className='mb-4 d-flex justify-content-between align-items-center'>
                 <h2>Nuevo prestamo</h2>
-                <button className="btn btn-outline-danger">Volver Atrás</button>
             </header>
 
             <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>

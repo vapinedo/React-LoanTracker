@@ -99,7 +99,7 @@ export default function EmpleadosAdminPage() {
   }, []);
 
   return (
-    <div>
+    <>
       <header className="d-flex justify-content-between align-items-center">
         <h2>Lista de Empleados</h2>
         <button onClick={() => navigate("/empleados/nuevo")} className="btn btn-primary">Crear empleado</button>
@@ -131,6 +131,6 @@ export default function EmpleadosAdminPage() {
           }}
         />
       </Box>
-    </div>
+    </>
   )
 }

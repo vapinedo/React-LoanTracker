@@ -21,7 +21,6 @@ export default function EmpleadoDetailsPage() {
         <div>
             <header className="d-flex justify-content-between align-items-center">
                 <h2>Detalles del empleado</h2>
-                <button className="btn btn-outline-danger">Volver Atrás</button>
             </header>
 
             <div className="mt-4">
