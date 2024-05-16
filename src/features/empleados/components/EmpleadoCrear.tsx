@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Typography } from '@mui/material';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
-import useEmpleadoStore from "@store/useEmpleadoStore";
+import useEmpleadoStore from "@app/stores/useEmpleadoStore";
 import { Empleado } from '@features/empleados/models/Empleado';
 import CustomTextField from '@components/form/CustomTextField';
 

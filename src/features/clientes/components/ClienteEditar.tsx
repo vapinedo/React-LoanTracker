@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import { useEffect } from "react";
 import { Button, Typography } from '@mui/material';
-import useClienteStore from "@store/useClienteStore";
+import useClienteStore from "@app/stores/useClienteStore";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from "react-router-dom";
