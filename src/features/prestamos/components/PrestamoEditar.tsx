@@ -1,13 +1,13 @@
 import dayjs from 'dayjs';
 import db from '@firebaseConfig';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Select from '@mui/material/Select';
-import { doc, Firestore } from 'firebase/firestore';
 import useClienteStore from '@stores/useClienteStore';
 import { FieldErrors, useForm } from 'react-hook-form';
 import useEmpleadoStore from '@stores/useEmpleadoStore';
 import usePrestamoStore from '@stores/usePrestamoStore';
 import { useNavigate, useParams } from "react-router-dom";
+import { doc, Firestore, getDoc } from 'firebase/firestore';
 import { Cliente } from '@features/clientes/models/Cliente';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Prestamo } from '@features/prestamos/models/Prestamo';
@@ -31,12 +31,14 @@ const defaultValues: Prestamo = {
 export default function PrestamoEditar() {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
+    const { updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
     const { clientes, getAllClientes } = useClienteStore();
     const { empleados, getAllEmpleados } = useEmpleadoStore();
-    const { updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
+    const [cliente, setCliente] = useState<Cliente | null>(null);
+    const [empleado, setEmpleado] = useState<Empleado | null>(null);
 
     const form = useForm<Prestamo>({
-        defaultValues,
+        defaultValues: defaultValues,
         mode: "onTouched",
     });
 
@@ -53,8 +55,24 @@ export default function PrestamoEditar() {
                 setValue('fechaFinal', prestamo.fechaFinal);
                 setValue('estado', prestamo.estado);
                 setValue('modalidadDePago', prestamo.modalidadDePago);
-                setValue('clienteRef', prestamo.clienteRef);
-                setValue('empleadoRef', prestamo.empleadoRef);
+
+                if (prestamo.clienteRef) {
+                    const clienteDoc = await getDoc(prestamo.clienteRef);
+                    if (clienteDoc.exists()) {
+                        const clienteData = clienteDoc.data() as Cliente;
+                        setCliente(clienteData);
+                        setValue('clienteRef', prestamo.clienteRef);
+                    }
+                }
+
+                if (prestamo.empleadoRef) {
+                    const empleadoDoc = await getDoc(prestamo.empleadoRef);
+                    if (empleadoDoc.exists()) {
+                        const empleadoData = empleadoDoc.data() as Empleado;
+                        setEmpleado(empleadoData);
+                        setValue('empleadoRef', prestamo.empleadoRef);
+                    }
+                }
             }
         };
 
@@ -117,7 +135,8 @@ export default function PrestamoEditar() {
                         <Autocomplete
                             fullWidth
                             options={clientes}
-                            getOptionLabel={(cliente: Cliente) => cliente.nombres + " " + cliente.apellidos}
+                            getOptionLabel={(cliente: Cliente) => `${cliente.nombres} ${cliente.apellidos}`}
+                            value={cliente}
                             onChange={handleClienteChange}
                             renderInput={(params) => <TextField {...params} label="Cliente" />}
                         />
@@ -127,7 +146,8 @@ export default function PrestamoEditar() {
                         <Autocomplete
                             fullWidth
                             options={empleados}
-                            getOptionLabel={(empleado: Empleado) => empleado.nombres + " " + empleado.apellidos}
+                            getOptionLabel={(empleado: Empleado) => `${empleado.nombres} ${empleado.apellidos}`}
+                            value={empleado}
                             onChange={handleEmpleadoChange}
                             renderInput={(params) => <TextField {...params} label="Empleado" />}
                         />
