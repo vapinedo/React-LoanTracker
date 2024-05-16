@@ -1,21 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import useClientes from "@services/useClientes";
+import useClienteStore from "@store/useClienteStore";
 
-export default function ClienteDetailsPage() {
-
+export default function EmpleadoDetailsPage() {
     const params = useParams();
-    const { getClienteById } = useClientes();
-    const [cliente, setCliente] = useState<any>(null)
+    const { getClienteById, clientes, loading, error } = useClienteStore();
 
     useEffect(() => {
         const clienteId = params.id;
-        const fetchEmployee = async (clienteId: string) => {
-            const newCliente = await getClienteById(clienteId);
-            setCliente(newCliente);
-        };
-        clienteId && fetchEmployee(clienteId);
-    }, []);
+        if (clienteId) {
+            getClienteById(clienteId);
+        }
+    }, [getClienteById, params.id]);
+
+    const cliente = clientes.length > 0 ? clientes[0] : null;
 
     return (
         <div>
@@ -23,32 +21,40 @@ export default function ClienteDetailsPage() {
                 <h2>Detalles del cliente</h2>
             </header>
 
-            <div className="mt-4">
-                <table className="table table-striped">
-                    <tbody>
-                        <tr>
-                            <th>Nombres</th>
-                            <td>{cliente?.nombres}</td> 
-                        </tr>
-                        <tr>
-                            <th>Apellidos</th>
-                            <td>{cliente?.apellidos}</td> 
-                        </tr>
-                        <tr>
-                            <th>Celular</th>
-                            <td>{cliente?.celular}</td> 
-                        </tr>
-                        <tr>
-                            <th>Correo</th>
-                            <td>{cliente?.correo}</td> 
-                        </tr>
-                        <tr>
-                            <th>Dirección</th>
-                            <td>{cliente?.direccion}</td> 
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            {loading ? (
+                <p>Cargando cliente...</p>
+            ) : error ? (
+                <p>Error al cargar cliente: {error}</p>
+            ) : cliente ? (
+                <div className="mt-4">
+                    <table className="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Nombres</th>
+                                <td>{cliente.nombres}</td>
+                            </tr>
+                            <tr>
+                                <th>Apellidos</th>
+                                <td>{cliente.apellidos}</td>
+                            </tr>
+                            <tr>
+                                <th>Celular</th>
+                                <td>{cliente.celular}</td>
+                            </tr>
+                            <tr>
+                                <th>Correo</th>
+                                <td>{cliente.correo}</td>
+                            </tr>
+                            <tr>
+                                <th>Dirección</th>
+                                <td>{cliente.direccion}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <p>No se encontró cliente con ID {params.id}</p>
+            )}
         </div>
-    )
+    );
 }
