@@ -46,7 +46,7 @@ export default function PrestamoCrear() {
         }
     }, []);
 
-    const handleClienteChange = (event: any, value: Cliente) => {
+    const handleClienteChange = (event: any, value: Cliente | null) => {
         if (value) {
             const clienteId = value.id;
             const clienteRef = doc(db as Firestore, 'CLIENTES', clienteId);
