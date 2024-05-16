@@ -6,6 +6,7 @@ import usePrestamoStore from "@stores/usePrestamoStore";
 import { NavLink, useNavigate } from "react-router-dom";
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import useNotificaciones from "@services/useNotificaciones";
+import { Prestamo } from "@features/prestamos/models/Prestamo";
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 
 export default function PrestamosAdminPage() {
@@ -14,61 +15,60 @@ export default function PrestamosAdminPage() {
   const { dialogConfirm } = useNotificaciones();
   const { prestamos, loading, error, fetchPrestamos, deletePrestamo } = usePrestamoStore();
 
-  const [clientesData, setClientesData] = useState<{ [key: string]: string }>({});
-  const [empleadosData, setEmpleadosData] = useState<{ [key: string]: string }>({});
+  const [prestamosData, setPrestamosData] = useState<Prestamo[]>([]);
 
   useEffect(() => {
     const fetchRelatedData = async () => {
-      const clientesData: { [key: string]: string } = {};
-      const empleadosData: { [key: string]: string } = {};
-  
-      await Promise.all(
+      const prestamosConNombres: Prestamo[] = await Promise.all(
         prestamos.map(async (prestamo) => {
+          let clienteNombre = '';
+          let empleadoNombre = '';
+
           if (prestamo.clienteRef) {
             const clienteSnapshot = await getDoc(prestamo.clienteRef);
             if (clienteSnapshot.exists()) {
               const clienteData = clienteSnapshot.data();
-              if (clienteData && prestamo.id) { // Verificar que prestamo.id no sea null
-                const nombres = clienteData.nombres || '';
-                const apellidos = clienteData.apellidos || '';
-                clientesData[prestamo.id] = `${nombres} ${apellidos}`;
+              if (clienteData) {
+                clienteNombre = `${clienteData.nombres || ''} ${clienteData.apellidos || ''}`;
               }
             }
           }
-  
+
           if (prestamo.empleadoRef) {
             const empleadoSnapshot = await getDoc(prestamo.empleadoRef);
             if (empleadoSnapshot.exists()) {
               const empleadoData = empleadoSnapshot.data();
-              if (empleadoData && prestamo.id) { // Verificar que prestamo.id no sea null
-                const nombres = empleadoData.nombres || '';
-                const apellidos = empleadoData.apellidos || '';
-                empleadosData[prestamo.id] = `${nombres} ${apellidos}`;
+              if (empleadoData) {
+                empleadoNombre = `${empleadoData.nombres || ''} ${empleadoData.apellidos || ''}`;
               }
             }
           }
+
+          return {
+            ...prestamo,
+            clienteNombre,
+            empleadoNombre,
+          };
         })
       );
-  
-      setClientesData(clientesData);
-      setEmpleadosData(empleadosData);
+
+      setPrestamosData(prestamosConNombres);
     };
-  
+
     fetchRelatedData();
   }, [prestamos]);
-  
 
   const handleDetails = (params: any) => {
     return (
       <NavLink
-        title={`Ver detalles de ${clientesData[params.id]}`}
+        title={`Ver detalles de ${params.value}`}
         className="grid-table-linkable-column"
         to={`/prestamos/detalles/${params.id}`}
       >
-        {clientesData[params.id]}
+        {params.value}
       </NavLink>
     );
-  };
+  };  
 
   const handleActions = (params: any) => {
     const { id, row } = params;
@@ -112,7 +112,7 @@ export default function PrestamosAdminPage() {
       headerName: 'Empleado',
       width: 240,
       editable: true,
-      renderCell: (params) => empleadosData[params.id] || '',
+      renderCell: (params) => params.value,
     },
     {
       field: 'monto',
@@ -168,11 +168,11 @@ export default function PrestamosAdminPage() {
 
       <Box sx={{ height: "100%", width: '100%', marginTop: 3 }}>
         <DataGrid
-          rows={prestamos}
+          rows={prestamosData}
           columns={columns}
           density="compact"
           checkboxSelection
-          disableColumnFilter
+          disableColumnFilter={false} // Make sure filtering is enabled
           pageSizeOptions={[12]}
           disableColumnSelector
           disableDensitySelector
@@ -192,6 +192,7 @@ export default function PrestamosAdminPage() {
           }}
         />
       </Box>
+
     </div>
   )
 }
