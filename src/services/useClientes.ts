@@ -3,7 +3,7 @@ import { v4 as createUuid } from 'uuid';
 import firebaseApp from "@firebaseConfig";
 import { Cliente } from "@features/clientes/models/Cliente";
 import { AutocompleteOption } from '@models/AutocompleteOption';
-import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction, deleteDoc } from "firebase/firestore";
+import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction, deleteDoc, DocumentSnapshot } from "firebase/firestore";
 
 const COLLECTION = "CLIENTES";
 const db = getFirestore(firebaseApp);
@@ -40,19 +40,38 @@ export default function useClientes() {
         return documents;
     };
 
-    const getClienteById = async (documentId: string) => {
-        let document = null;
+    const getClienteById = async (id: string): Promise<Cliente | null> => {
         try {
-            const docRef = doc(db, COLLECTION, documentId);
-            const docSnap = await getDoc(docRef);
+            const docRef = doc(db, COLLECTION, id);
+            const docSnap: DocumentSnapshot = await getDoc(docRef);
+
             if (docSnap.exists()) {
-                document = docSnap.data();
+                // Obtener los datos del documento
+                const clienteData = docSnap.data();
+
+                // Verificar si los datos cumplen con el tipo Cliente
+                if (clienteData && typeof clienteData === 'object') {
+                    const cliente: Cliente = {
+                        id: clienteData.id,
+                        nombres: clienteData.nombres,
+                        apellidos: clienteData.apellidos,
+                        correo: clienteData.correo,
+                        celular: clienteData.celular,
+                        direccion: clienteData.direccion,
+                    };
+
+                    return cliente;
+                } else {
+                    throw new Error(`El documento no contiene datos válidos para un cliente: ${id}`);
+                }
+            } else {
+                return null; // El cliente no existe
             }
         } catch (error) {
-            console.log(error);
+            console.error(`Error al obtener cliente por ID ${id}:`, error);
+            throw error;
         }
-        return document;
-    };
+    };    
 
     const createCliente = async (document: Cliente) => {
         try {
