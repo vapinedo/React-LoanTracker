@@ -1,82 +1,109 @@
-// import * as Yup from "yup";
-// import { useEffect } from "react";
-// import { Button } from '@mui/material';
-// import usePrestamos from "@services/usePrestamos";
-// import { yupResolver } from "@hookform/resolvers/yup";
-// import { FieldErrors, useForm } from 'react-hook-form';
-// import { useNavigate, useParams } from "react-router-dom";
-// import { Prestamo } from '@features/prestamos/models/Prestamo';
-// import CustomTextField from '@components/form/CustomTextField';
+import dayjs from 'dayjs';
+import db from '@firebaseConfig';
+import { useEffect } from 'react';
+import Select from '@mui/material/Select';
+import { doc, Firestore } from 'firebase/firestore';
+import useClienteStore from '@stores/useClienteStore';
+import { FieldErrors, useForm } from 'react-hook-form';
+import useEmpleadoStore from '@stores/useEmpleadoStore';
+import usePrestamoStore from '@stores/usePrestamoStore';
+import { useNavigate, useParams } from "react-router-dom";
+import { Cliente } from '@features/clientes/models/Cliente';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Prestamo } from '@features/prestamos/models/Prestamo';
+import { Empleado } from '@features/empleados/models/Empleado';
+import CustomTextField from '@components/form/CustomTextField';
+import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOptions';
+import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
 
-// const defaultValues: Prestamo = {
-//     id: null,
-//     clienteId: null,
-//     empleadoId: null,
-//     clienteNombre: null,
-//     empleadoNombre: null,
-//     monto: ,
-//     interes: ,
-//     fechaInicio: ,
-//     fechaFinal: ,
-//     estado: ,
-//     modalidadDePago: ,
-// };
-
-// const validationSchema = Yup.object().shape({
-//     nombres: Yup
-//         .string()
-//         .required("Nombres es requerido"),
-//     apellidos: Yup
-//         .string()
-//         .required("Apellidos es requerido"),
-//     correo: Yup
-//         .string()
-//         .notRequired(),
-//     celular: Yup
-//         .string()
-//         .required("Celular es requerido"),
-//     direccion: Yup
-//         .string()
-//         .required("Dirección es requerido"),
-// });
+const defaultValues: Prestamo = {
+    id: null,
+    monto: 0,
+    interes: 0,
+    fechaInicio: new Date().getTime(),
+    fechaFinal: new Date().getTime(),
+    estado: "Activo",
+    modalidadDePago: "Diario",
+    clienteRef: null,
+    empleadoRef: null,
+};
 
 export default function PrestamoEditar() {
+    const navigate = useNavigate();
+    const { id } = useParams<{ id: string }>();
+    const { clientes, getAllClientes } = useClienteStore();
+    const { empleados, getAllEmpleados } = useEmpleadoStore();
+    const { updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
 
-    // const params = useParams();
-    // const navigate = useNavigate();
-    // const { getPrestamoById, updatePrestamo } = usePrestamos();
+    const form = useForm<Prestamo>({
+        defaultValues,
+        mode: "onTouched",
+    });
 
-    // const form = useForm<Prestamo>({
-    //     defaultValues,
-    //     mode: "onTouched",
-    //     // resolver: yupResolver(validationSchema),
-    // });
+    const { register, formState, handleSubmit, setValue } = form;
+    const { errors, isSubmitting, isValid } = formState;
 
-    // const { register, formState, handleSubmit } = form;
-    // const { errors, isSubmitting, isValid } = formState;
+    useEffect(() => {
+        const loadPrestamo = async () => {
+            const prestamo = await getPrestamo(id);
+            if (prestamo) {
+                setValue('monto', prestamo.monto);
+                setValue('interes', prestamo.interes);
+                setValue('fechaInicio', prestamo.fechaInicio);
+                setValue('fechaFinal', prestamo.fechaFinal);
+                setValue('estado', prestamo.estado);
+                setValue('modalidadDePago', prestamo.modalidadDePago);
+                setValue('clienteRef', prestamo.clienteRef);
+                setValue('empleadoRef', prestamo.empleadoRef);
+            }
+        };
 
-    // const onSubmit = (prestamo: Prestamo) => {
-    //     updatePrestamo(prestamo);
-    //     navigate("/prestamos");
-    // };
+        loadPrestamo();
+    }, [id, setValue, getPrestamo]);
 
-    // const onError = (errors: FieldErrors<any>) => {
-    //     console.log({ errors });
-    // };
+    useEffect(() => {
+        if (!clientes.length) {
+            getAllClientes();
+        }
+    }, [clientes, getAllClientes]);
 
-    // useEffect(() => {
-    //     const employeeId = params.id;
-    //     const fetchEmployee = async (employeeId: string) => {
-    //         const prestamo = await getPrestamoById(employeeId);
-    //         form.setValue("id", prestamo?.id);
-    //         form.setValue("nombres", prestamo?.nombres);
-    //         form.setValue("apellidos", prestamo?.apellidos);
-    //         form.setValue("correo", prestamo?.correo);
-    //         form.setValue("celular", prestamo?.celular);
-    //         form.setValue("direccion", prestamo?.direccion);
-    //     }
-    //     employeeId && fetchEmployee(employeeId);
-    // }, [params.id])
+    useEffect(() => {
+        if (!empleados.length) {
+            getAllEmpleados();
+        }
+    }, [empleados, getAllEmpleados]);
+
+    const handleClienteChange = (event: any, value: Cliente | null) => {
+        if (value) {
+            const clienteId = value.id;
+            const clienteRef = doc(db as Firestore, 'CLIENTES', clienteId);
+            setValue('clienteRef', clienteRef);
+        } else {
+            setValue('clienteRef', null);
+        }
+    };
+
+    const handleEmpleadoChange = (event: any, value: Empleado | null) => {
+        if (value) {
+            const empleadoId = value.id;
+            const empleadoRef = doc(db as Firestore, 'EMPLEADOS', empleadoId);
+            setValue('empleadoRef', empleadoRef);
+        } else {
+            setValue('empleadoRef', null);
+        }
+    };
+
+    const onSubmit = async (prestamo: Prestamo) => {
+        await updatePrestamo(prestamo);
+        navigate("/prestamos");
+    };
+
+    const onError = (errors: FieldErrors<any>) => {
+        console.log({ errors });
+    };
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
         <section>
@@ -84,70 +111,124 @@ export default function PrestamoEditar() {
                 <h2>Editar prestamo</h2>
             </header>
 
-            {/* <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
+            <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
                 <div className="row">
                     <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            autoFocus
-                            type="text"
-                            name="nombres"
-                            label="Nombres"
-                            register={register}
-                            error={errors.nombres?.message}
+                        <Autocomplete
+                            fullWidth
+                            options={clientes}
+                            getOptionLabel={(cliente: Cliente) => cliente.nombres + " " + cliente.apellidos}
+                            onChange={handleClienteChange}
+                            renderInput={(params) => <TextField {...params} label="Cliente" />}
+                        />
+                    </div>
+
+                    <div className="col-md-8 mb-3">
+                        <Autocomplete
+                            fullWidth
+                            options={empleados}
+                            getOptionLabel={(empleado: Empleado) => empleado.nombres + " " + empleado.apellidos}
+                            onChange={handleEmpleadoChange}
+                            renderInput={(params) => <TextField {...params} label="Empleado" />}
                         />
                     </div>
 
                     <div className="col-md-8 mb-3">
                         <CustomTextField
                             type="text"
-                            name="apellidos"
-                            label="Apellidos"
+                            name="monto"
+                            label="Monto"
                             register={register}
-                            error={errors.apellidos?.message}
+                            error={errors.monto?.message}
                         />
                     </div>
 
                     <div className="col-md-8 mb-3">
                         <CustomTextField
                             type="text"
-                            name="correo"
-                            label="Correo"
+                            name="interes"
+                            label="Interés"
                             register={register}
-                            error={errors.correo?.message}
+                            error={errors.interes?.message}
                         />
                     </div>
 
                     <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
-                            name="celular"
-                            label="Celular"
-                            register={register}
-                            error={errors.celular?.message}
+                        <FormControl fullWidth>
+                            <InputLabel>Modalidad de pago</InputLabel>
+                            <Select
+                                defaultValue="Diario"
+                                name="modalidadDePago"
+                                onChange={(event) => {
+                                    const value = event?.target.value;
+                                    setValue("modalidadDePago", value);
+                                }}
+                            >
+                                {modalidadDePagoOptions.map((modalidad: string) => (
+                                    <MenuItem key={modalidad} value={modalidad}>{modalidad}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </div>
+
+                    <div className="col-md-8 mb-3">
+                        <FormControl fullWidth>
+                            <InputLabel>Estado</InputLabel>
+                            <Select
+                                defaultValue="Activo"
+                                name="estado"
+                                onChange={(event) => {
+                                    const value = event?.target.value;
+                                    setValue("estado", value);
+                                }}
+                            >
+                                {estadoPrestamoOptions.map((estado: string) => (
+                                    <MenuItem key={estado} value={estado}>{estado}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </div>
+
+                    <div className="col-md-8 mb-3">
+                        <DatePicker
+                            name="fechaInicio"
+                            sx={{ width: "100%" }}
+                            label="Fecha de inicio"
+                            minDate={dayjs(new Date())}
+                            defaultValue={dayjs(new Date())}
+                            onChange={(newDate) => {
+                                const selectedDate = dayjs(newDate);
+                                const timeStamp = selectedDate.valueOf();
+                                setValue("fechaInicio", timeStamp);
+                            }}
                         />
                     </div>
 
                     <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
-                            name="direccion"
-                            label="Dirección"
-                            register={register}
-                            error={errors.direccion?.message}
+                        <DatePicker
+                            name="fechaFinal"
+                            sx={{ width: "100%" }}
+                            label="Fecha limite"
+                            minDate={dayjs(new Date())}
+                            defaultValue={dayjs(new Date()).add(30, "day")}
+                            onChange={(newDate) => {
+                                const selectedDate = dayjs(newDate);
+                                const timeStamp = selectedDate.valueOf();
+                                setValue("fechaFinal", timeStamp);
+                            }}
                         />
                     </div>
                 </div>
 
                 <Button
                     type="submit"
-                    color="success"
                     variant="contained"
                     sx={{ marginTop: 2 }}
-                    // disabled={!isValid || isSubmitting}
+                    disabled={!isValid || isSubmitting}
                 >
                     Guardar
                 </Button>
-            </form> */}
+            </form>
         </section>
-    )
+    );
 }
