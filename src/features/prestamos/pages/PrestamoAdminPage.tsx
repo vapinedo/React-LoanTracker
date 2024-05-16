@@ -1,20 +1,17 @@
+import { useEffect } from "react";
 import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
-import usePrestamos from "@services/usePrestamos";
-import { NavLink, useNavigate } from "react-router-dom"
+import useDatetime from "@services/useDatetime";
+import usePrestamoStore from "@stores/usePrestamoStore";
+import { NavLink, useNavigate } from "react-router-dom";
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import useNotificaciones from "@services/useNotificaciones";
-import { Prestamo } from "@features/prestamos/models/Prestamo";
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
-import useDatetime from "@app/services/useDatetime";
 
 export default function PrestamosAdminPage() {
-
   const navigate = useNavigate();
   const { getHumanDate } = useDatetime();
   const { dialogConfirm } = useNotificaciones();
-  const { getAllPrestamos, deletePrestamo } = usePrestamos();
-  const [prestamos, setPrestamos] = useState<Prestamo[] | []>([]);
+  const { prestamos, loading, error, fetchPrestamos, deletePrestamo } = usePrestamoStore();
 
   const handleDetails = (params: any) => {
     return (
@@ -51,7 +48,10 @@ export default function PrestamosAdminPage() {
   const handleDelete = async (id: string, nombres: string, apellidos: string) => {
     const text = `Vas a eliminar a ${nombres} ${apellidos}`;
     const { isConfirmed } = await dialogConfirm(text);
-    isConfirmed && deletePrestamo(id);
+    if (isConfirmed) {
+      await deletePrestamo(id);
+      fetchPrestamos(); // Refresh prestamos after deletion
+    }
   };
 
   const columns: GridColDef<any>[] = [
@@ -107,12 +107,11 @@ export default function PrestamosAdminPage() {
   ];
 
   useEffect(() => {
-    const fetchPrestamos = async () => {
-      const prestamoList = await getAllPrestamos();
-      setPrestamos(prestamoList);
-    };
     fetchPrestamos();
-  }, []);
+  }, [fetchPrestamos]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div>

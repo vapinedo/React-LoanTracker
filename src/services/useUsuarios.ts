@@ -1,10 +1,9 @@
 import { useState } from "react";
 import firebaseApp from "@firebaseConfig";
-import { doc, setDoc, getFirestore } from "firebase/firestore"; 
+import { doc, setDoc } from "firebase/firestore"; 
 import { getAuth, signOut, signInWithEmailAndPassword, onAuthStateChanged, User } from "firebase/auth";
 
 const COLLECTION = "USUARIOS";
-const db = getFirestore(firebaseApp);
 const AUTH_DATA = getAuth(firebaseApp);
 
 const newDocument = {

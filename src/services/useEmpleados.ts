@@ -1,12 +1,11 @@
 import toast from 'react-hot-toast';
+import db from '@app/firebaseInstance';
 import { v4 as createUuid } from 'uuid';
-import firebaseApp from "@firebaseConfig";
 import { Empleado } from "@features/empleados/models/Empleado";
 import { AutocompleteOption } from '@models/AutocompleteOption';
-import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction, deleteDoc, DocumentSnapshot } from "firebase/firestore";
+import { doc, getDocs, getDoc, setDoc, collection, runTransaction, deleteDoc, DocumentSnapshot } from "firebase/firestore";
 
 const COLLECTION = "EMPLEADOS";
-const db = getFirestore(firebaseApp);
 
 export default function useEmpleados() {
 
