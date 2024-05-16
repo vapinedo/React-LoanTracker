@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import db from '@firebaseConfig';
 import { useEffect } from 'react';
-import { v4 as createUuid } from 'uuid';
 import Select from '@mui/material/Select';
 import { useNavigate } from "react-router-dom";
 import { doc, Firestore } from 'firebase/firestore';
@@ -16,7 +15,7 @@ import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOp
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
 
 const defaultValues: Prestamo = {
-    id: createUuid(),
+    id: null,
     monto: 0,
     interes: 0,
     fechaInicio: new Date().getTime(),
@@ -58,6 +57,7 @@ export default function PrestamoCrear() {
     };
 
     const onSubmit = async (prestamo: Prestamo) => {
+        console.log({ prestamo });
         await createPrestamo(prestamo);
         navigate("/prestamos");
     };
