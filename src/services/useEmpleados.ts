@@ -3,7 +3,7 @@ import { v4 as createUuid } from 'uuid';
 import firebaseApp from "@firebaseConfig";
 import { Empleado } from "@features/empleados/models/Empleado";
 import { AutocompleteOption } from '@models/AutocompleteOption';
-import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction, deleteDoc } from "firebase/firestore";
+import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction, deleteDoc, DocumentSnapshot } from "firebase/firestore";
 
 const COLLECTION = "EMPLEADOS";
 const db = getFirestore(firebaseApp);
@@ -40,18 +40,37 @@ export default function useEmpleados() {
         return documents;
     };
 
-    const getEmpleadoById = async (documentId: string) => {
-        let document = null;
+    const getEmpleadoById = async (id: string): Promise<Empleado | null> => {
         try {
-            const docRef = doc(db, COLLECTION, documentId);
-            const docSnap = await getDoc(docRef);
+            const docRef = doc(db, COLLECTION, id);
+            const docSnap: DocumentSnapshot = await getDoc(docRef);
+
             if (docSnap.exists()) {
-                document = docSnap.data();
+                // Obtener los datos del documento
+                const empleadoData = docSnap.data();
+
+                // Verificar si los datos cumplen con el tipo Empleado
+                if (empleadoData && typeof empleadoData === 'object') {
+                    const empleado: Empleado = {
+                        id: empleadoData.id,
+                        nombres: empleadoData.nombres,
+                        apellidos: empleadoData.apellidos,
+                        correo: empleadoData.correo,
+                        celular: empleadoData.celular,
+                        direccion: empleadoData.direccion,
+                    };
+
+                    return empleado;
+                } else {
+                    throw new Error(`El documento no contiene datos válidos para un empleado: ${id}`);
+                }
+            } else {
+                return null; // El empleado no existe
             }
         } catch (error) {
-            console.log(error);
+            console.error(`Error al obtener empleado por ID ${id}:`, error);
+            throw error;
         }
-        return document;
     };
 
     const createEmpleado = async (document: Empleado) => {
@@ -80,12 +99,12 @@ export default function useEmpleados() {
             console.error(error);
         }
     };
-    
+
     const deleteEmpleado = async (documentId: string) => {
         try {
             const docRef = doc(db, COLLECTION, documentId);
             const response = await deleteDoc(docRef);
-            console.log({response});
+            console.log({ response });
             toast.success("Empleado eliminado exitosamente!");
         } catch (error) {
             console.error(error);

@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import { useEffect } from "react";
-import { Button } from '@mui/material';
-import useEmpleados from "@services/useEmpleados";
+import { Button, Typography } from '@mui/material';
+import useEmpleadoStore from "@store/useEmpleadoStore";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from "react-router-dom";
@@ -36,10 +36,9 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function EmpleadoEditar() {
-
     const params = useParams();
     const navigate = useNavigate();
-    const { getEmpleadoById, updateEmpleado } = useEmpleados();
+    const { getEmpleadoById, updateEmpleado, loading, error } = useEmpleadoStore();
 
     const form = useForm<Empleado>({
         defaultValues,
@@ -47,11 +46,11 @@ export default function EmpleadoEditar() {
         resolver: yupResolver(validationSchema),
     });
 
-    const { register, formState, handleSubmit } = form;
-    const { errors, isSubmitting, isValid } = formState;
+    const { register, formState, handleSubmit, setValue } = form;
+    const { errors, isValid } = formState;
 
-    const onSubmit = (empleado: Empleado) => {
-        updateEmpleado(empleado);
+    const onSubmit = async (empleado: Empleado) => {
+        await updateEmpleado(empleado);
         navigate("/empleados");
     };
 
@@ -61,88 +60,99 @@ export default function EmpleadoEditar() {
 
     useEffect(() => {
         const employeeId = params.id;
-        const fetchEmployee = async (employeeId: string) => {
-            const empleado = await getEmpleadoById(employeeId);
-            form.setValue("id", empleado?.id);
-            form.setValue("nombres", empleado?.nombres);
-            form.setValue("apellidos", empleado?.apellidos);
-            form.setValue("correo", empleado?.correo);
-            form.setValue("celular", empleado?.celular);
-            form.setValue("direccion", empleado?.direccion);
+        if (employeeId) {
+            getEmpleadoById(employeeId);
         }
-        employeeId && fetchEmployee(employeeId);
-    }, [params.id])
+    }, [getEmpleadoById, params.id]);
+
+    useEffect(() => {
+        const empleado = useEmpleadoStore.getState().empleados[0];
+        if (empleado) {
+            setValue("id", empleado.id);
+            setValue("nombres", empleado.nombres);
+            setValue("apellidos", empleado.apellidos);
+            setValue("correo", empleado.correo);
+            setValue("celular", empleado.celular);
+            setValue("direccion", empleado.direccion);
+        }
+    }, [useEmpleadoStore.getState().empleados, setValue]);
 
     return (
         <section>
             <header className='mb-4 d-flex justify-content-between align-items-center'>
-                <h2>Editar empleado</h2>
+                <Typography variant="h4">Editar empleado</Typography>
             </header>
 
-            <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
-                <div className="row">
-                    <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            autoFocus
-                            type="text"
-                            name="nombres"
-                            label="Nombres"
-                            register={register}
-                            error={errors.nombres?.message}
-                        />
+            {loading ? (
+                <p>Cargando empleado...</p>
+            ) : error ? (
+                <p>Error al cargar empleado: {error}</p>
+            ) : (
+                <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
+                    <div className="row">
+                        <div className="col-md-8 mb-3">
+                            <CustomTextField
+                                autoFocus
+                                type="text"
+                                name="nombres"
+                                label="Nombres"
+                                register={register}
+                                error={errors.nombres?.message}
+                            />
+                        </div>
+
+                        <div className="col-md-8 mb-3">
+                            <CustomTextField
+                                type="text"
+                                name="apellidos"
+                                label="Apellidos"
+                                register={register}
+                                error={errors.apellidos?.message}
+                            />
+                        </div>
+
+                        <div className="col-md-8 mb-3">
+                            <CustomTextField
+                                type="text"
+                                name="correo"
+                                label="Correo"
+                                register={register}
+                                error={errors.correo?.message}
+                            />
+                        </div>
+
+                        <div className="col-md-8 mb-3">
+                            <CustomTextField
+                                type="text"
+                                name="celular"
+                                label="Celular"
+                                register={register}
+                                error={errors.celular?.message}
+                            />
+                        </div>
+
+                        <div className="col-md-8 mb-3">
+                            <CustomTextField
+                                type="text"
+                                name="direccion"
+                                label="Dirección"
+                                register={register}
+                                error={errors.direccion?.message}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
-                            name="apellidos"
-                            label="Apellidos"
-                            register={register}
-                            error={errors.apellidos?.message}
-                        />
-                    </div>
-
-                    <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
-                            name="correo"
-                            label="Correo"
-                            register={register}
-                            error={errors.correo?.message}
-                        />
-                    </div>
-
-                    <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
-                            name="celular"
-                            label="Celular"
-                            register={register}
-                            error={errors.celular?.message}
-                        />
-                    </div>
-
-                    <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
-                            name="direccion"
-                            label="Dirección"
-                            register={register}
-                            error={errors.direccion?.message}
-                        />
-                    </div>
-                </div>
-
-                <Button
-                    type="submit"
-                    color="success"
-                    variant="contained"
-                    sx={{ marginTop: 2 }}
-                    // disabled={!isValid || isSubmitting}
-                >
-                    Guardar
-                </Button>
-            </form>
+                    <Button
+                        type="submit"
+                        color="success"
+                        variant="contained"
+                        disabled={!isValid || loading}
+                        sx={{ marginTop: 2 }}
+                    >
+                        Guardar
+                    </Button>
+                </form>
+            )}            
         </section>
-    )
+    );
 }

@@ -1,9 +1,9 @@
 import * as Yup from "yup";
-import { Button } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import useEmpleados from "@services/useEmpleados";
+import { Button, Typography } from '@mui/material';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
+import useEmpleadoStore from "@store/useEmpleadoStore";
 import { Empleado } from '@features/empleados/models/Empleado';
 import CustomTextField from '@components/form/CustomTextField';
 
@@ -35,9 +35,8 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function EmpleadoCrear() {
-
-    const { createEmpleado } = useEmpleados();
     const navigate = useNavigate();
+    const { createEmpleado, loading, error } = useEmpleadoStore();
 
     const form = useForm<Empleado>({
         defaultValues,
@@ -46,10 +45,10 @@ export default function EmpleadoCrear() {
     });
 
     const { register, formState, handleSubmit } = form;
-    const { errors, isSubmitting, isValid } = formState;
+    const { errors, isValid } = formState;
 
-    const onSubmit = (employee: Empleado) => {
-        createEmpleado(employee);
+    const onSubmit = async (empleado: Empleado) => {
+        await createEmpleado(empleado);
         navigate("/empleados");
     };
 
@@ -60,72 +59,78 @@ export default function EmpleadoCrear() {
     return (
         <section>
             <header className='mb-4 d-flex justify-content-between align-items-center'>
-                <h2>Nuevo empleado</h2>
+                <Typography variant="h4">Nuevo empleado</Typography>
             </header>
 
-            <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
-                <div className="row">
-                    <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            autoFocus
-                            type="text"
-                            name="nombres"
-                            label="Nombres"
-                            register={register}
-                            error={errors.nombres?.message}
-                        />
+            {loading ? (
+                <p>Cargando formulario...</p>
+            ) : error ? (
+                <p>Error al cargar formulario: {error}</p>
+            ) : (
+                <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
+                    <div className="row">
+                        <div className="col-md-8 mb-3">
+                            <CustomTextField
+                                autoFocus
+                                type="text"
+                                name="nombres"
+                                label="Nombres"
+                                register={register}
+                                error={errors.nombres?.message}
+                            />
+                        </div>
+
+                        <div className="col-md-8 mb-3">
+                            <CustomTextField
+                                type="text"
+                                name="apellidos"
+                                label="Apellidos"
+                                register={register}
+                                error={errors.apellidos?.message}
+                            />
+                        </div>
+
+                        <div className="col-md-8 mb-3">
+                            <CustomTextField
+                                type="text"
+                                name="correo"
+                                label="Correo"
+                                register={register}
+                                error={errors.correo?.message}
+                            />
+                        </div>
+
+                        <div className="col-md-8 mb-3">
+                            <CustomTextField
+                                type="text"
+                                name="celular"
+                                label="Celular"
+                                register={register}
+                                error={errors.celular?.message}
+                            />
+                        </div>
+
+                        <div className="col-md-8 mb-3">
+                            <CustomTextField
+                                type="text"
+                                name="direccion"
+                                label="Dirección"
+                                register={register}
+                                error={errors.direccion?.message}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
-                            name="apellidos"
-                            label="Apellidos"
-                            register={register}
-                            error={errors.apellidos?.message}
-                        />
-                    </div>
-
-                    <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
-                            name="correo"
-                            label="Correo"
-                            register={register}
-                            error={errors.correo?.message}
-                        />
-                    </div>
-
-                    <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
-                            name="celular"
-                            label="Celular"
-                            register={register}
-                            error={errors.celular?.message}
-                        />
-                    </div>
-
-                    <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
-                            name="direccion"
-                            label="Dirección"
-                            register={register}
-                            error={errors.direccion?.message}
-                        />
-                    </div>
-                </div>
-
-                <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ marginTop: 2 }}
-                    disabled={!isValid || isSubmitting}
-                >
-                    Guardar
-                </Button>
-            </form>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={!isValid || loading}
+                        sx={{ marginTop: 2 }}
+                    >
+                        Guardar
+                    </Button>
+                </form>
+            )}  
         </section>
-    )
+    );
 }
