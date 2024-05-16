@@ -1,5 +1,6 @@
-import { useEffect } from "react";
 import { Box } from "@mui/material";
+import { useEffect, useState } from "react";
+import { getDoc } from "firebase/firestore";
 import useDatetime from "@services/useDatetime";
 import usePrestamoStore from "@stores/usePrestamoStore";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -13,33 +14,59 @@ export default function PrestamosAdminPage() {
   const { dialogConfirm } = useNotificaciones();
   const { prestamos, loading, error, fetchPrestamos, deletePrestamo } = usePrestamoStore();
 
+  const [clientesData, setClientesData] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    const fetchClientesData = async () => {
+      const data: { [key: string]: string } = {};
+      await Promise.all(
+        prestamos.map(async (prestamo) => {
+          if (prestamo.clienteRef) {
+            const clienteSnapshot = await getDoc(prestamo.clienteRef);
+            if (clienteSnapshot.exists()) {
+              const clienteData = clienteSnapshot.data();
+              if (clienteData && prestamo.id) { // Verificar que prestamo.id no sea null
+                const nombres = clienteData.nombres || '';
+                const apellidos = clienteData.apellidos || '';
+                data[prestamo.id] = `${nombres} ${apellidos}`;
+              }
+            }
+          }
+        })
+      );
+      setClientesData(data);
+    };
+  
+    fetchClientesData();
+  }, [prestamos]);
+
   const handleDetails = (params: any) => {
     return (
       <NavLink
-        title="Ver detalles"
+        title={`Ver detalles de ${clientesData[params.id]}`}
         className="grid-table-linkable-column"
-        to={`/prestamos/detalles/${params.id}`} 
+        to={`/prestamos/detalles/${params.id}`}
       >
-        {params.formattedValue}
+        {clientesData[params.id]}
       </NavLink>
-    )
-  }
+    );
+  };
 
   const handleActions = (params: any) => {
     const { id, row } = params;
     const { nombres, apellidos } = row;
     return (
       <>
-        <IconEdit 
-          color="#00abfb" 
-          cursor="pointer" 
-          onClick={() => navigate(`/prestamos/editar/${params.id}`)} 
+        <IconEdit
+          color="#00abfb"
+          cursor="pointer"
+          onClick={() => navigate(`/prestamos/editar/${params.id}`)}
         />
-        <IconTrash 
-          color="#ff2825" 
+        <IconTrash
+          color="#ff2825"
           cursor="pointer"
           style={{ marginLeft: 15 }}
-          onClick={() => handleDelete(id, nombres, apellidos)} 
+          onClick={() => handleDelete(id, nombres, apellidos)}
         />
       </>
     )
