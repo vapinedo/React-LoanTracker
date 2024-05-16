@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import usePrestamos from '@services/usePrestamos';
 import { Prestamo } from '@features/prestamos/models/Prestamo';
 
-// Define the store interface
 interface PrestamoStore {
     prestamos: Prestamo[];
     loading: boolean;

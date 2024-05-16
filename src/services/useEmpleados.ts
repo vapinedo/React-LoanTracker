@@ -1,5 +1,5 @@
+import db from '@firebaseConfig';
 import toast from 'react-hot-toast';
-import db from '@app/firebaseInstance';
 import { v4 as createUuid } from 'uuid';
 import { Empleado } from "@features/empleados/models/Empleado";
 import { AutocompleteOption } from '@models/AutocompleteOption';

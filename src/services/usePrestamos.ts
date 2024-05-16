@@ -1,5 +1,5 @@
+import db from '@firebaseConfig';
 import toast from 'react-hot-toast';
-import db from '@app/firebaseInstance';
 import { v4 as createUuid } from 'uuid';
 import { Prestamo } from "@features/prestamos/models/Prestamo";
 import { doc, getDocs, getDoc, setDoc, collection, runTransaction, deleteDoc, DocumentReference } from "firebase/firestore";

@@ -31,10 +31,6 @@ export default function Navbar() {
                         </li>
 
                         <li className="nav-item">
-                            <NavLink className="nav-link" to="/usuarios">Usuarios</NavLink>
-                        </li>
-
-                        <li className="nav-item">
                             <NavLink className="nav-link" to="/empleados">Empleados</NavLink>
                         </li>
 

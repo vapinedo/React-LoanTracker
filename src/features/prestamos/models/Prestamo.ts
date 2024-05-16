@@ -8,6 +8,6 @@ export interface Prestamo {
     fechaFinal: number;
     fechaInicio: number;
     modalidadDePago: string;
-    clienteRef: DocumentReference;
-    empleadoRef: DocumentReference;
+    clienteRef: DocumentReference | null;
+    empleadoRef: DocumentReference | null;
 }

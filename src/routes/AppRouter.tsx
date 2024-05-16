@@ -5,7 +5,6 @@ import { Toaster } from "react-hot-toast";
 import { Route, Routes } from "react-router-dom"
 import Breadcrumbs from "@components/Breadcrumbs";
 import ClientesRouter from "@routes/ClientesRouter";
-import UsuariosRouter from "@routes/UsuariosRouter";
 import NotFoundPage from "@components/NotFoundPage";
 import PrestamosRouter from "@routes/PrestamosRouter";
 import EmpleadosRouter from "@routes/EmpleadosRouter";
@@ -25,7 +24,6 @@ export default function AppRouter() {
                 <Routes>
                     <Route path="/" element={ <LoginPage /> } />
                     <Route path="/clientes/*" element={ <ClientesRouter /> } />
-                    <Route path="/usuarios/*" element={ <UsuariosRouter /> } />
                     <Route path="/prestamos/*" element={ <PrestamosRouter /> } />
                     <Route path="/empleados/*" element={ <EmpleadosRouter /> } />
                     <Route path="*" element={<NotFoundPage />} />
