@@ -15,10 +15,13 @@ export default function PrestamosAdminPage() {
   const { prestamos, loading, error, fetchPrestamos, deletePrestamo } = usePrestamoStore();
 
   const [clientesData, setClientesData] = useState<{ [key: string]: string }>({});
+  const [empleadosData, setEmpleadosData] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
-    const fetchClientesData = async () => {
-      const data: { [key: string]: string } = {};
+    const fetchRelatedData = async () => {
+      const clientesData: { [key: string]: string } = {};
+      const empleadosData: { [key: string]: string } = {};
+  
       await Promise.all(
         prestamos.map(async (prestamo) => {
           if (prestamo.clienteRef) {
@@ -28,17 +31,32 @@ export default function PrestamosAdminPage() {
               if (clienteData && prestamo.id) { // Verificar que prestamo.id no sea null
                 const nombres = clienteData.nombres || '';
                 const apellidos = clienteData.apellidos || '';
-                data[prestamo.id] = `${nombres} ${apellidos}`;
+                clientesData[prestamo.id] = `${nombres} ${apellidos}`;
+              }
+            }
+          }
+  
+          if (prestamo.empleadoRef) {
+            const empleadoSnapshot = await getDoc(prestamo.empleadoRef);
+            if (empleadoSnapshot.exists()) {
+              const empleadoData = empleadoSnapshot.data();
+              if (empleadoData && prestamo.id) { // Verificar que prestamo.id no sea null
+                const nombres = empleadoData.nombres || '';
+                const apellidos = empleadoData.apellidos || '';
+                empleadosData[prestamo.id] = `${nombres} ${apellidos}`;
               }
             }
           }
         })
       );
-      setClientesData(data);
+  
+      setClientesData(clientesData);
+      setEmpleadosData(empleadosData);
     };
   
-    fetchClientesData();
+    fetchRelatedData();
   }, [prestamos]);
+  
 
   const handleDetails = (params: any) => {
     return (
@@ -94,6 +112,7 @@ export default function PrestamosAdminPage() {
       headerName: 'Empleado',
       width: 240,
       editable: true,
+      renderCell: (params) => empleadosData[params.id] || '',
     },
     {
       field: 'monto',
