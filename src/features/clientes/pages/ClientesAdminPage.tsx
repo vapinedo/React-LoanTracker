@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Box } from '@mui/material';
-import useClienteStore from '@store/useClienteStore';
+import useClienteStore from '@app/stores/useClienteStore';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import useNotificaciones from "@services/useNotificaciones";

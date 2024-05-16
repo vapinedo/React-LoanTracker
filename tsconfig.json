@@ -24,7 +24,7 @@
     "paths": {
       "@app/*": ["*"],
       "@mocks/*": ["mocks/*"],
-      "@store/*": ["store/*"],
+      "@stores/*": ["stores/*"],
       "@routes/*": ["routes/*"],
       "@models/*": ["models/*"],
       "@features/*": ["features/*"],

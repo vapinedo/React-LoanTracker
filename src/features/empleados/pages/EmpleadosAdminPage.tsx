@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Box } from '@mui/material';
-import useEmpleadoStore from '@store/useEmpleadoStore';
+import useEmpleadoStore from '@app/stores/useEmpleadoStore';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import useNotificaciones from "@services/useNotificaciones";

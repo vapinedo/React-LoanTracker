@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import useEmpleadoStore from "@store/useEmpleadoStore";
+import useEmpleadoStore from "@app/stores/useEmpleadoStore";
 
 export default function EmpleadoDetailsPage() {
     const params = useParams();
