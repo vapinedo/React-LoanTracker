@@ -1,75 +1,93 @@
+import db from '@firebaseConfig';
 import toast from 'react-hot-toast';
 import { v4 as createUuid } from 'uuid';
-import firebaseApp from "@firebaseConfig";
 import { Prestamo } from "@features/prestamos/models/Prestamo";
-import { doc, getDocs, getDoc, setDoc, collection, getFirestore, runTransaction, deleteDoc } from "firebase/firestore";
+import { doc, getDocs, getDoc, setDoc, collection, runTransaction, deleteDoc, DocumentReference } from "firebase/firestore";
 
 const COLLECTION = "PRESTAMOS";
-const db = getFirestore(firebaseApp);
 
 export default function usePrestamos() {
 
-    const getAllPrestamos = async () => {
-        const documents: any[] = [];
+    const getAllPrestamos = async (): Promise<Prestamo[]> => {
+        const prestamos: Prestamo[] = [];
         try {
             const querySnapshot = await getDocs(collection(db, COLLECTION));
-            querySnapshot.forEach((doc) => {
-                documents.push(doc.data());
-            });
-        } catch (error) {
-            console.log(error);
-        }
-        return documents;
-    };
-
-    const getPrestamoById = async (documentId: string) => {
-        let document = null;
-        try {
-            const docRef = doc(db, COLLECTION, documentId);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                document = docSnap.data();
+            for (const docSnapshot of querySnapshot.docs) {
+                const prestamoData = docSnapshot.data() as Prestamo;
+                prestamos.push(prestamoData);
             }
         } catch (error) {
             console.log(error);
         }
-        return document;
+        return prestamos;
     };
 
-    const createPrestamo = async (document: Prestamo) => {
+    const getPrestamoById = async (documentId: string): Promise<Prestamo | null> => {
+        let prestamo: Prestamo | null = null;
         try {
-            await setDoc(doc(db, COLLECTION, document.id), document);
+            const docRef = doc(db, COLLECTION, documentId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                prestamo = docSnap.data() as Prestamo;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        return prestamo;
+    };
+
+    const createPrestamo = async (prestamo: Prestamo) => {
+        try {
+            if (!prestamo.id) {
+                prestamo.id = createUuid();
+            }
+            await setDoc(doc(db, COLLECTION, prestamo.id), prestamo);
             toast.success("Prestamo creado exitosamente!");
         } catch (error) {
             console.log(error);
         }
     };
 
-    const updatePrestamo = async (document: any) => {
-        const docRef = doc(db, COLLECTION, document.id);
+    const updatePrestamo = async (prestamo: Prestamo) => {
+        const docRef = doc(db, COLLECTION, prestamo.id);
         try {
             await runTransaction(db, async (transaction) => {
                 const sfDoc = await transaction.get(docRef);
                 if (!sfDoc.exists()) {
-                    throw "No existe el prestamo que quiere editar";
+                    throw new Error("No existe el prestamo que quiere editar");
                 }
-                transaction.update(docRef, document);
+                const updatedData = {
+                    monto: prestamo.monto,
+                    estado: prestamo.estado,
+                    interes: prestamo.interes,
+                    fechaFinal: prestamo.fechaFinal,
+                    fechaInicio: prestamo.fechaInicio,
+                    modalidadDePago: prestamo.modalidadDePago,
+                    clienteRef: prestamo.clienteRef,
+                    empleadoRef: prestamo.empleadoRef
+                };
+                transaction.update(docRef, updatedData);
                 toast.success("Prestamo actualizado exitosamente!");
             });
         } catch (error) {
             console.error(error);
         }
     };
-    
+
     const deletePrestamo = async (documentId: string) => {
         try {
             const docRef = doc(db, COLLECTION, documentId);
-            const response = await deleteDoc(docRef);
-            console.log({response});
+            await deleteDoc(docRef);
             toast.success("Prestamo eliminado exitosamente!");
         } catch (error) {
             console.error(error);
         }
+    };
+
+    const getClienteAndEmpleadoData = async (prestamo: Prestamo) => {
+        const clienteData = (await getDoc(prestamo.clienteRef as DocumentReference)).data();
+        const empleadoData = (await getDoc(prestamo.empleadoRef as DocumentReference)).data();
+        return { clienteData, empleadoData };
     };
 
     return {
@@ -78,5 +96,6 @@ export default function usePrestamos() {
         createPrestamo,
         updatePrestamo,
         deletePrestamo,
+        getClienteAndEmpleadoData,
     };
 }

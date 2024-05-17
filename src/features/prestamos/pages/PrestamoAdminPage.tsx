@@ -1,48 +1,90 @@
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import usePrestamos from "@services/usePrestamos";
-import { NavLink, useNavigate } from "react-router-dom"
+import { getDoc } from "firebase/firestore";
+import useDatetime from "@services/useDatetime";
+import usePrestamoStore from "@stores/usePrestamoStore";
+import { NavLink, useNavigate } from "react-router-dom";
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import useNotificaciones from "@services/useNotificaciones";
 import { Prestamo } from "@features/prestamos/models/Prestamo";
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
-import useDatetime from "@app/services/useDatetime";
 
 export default function PrestamosAdminPage() {
-
   const navigate = useNavigate();
   const { getHumanDate } = useDatetime();
   const { dialogConfirm } = useNotificaciones();
-  const { getAllPrestamos, deletePrestamo } = usePrestamos();
-  const [prestamos, setPrestamos] = useState<Prestamo[] | []>([]);
+  const { prestamos, loading, error, fetchPrestamos, deletePrestamo } = usePrestamoStore();
+
+  const [prestamosData, setPrestamosData] = useState<Prestamo[]>([]);
+
+  useEffect(() => {
+    const fetchRelatedData = async () => {
+      const prestamosConNombres: Prestamo[] = await Promise.all(
+        prestamos.map(async (prestamo) => {
+          let clienteNombre = '';
+          let empleadoNombre = '';
+
+          if (prestamo.clienteRef) {
+            const clienteSnapshot = await getDoc(prestamo.clienteRef);
+            if (clienteSnapshot.exists()) {
+              const clienteData = clienteSnapshot.data();
+              if (clienteData) {
+                clienteNombre = `${clienteData.nombres || ''} ${clienteData.apellidos || ''}`;
+              }
+            }
+          }
+
+          if (prestamo.empleadoRef) {
+            const empleadoSnapshot = await getDoc(prestamo.empleadoRef);
+            if (empleadoSnapshot.exists()) {
+              const empleadoData = empleadoSnapshot.data();
+              if (empleadoData) {
+                empleadoNombre = `${empleadoData.nombres || ''} ${empleadoData.apellidos || ''}`;
+              }
+            }
+          }
+
+          return {
+            ...prestamo,
+            clienteNombre,
+            empleadoNombre,
+          };
+        })
+      );
+
+      setPrestamosData(prestamosConNombres);
+    };
+
+    fetchRelatedData();
+  }, [prestamos]);
 
   const handleDetails = (params: any) => {
     return (
       <NavLink
-        title="Ver detalles"
+        title={`Ver detalles de ${params.value}`}
         className="grid-table-linkable-column"
-        to={`/prestamos/detalles/${params.id}`} 
+        to={`/prestamos/detalles/${params.id}`}
       >
-        {params.formattedValue}
+        {params.value}
       </NavLink>
-    )
-  }
+    );
+  };  
 
   const handleActions = (params: any) => {
     const { id, row } = params;
     const { nombres, apellidos } = row;
     return (
       <>
-        <IconEdit 
-          color="#00abfb" 
-          cursor="pointer" 
-          onClick={() => navigate(`/prestamos/editar/${params.id}`)} 
+        <IconEdit
+          color="#00abfb"
+          cursor="pointer"
+          onClick={() => navigate(`/prestamos/editar/${params.id}`)}
         />
-        <IconTrash 
-          color="#ff2825" 
+        <IconTrash
+          color="#ff2825"
           cursor="pointer"
           style={{ marginLeft: 15 }}
-          onClick={() => handleDelete(id, nombres, apellidos)} 
+          onClick={() => handleDelete(id, nombres, apellidos)}
         />
       </>
     )
@@ -51,7 +93,10 @@ export default function PrestamosAdminPage() {
   const handleDelete = async (id: string, nombres: string, apellidos: string) => {
     const text = `Vas a eliminar a ${nombres} ${apellidos}`;
     const { isConfirmed } = await dialogConfirm(text);
-    isConfirmed && deletePrestamo(id);
+    if (isConfirmed) {
+      await deletePrestamo(id);
+      fetchPrestamos(); // Refresh prestamos after deletion
+    }
   };
 
   const columns: GridColDef<any>[] = [
@@ -67,6 +112,7 @@ export default function PrestamosAdminPage() {
       headerName: 'Empleado',
       width: 240,
       editable: true,
+      renderCell: (params) => params.value,
     },
     {
       field: 'monto',
@@ -107,12 +153,11 @@ export default function PrestamosAdminPage() {
   ];
 
   useEffect(() => {
-    const fetchPrestamos = async () => {
-      const prestamoList = await getAllPrestamos();
-      setPrestamos(prestamoList);
-    };
     fetchPrestamos();
-  }, []);
+  }, [fetchPrestamos]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div>
@@ -123,11 +168,11 @@ export default function PrestamosAdminPage() {
 
       <Box sx={{ height: "100%", width: '100%', marginTop: 3 }}>
         <DataGrid
-          rows={prestamos}
+          rows={prestamosData}
           columns={columns}
           density="compact"
           checkboxSelection
-          disableColumnFilter
+          disableColumnFilter={false}
           pageSizeOptions={[12]}
           disableColumnSelector
           disableDensitySelector
@@ -147,6 +192,7 @@ export default function PrestamosAdminPage() {
           }}
         />
       </Box>
+
     </div>
   )
 }

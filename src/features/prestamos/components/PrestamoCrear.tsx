@@ -1,106 +1,89 @@
 import dayjs from 'dayjs';
-// import * as Yup from "yup";
-import { v4 as createUuid } from 'uuid';
+import db from '@firebaseConfig';
+import { useEffect } from 'react';
 import Select from '@mui/material/Select';
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useClientes from "@services/useClientes";
-import useEmpleados from "@services/useEmpleados";
-import usePrestamos from '@services/usePrestamos';
-import Autocomplete from '@mui/material/Autocomplete';
-// import { yupResolver } from "@hookform/resolvers/yup";
+import { doc, Firestore } from 'firebase/firestore';
+import useClienteStore from '@stores/useClienteStore';
 import { FieldErrors, useForm } from 'react-hook-form';
+import useEmpleadoStore from '@stores/useEmpleadoStore';
+import usePrestamoStore from '@stores/usePrestamoStore';
+import { Cliente } from '@features/clientes/models/Cliente';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Prestamo } from '@features/prestamos/models/Prestamo';
+import { Empleado } from '@features/empleados/models/Empleado';
 import CustomTextField from '@components/form/CustomTextField';
-import { AutocompleteOption } from "@models/AutocompleteOption";
-import { Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
-import { estadoPrestamoOptions, modalidadDePagoOptions } from '@app/mocks/DropdownOptions';
-
-const currentDate = new Date();
-const newDate = new Date(currentDate);
-const currentDayOfMonth = newDate.getDate();
-newDate.setDate(currentDayOfMonth + 30);
-const todayTimestamp = dayjs(currentDate).valueOf();
-const todayPlus30DaysTimestamp = dayjs(newDate).valueOf();
+import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOptions';
+import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
 
 const defaultValues: Prestamo = {
-    id: createUuid(),
-    clienteId: null,
-    empleadoId: null,
-    clienteNombre: null,
-    empleadoNombre: null,
+    id: null,
     monto: 0,
     interes: 0,
-    fechaInicio: todayTimestamp,
-    fechaFinal: todayPlus30DaysTimestamp,
+    fechaInicio: new Date().getTime(),
+    fechaFinal: new Date().getTime(),
     estado: "Activo",
     modalidadDePago: "Diario",
+    clienteRef: null,
+    empleadoRef: null,
 }
 
-// const validationSchema = Yup.object().shape({
-//     clienteId: Yup
-//         .string()
-//         .required("Cliente es requerido"),
-//     empleadoId: Yup
-//         .string()
-//         .required("Empleado es requerido"),
-//     monto: Yup
-//         .number()
-//         .required("Monto es requerido"),
-//     interes: Yup
-//         .number()
-//         .required("Interés es requerido"),
-// });
-
-// const clienteOptions = [
-//     { label: "Juan Perez", value: "1"}, 
-//     { label: "Maria Gomez", value: "2"}, 
-//     { label: "Diego Sandoval", value: "3"}, 
-// ];
-
 export default function PrestamoCrear() {
-
     const navigate = useNavigate();
-    const { createPrestamo } = usePrestamos();
-    const { getClienteOptions } = useClientes();
-    const { getEmpleadoOptions } = useEmpleados();
-    const [clienteOptions, setClienteOptions] = useState<AutocompleteOption[] | []>([]);
-    const [empleadoOptions, setEmpleadoOptions] = useState<AutocompleteOption[] | []>([]);
+    const { createPrestamo } = usePrestamoStore();
+    const { clientes, getAllClientes } = useClienteStore();
+    const { empleados, getAllEmpleados } = useEmpleadoStore();
 
     const form = useForm<Prestamo>({
         defaultValues,
         mode: "onTouched",
-        // resolver: yupResolver(validationSchema),
     });
 
     const { register, formState, handleSubmit } = form;
     const { errors, isSubmitting, isValid } = formState;
 
-    const onSubmit = (prestamo: Prestamo) => {
-        createPrestamo(prestamo);
+    useEffect(() => {
+        // Cargar clientes al montar el componente (solo si aún no están cargados)
+        if (!clientes.length) {
+            getAllClientes();
+        }
+    }, []);
+
+    useEffect(() => {
+        // Cargar empleados al montar el componente (solo si aún no están cargados)
+        if (!empleados.length) {
+            getAllEmpleados();
+        }
+    }, []);
+
+    const handleClienteChange = (event: any, value: Cliente | null) => {
+        if (value) {
+            const clienteId = value.id;
+            const clienteRef = doc(db as Firestore, 'CLIENTES', clienteId);
+            form.setValue('clienteRef', clienteRef);
+        } else {
+            form.setValue('clienteRef', null);
+        }
+    };
+
+    const handleEmpleadoChange = (event: any, value: Empleado | null) => {
+        if (value) {
+            const empleadoId = value.id;
+            const empleadoRef = doc(db as Firestore, 'EMPLEADOS', empleadoId);
+            form.setValue('empleadoRef', empleadoRef);
+        } else {
+            form.setValue('empleadoRef', null);
+        }
+    };
+
+    const onSubmit = async (prestamo: Prestamo) => {
+        await createPrestamo(prestamo);
         navigate("/prestamos");
     };
 
     const onError = (errors: FieldErrors<any>) => {
         console.log({ errors });
     };
-
-    useEffect(() => {
-        const fetchClienteOptions = async () => {
-            const clienteOptions = await getClienteOptions();
-            setClienteOptions(clienteOptions);
-        };
-        fetchClienteOptions();
-    }, []);
-
-    useEffect(() => {
-        const fetchEmpleadoOptions = async () => {
-            const empleadOptions = await getEmpleadoOptions();
-            setEmpleadoOptions(empleadOptions);
-        };
-        fetchEmpleadoOptions();
-    }, []);
 
     return (
         <section>
@@ -113,11 +96,9 @@ export default function PrestamoCrear() {
                     <div className="col-md-8 mb-3">
                         <Autocomplete
                             fullWidth
-                            options={clienteOptions}
-                            onChange={(event: any, option: AutocompleteOption) => {
-                                form.setValue("clienteId", option.value);
-                                form.setValue("clienteNombre", option.label);
-                            }}
+                            options={clientes}
+                            getOptionLabel={(cliente: Cliente) => cliente.nombres + " " + cliente.apellidos}
+                            onChange={handleClienteChange}
                             renderInput={(params) => <TextField {...params} label="Cliente" />}
                         />
                     </div>
@@ -125,12 +106,10 @@ export default function PrestamoCrear() {
                     <div className="col-md-8 mb-3">
                         <Autocomplete
                             fullWidth
-                            options={empleadoOptions}
-                            onChange={(event: any, option: AutocompleteOption) => {
-                                form.setValue("empleadoId", option.value);
-                                form.setValue("empleadoNombre", option.label);
-                            }}
-                            renderInput={(params) => <TextField {...params} name="empleadoId" label="Empleado" />}
+                            options={empleados}
+                            getOptionLabel={(empleado: Empleado) => empleado.nombres + " " + empleado.apellidos}
+                            onChange={handleEmpleadoChange}
+                            renderInput={(params) => <TextField {...params} label="Empleado" />}
                         />
                     </div>
 
@@ -194,15 +173,14 @@ export default function PrestamoCrear() {
                         <DatePicker
                             name="fechaInicio"
                             sx={{ width: "100%" }}
-                            label="Fecha de inicio" 
-                            minDate={dayjs(todayTimestamp)}
-                            defaultValue={dayjs(todayTimestamp)}
+                            label="Fecha de inicio"
+                            minDate={dayjs(new Date())}
+                            defaultValue={dayjs(new Date())}
                             onChange={(newDate) => {
                                 const selectedDate = dayjs(newDate);
                                 const timeStamp = selectedDate.valueOf();
-                                console.log("inicio", timeStamp);
                                 form.setValue("fechaInicio", timeStamp);
-                            }} 
+                            }}
                         />
                     </div>
 
@@ -210,15 +188,14 @@ export default function PrestamoCrear() {
                         <DatePicker
                             name="fechaFinal"
                             sx={{ width: "100%" }}
-                            label="Fecha limite" 
-                            minDate={dayjs(todayTimestamp)}
-                            defaultValue={dayjs(todayTimestamp).add(30, "day")}
+                            label="Fecha limite"
+                            minDate={dayjs(new Date())}
+                            defaultValue={dayjs(new Date()).add(30, "day")}
                             onChange={(newDate) => {
                                 const selectedDate = dayjs(newDate);
                                 const timeStamp = selectedDate.valueOf();
-                                console.log("final", timeStamp);
                                 form.setValue("fechaFinal", timeStamp);
-                            }} 
+                            }}
                         />
                     </div>
                 </div>
