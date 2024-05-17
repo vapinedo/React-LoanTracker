@@ -1,7 +1,9 @@
-import { create } from 'zustand';
-import usePrestamos from '@services/usePrestamos';
-import { Prestamo } from '@features/prestamos/models/Prestamo';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import usePrestamos from "@services/usePrestamos";
+import { firebaseApp } from "@app/firebaseConfig";
+import { doc, getFirestore  } from "firebase/firestore";
+import { Prestamo } from "@features/prestamos/models/Prestamo";
 
 interface PrestamoStore {
     prestamos: Prestamo[];
@@ -13,6 +15,24 @@ interface PrestamoStore {
     updatePrestamo: (prestamo: Prestamo) => Promise<void>;
     deletePrestamo: (id: string) => Promise<void>;
 }
+
+const firestore = getFirestore(firebaseApp);
+
+const serializePrestamo = (prestamo: Prestamo): any => {
+    return {
+        ...prestamo,
+        clienteRef: prestamo.clienteRef?.path || null,
+        empleadoRef: prestamo.empleadoRef?.path || null,
+    };
+};
+
+const deserializePrestamo = (prestamo: any): Prestamo => {
+    return {
+        ...prestamo,
+        clienteRef: prestamo.clienteRef ? doc(firestore, prestamo.clienteRef) : null,
+        empleadoRef: prestamo.empleadoRef ? doc(firestore, prestamo.empleadoRef) : null,
+    };
+};
 
 const usePrestamoStore = create<PrestamoStore>()(
     persist(
@@ -87,7 +107,23 @@ const usePrestamoStore = create<PrestamoStore>()(
         }),
         {
             name: "prestamos-store",
-            storage: createJSONStorage(() => sessionStorage),
+            serialize: (state) => JSON.stringify({
+                ...state,
+                state: {
+                    ...state.state,
+                    prestamos: state.state.prestamos.map(serializePrestamo),
+                },
+            }),
+            deserialize: (str) => {
+                const state = JSON.parse(str);
+                return {
+                    ...state,
+                    state: {
+                        ...state.state,
+                        prestamos: state.state.prestamos.map(deserializePrestamo),
+                    },
+                };
+            },
         }
     )
 );
