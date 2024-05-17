@@ -118,7 +118,7 @@ export default function PrestamoCrear() {
                             type="text"
                             name="monto"
                             label="Monto"
-                            register={register}
+                            register={register("monto")}
                             error={errors.monto?.message}
                         />
                     </div>
@@ -128,7 +128,7 @@ export default function PrestamoCrear() {
                             type="text"
                             name="interes"
                             label="Interés"
-                            register={register}
+                            register={register("interes")}
                             error={errors.interes?.message}
                         />
                     </div>
