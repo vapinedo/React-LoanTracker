@@ -42,19 +42,20 @@ export default function PrestamoEditar() {
         mode: "onTouched",
     });
 
-    const { register, formState, handleSubmit, setValue } = form;
+    const { register, formState, handleSubmit, setValue, getValues, watch } = form;
     const { errors, isSubmitting, isValid } = formState;
 
     useEffect(() => {
         const loadPrestamo = async () => {
             const prestamo = await getPrestamo(id);
             if (prestamo) {
+                setValue('id', prestamo.id);
                 setValue('monto', prestamo.monto);
                 setValue('interes', prestamo.interes);
                 setValue('fechaInicio', prestamo.fechaInicio);
                 setValue('fechaFinal', prestamo.fechaFinal);
                 setValue('estado', prestamo.estado);
-                setValue('modalidadDePago', prestamo.modalidadDePago);
+                setValue('modalidadDePago', prestamo.modalidadDePago); // Actualiza el valor del Select
 
                 if (prestamo.clienteRef) {
                     const clienteDoc = await getDoc(prestamo.clienteRef);
@@ -96,8 +97,10 @@ export default function PrestamoEditar() {
             const clienteId = value.id;
             const clienteRef = doc(db as Firestore, 'CLIENTES', clienteId);
             setValue('clienteRef', clienteRef);
+            setCliente(value); // Actualizar el estado local
         } else {
             setValue('clienteRef', null);
+            setCliente(null); // Actualizar el estado local
         }
     };
 
@@ -106,13 +109,19 @@ export default function PrestamoEditar() {
             const empleadoId = value.id;
             const empleadoRef = doc(db as Firestore, 'EMPLEADOS', empleadoId);
             setValue('empleadoRef', empleadoRef);
+            setEmpleado(value); // Actualizar el estado local
         } else {
             setValue('empleadoRef', null);
+            setEmpleado(null); // Actualizar el estado local
         }
     };
 
     const onSubmit = async (prestamo: Prestamo) => {
-        await updatePrestamo(prestamo);
+        const clienteRef = getValues('clienteRef');
+        const empleadoRef = getValues('empleadoRef');
+        const updatedPrestamo = { ...prestamo, clienteRef, empleadoRef };
+
+        await updatePrestamo(updatedPrestamo);
         navigate("/prestamos");
     };
 
@@ -179,11 +188,10 @@ export default function PrestamoEditar() {
                         <FormControl fullWidth>
                             <InputLabel>Modalidad de pago</InputLabel>
                             <Select
-                                defaultValue="Diario"
-                                name="modalidadDePago"
+                                value={watch('modalidadDePago')} // Usamos watch para sincronizar el valor dinámicamente
                                 onChange={(event) => {
-                                    const value = event?.target.value;
-                                    setValue("modalidadDePago", value);
+                                    const value = event.target.value;
+                                    setValue('modalidadDePago', value);
                                 }}
                             >
                                 {modalidadDePagoOptions.map((modalidad: string) => (
@@ -197,11 +205,10 @@ export default function PrestamoEditar() {
                         <FormControl fullWidth>
                             <InputLabel>Estado</InputLabel>
                             <Select
-                                defaultValue="Activo"
-                                name="estado"
+                                value={watch('estado')} // Usamos watch para sincronizar el valor dinámicamente
                                 onChange={(event) => {
-                                    const value = event?.target.value;
-                                    setValue("estado", value);
+                                    const value = event.target.value;
+                                    setValue('estado', value);
                                 }}
                             >
                                 {estadoPrestamoOptions.map((estado: string) => (
@@ -221,7 +228,7 @@ export default function PrestamoEditar() {
                             onChange={(newDate) => {
                                 const selectedDate = dayjs(newDate);
                                 const timeStamp = selectedDate.valueOf();
-                                setValue("fechaInicio", timeStamp);
+                                setValue('fechaInicio', timeStamp);
                             }}
                         />
                     </div>
@@ -230,24 +237,18 @@ export default function PrestamoEditar() {
                         <DatePicker
                             name="fechaFinal"
                             sx={{ width: "100%" }}
-                            label="Fecha limite"
+                            label="Fecha de finalización"
                             minDate={dayjs(new Date())}
-                            defaultValue={dayjs(new Date()).add(30, "day")}
+                            defaultValue={dayjs(new Date())}
                             onChange={(newDate) => {
                                 const selectedDate = dayjs(newDate);
                                 const timeStamp = selectedDate.valueOf();
-                                setValue("fechaFinal", timeStamp);
+                                setValue('fechaFinal', timeStamp);
                             }}
                         />
                     </div>
                 </div>
-
-                <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ marginTop: 2 }}
-                    disabled={!isValid || isSubmitting}
-                >
+                <Button type="submit" sx={{ marginTop: 2 }} variant="contained" color="success" disabled={isSubmitting || !isValid}>
                     Guardar
                 </Button>
             </form>
