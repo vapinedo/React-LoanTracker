@@ -31,11 +31,11 @@ const defaultValues: Prestamo = {
 export default function PrestamoEditar() {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
-    const { updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
     const { clientes, getAllClientes } = useClienteStore();
     const { empleados, getAllEmpleados } = useEmpleadoStore();
     const [cliente, setCliente] = useState<Cliente | null>(null);
     const [empleado, setEmpleado] = useState<Empleado | null>(null);
+    const { updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
 
     const form = useForm<Prestamo>({
         defaultValues: defaultValues,
