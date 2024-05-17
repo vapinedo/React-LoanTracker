@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import usePrestamos from "@services/usePrestamos";
 import { firebaseApp } from "@app/firebaseConfig";
 import { doc, getFirestore  } from "firebase/firestore";
+import { persist, PersistStorage } from "zustand/middleware";
 import { Prestamo } from "@features/prestamos/models/Prestamo";
 
 interface PrestamoStore {
@@ -32,6 +32,34 @@ const deserializePrestamo = (prestamo: any): Prestamo => {
         clienteRef: prestamo.clienteRef ? doc(firestore, prestamo.clienteRef) : null,
         empleadoRef: prestamo.empleadoRef ? doc(firestore, prestamo.empleadoRef) : null,
     };
+};
+
+const storage: PersistStorage<PrestamoStore> = {
+    getItem: (name) => {
+        const item = sessionStorage.getItem(name);
+        if (item) {
+            const parsed = JSON.parse(item);
+            return {
+                ...parsed,
+                state: {
+                    ...parsed.state,
+                    prestamos: parsed.state.prestamos.map(deserializePrestamo),
+                },
+            };
+        }
+        return null;
+    },
+    setItem: (name, value) => {
+        const serializedState = JSON.stringify({
+            ...value,
+            state: {
+                ...value.state,
+                prestamos: value.state.prestamos.map(serializePrestamo),
+            },
+        });
+        sessionStorage.setItem(name, serializedState);
+    },
+    removeItem: (name) => sessionStorage.removeItem(name),
 };
 
 const usePrestamoStore = create<PrestamoStore>()(
@@ -107,23 +135,7 @@ const usePrestamoStore = create<PrestamoStore>()(
         }),
         {
             name: "prestamos-store",
-            serialize: (state) => JSON.stringify({
-                ...state,
-                state: {
-                    ...state.state,
-                    prestamos: state.state.prestamos.map(serializePrestamo),
-                },
-            }),
-            deserialize: (str) => {
-                const state = JSON.parse(str);
-                return {
-                    ...state,
-                    state: {
-                        ...state.state,
-                        prestamos: state.state.prestamos.map(deserializePrestamo),
-                    },
-                };
-            },
+            storage,
         }
     )
 );
