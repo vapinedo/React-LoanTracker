@@ -71,7 +71,7 @@ export default function LoginPage() {
                                 type="text"
                                 name="email"
                                 label="Correo"
-                                register={register}
+                                register={register("email")}
                                 error={errors.email?.message}
                             />
                         </Grid>
@@ -81,7 +81,7 @@ export default function LoginPage() {
                                 type="password"
                                 name="password"
                                 label="Contraseña"
-                                register={register}
+                                register={register("password")}
                                 error={errors.password?.message}
                             />
                         </Grid>

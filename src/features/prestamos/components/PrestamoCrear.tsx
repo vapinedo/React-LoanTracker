@@ -13,6 +13,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Prestamo } from '@features/prestamos/models/Prestamo';
 import { Empleado } from '@features/empleados/models/Empleado';
 import CustomTextField from '@components/form/CustomTextField';
+import CustomCurrencyInput from '@components/form/CustomCurrencyInput';
 import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOptions';
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
 
@@ -39,7 +40,7 @@ export default function PrestamoCrear() {
         mode: "onTouched",
     });
 
-    const { register, formState, handleSubmit } = form;
+    const { control, register, formState, handleSubmit } = form;
     const { errors, isSubmitting, isValid } = formState;
 
     useEffect(() => {
@@ -114,12 +115,11 @@ export default function PrestamoCrear() {
                     </div>
 
                     <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
+                        <CustomCurrencyInput
                             name="monto"
                             label="Monto"
-                            register={register("monto")}
-                            error={errors.monto?.message}
+                            control={control}
+                            helperText={errors.monto?.message}
                         />
                     </div>
 
