@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import db from '@firebaseConfig';
-import { useEffect, useState } from 'react';
 import Select from '@mui/material/Select';
+import { useEffect, useState } from 'react';
 import useClienteStore from '@stores/useClienteStore';
 import { FieldErrors, useForm } from 'react-hook-form';
 import useEmpleadoStore from '@stores/useEmpleadoStore';
@@ -42,7 +42,7 @@ export default function PrestamoEditar() {
         mode: "onTouched",
     });
 
-    const { register, formState, handleSubmit, setValue, getValues, watch } = form;
+    const { register, formState, handleSubmit, setValue, getValues, watch, reset } = form;
     const { errors, isSubmitting, isValid } = formState;
 
     useEffect(() => {
@@ -51,20 +51,23 @@ export default function PrestamoEditar() {
                 if (id) {
                     const prestamo = await getPrestamo(id);
                     if (prestamo) {
-                        setValue('id', prestamo.id);
-                        setValue('monto', prestamo.monto);
-                        setValue('interes', prestamo.interes);
-                        setValue('fechaInicio', prestamo.fechaInicio);
-                        setValue('fechaFinal', prestamo.fechaFinal);
-                        setValue('estado', prestamo.estado);
-                        setValue('modalidadDePago', prestamo.modalidadDePago);
+                        reset({
+                            id: prestamo.id,
+                            monto: prestamo.monto,
+                            interes: prestamo.interes,
+                            fechaInicio: prestamo.fechaInicio,
+                            fechaFinal: prestamo.fechaFinal,
+                            estado: prestamo.estado,
+                            modalidadDePago: prestamo.modalidadDePago,
+                            clienteRef: prestamo.clienteRef,
+                            empleadoRef: prestamo.empleadoRef,
+                        });
 
                         if (prestamo.clienteRef) {
                             const clienteDoc = await getDoc(prestamo.clienteRef);
                             if (clienteDoc.exists()) {
                                 const clienteData = clienteDoc.data() as Cliente;
                                 setCliente(clienteData);
-                                setValue('clienteRef', prestamo.clienteRef);
                             }
                         }
 
@@ -73,7 +76,6 @@ export default function PrestamoEditar() {
                             if (empleadoDoc.exists()) {
                                 const empleadoData = empleadoDoc.data() as Empleado;
                                 setEmpleado(empleadoData);
-                                setValue('empleadoRef', prestamo.empleadoRef);
                             }
                         }
                     }
@@ -84,7 +86,7 @@ export default function PrestamoEditar() {
         };
 
         loadPrestamo();
-    }, [id, setValue, getPrestamo]);
+    }, [id, reset, getPrestamo]);    
 
     useEffect(() => {
         if (!clientes.length) {

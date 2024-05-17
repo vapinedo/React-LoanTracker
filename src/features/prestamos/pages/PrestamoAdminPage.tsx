@@ -172,7 +172,7 @@ export default function PrestamosAdminPage() {
           columns={columns}
           density="compact"
           checkboxSelection
-          disableColumnFilter={false} // Make sure filtering is enabled
+          disableColumnFilter={false}
           pageSizeOptions={[12]}
           disableColumnSelector
           disableDensitySelector
