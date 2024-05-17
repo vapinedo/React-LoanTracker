@@ -20,8 +20,8 @@ const defaultValues: Prestamo = {
     id: null,
     monto: 0,
     interes: 0,
-    fechaInicio: new Date().getTime(),
-    fechaFinal: new Date().getTime(),
+    fechaInicio: Date.now(),
+    fechaFinal: Date.now(),
     estado: "Activo",
     modalidadDePago: "Diario",
     clienteRef: null,
@@ -47,33 +47,39 @@ export default function PrestamoEditar() {
 
     useEffect(() => {
         const loadPrestamo = async () => {
-            const prestamo = await getPrestamo(id);
-            if (prestamo) {
-                setValue('id', prestamo.id);
-                setValue('monto', prestamo.monto);
-                setValue('interes', prestamo.interes);
-                setValue('fechaInicio', prestamo.fechaInicio);
-                setValue('fechaFinal', prestamo.fechaFinal);
-                setValue('estado', prestamo.estado);
-                setValue('modalidadDePago', prestamo.modalidadDePago); // Actualiza el valor del Select
+            try {
+                if (id) {
+                    const prestamo = await getPrestamo(id);
+                    if (prestamo) {
+                        setValue('id', prestamo.id);
+                        setValue('monto', prestamo.monto);
+                        setValue('interes', prestamo.interes);
+                        setValue('fechaInicio', prestamo.fechaInicio);
+                        setValue('fechaFinal', prestamo.fechaFinal);
+                        setValue('estado', prestamo.estado);
+                        setValue('modalidadDePago', prestamo.modalidadDePago);
 
-                if (prestamo.clienteRef) {
-                    const clienteDoc = await getDoc(prestamo.clienteRef);
-                    if (clienteDoc.exists()) {
-                        const clienteData = clienteDoc.data() as Cliente;
-                        setCliente(clienteData);
-                        setValue('clienteRef', prestamo.clienteRef);
+                        if (prestamo.clienteRef) {
+                            const clienteDoc = await getDoc(prestamo.clienteRef);
+                            if (clienteDoc.exists()) {
+                                const clienteData = clienteDoc.data() as Cliente;
+                                setCliente(clienteData);
+                                setValue('clienteRef', prestamo.clienteRef);
+                            }
+                        }
+
+                        if (prestamo.empleadoRef) {
+                            const empleadoDoc = await getDoc(prestamo.empleadoRef);
+                            if (empleadoDoc.exists()) {
+                                const empleadoData = empleadoDoc.data() as Empleado;
+                                setEmpleado(empleadoData);
+                                setValue('empleadoRef', prestamo.empleadoRef);
+                            }
+                        }
                     }
                 }
-
-                if (prestamo.empleadoRef) {
-                    const empleadoDoc = await getDoc(prestamo.empleadoRef);
-                    if (empleadoDoc.exists()) {
-                        const empleadoData = empleadoDoc.data() as Empleado;
-                        setEmpleado(empleadoData);
-                        setValue('empleadoRef', prestamo.empleadoRef);
-                    }
-                }
+            } catch (error) {
+                console.error("Error loading prestamo:", error);
             }
         };
 
@@ -97,10 +103,10 @@ export default function PrestamoEditar() {
             const clienteId = value.id;
             const clienteRef = doc(db as Firestore, 'CLIENTES', clienteId);
             setValue('clienteRef', clienteRef);
-            setCliente(value); // Actualizar el estado local
+            setCliente(value);
         } else {
             setValue('clienteRef', null);
-            setCliente(null); // Actualizar el estado local
+            setCliente(null);
         }
     };
 
@@ -109,10 +115,10 @@ export default function PrestamoEditar() {
             const empleadoId = value.id;
             const empleadoRef = doc(db as Firestore, 'EMPLEADOS', empleadoId);
             setValue('empleadoRef', empleadoRef);
-            setEmpleado(value); // Actualizar el estado local
+            setEmpleado(value);
         } else {
             setValue('empleadoRef', null);
-            setEmpleado(null); // Actualizar el estado local
+            setEmpleado(null);
         }
     };
 
@@ -188,11 +194,8 @@ export default function PrestamoEditar() {
                         <FormControl fullWidth>
                             <InputLabel>Modalidad de pago</InputLabel>
                             <Select
-                                value={watch('modalidadDePago')} // Usamos watch para sincronizar el valor dinámicamente
-                                onChange={(event) => {
-                                    const value = event.target.value;
-                                    setValue('modalidadDePago', value);
-                                }}
+                                value={watch('modalidadDePago')}
+                                onChange={(event) => setValue('modalidadDePago', event.target.value)}
                             >
                                 {modalidadDePagoOptions.map((modalidad: string) => (
                                     <MenuItem key={modalidad} value={modalidad}>{modalidad}</MenuItem>
@@ -205,11 +208,8 @@ export default function PrestamoEditar() {
                         <FormControl fullWidth>
                             <InputLabel>Estado</InputLabel>
                             <Select
-                                value={watch('estado')} // Usamos watch para sincronizar el valor dinámicamente
-                                onChange={(event) => {
-                                    const value = event.target.value;
-                                    setValue('estado', value);
-                                }}
+                                value={watch('estado')}
+                                onChange={(event) => setValue('estado', event.target.value)}
                             >
                                 {estadoPrestamoOptions.map((estado: string) => (
                                     <MenuItem key={estado} value={estado}>{estado}</MenuItem>
