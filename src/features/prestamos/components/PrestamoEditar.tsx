@@ -138,6 +138,7 @@ export default function PrestamoEditar() {
                             getOptionLabel={(cliente: Cliente) => `${cliente.nombres} ${cliente.apellidos}`}
                             value={cliente}
                             onChange={handleClienteChange}
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
                             renderInput={(params) => <TextField {...params} label="Cliente" />}
                         />
                     </div>
@@ -149,6 +150,7 @@ export default function PrestamoEditar() {
                             getOptionLabel={(empleado: Empleado) => `${empleado.nombres} ${empleado.apellidos}`}
                             value={empleado}
                             onChange={handleEmpleadoChange}
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
                             renderInput={(params) => <TextField {...params} label="Empleado" />}
                         />
                     </div>
