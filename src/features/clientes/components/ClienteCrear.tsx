@@ -75,7 +75,7 @@ export default function ClienteCrear() {
                                 type="text"
                                 name="nombres"
                                 label="Nombres"
-                                register={register}
+                                register={register("nombres")}
                                 error={errors.nombres?.message}
                             />
                         </div>
@@ -85,7 +85,7 @@ export default function ClienteCrear() {
                                 type="text"
                                 name="apellidos"
                                 label="Apellidos"
-                                register={register}
+                                register={register("apellidos")}
                                 error={errors.apellidos?.message}
                             />
                         </div>
@@ -95,7 +95,7 @@ export default function ClienteCrear() {
                                 type="text"
                                 name="correo"
                                 label="Correo"
-                                register={register}
+                                register={register("correo")}
                                 error={errors.correo?.message}
                             />
                         </div>
@@ -105,7 +105,7 @@ export default function ClienteCrear() {
                                 type="text"
                                 name="celular"
                                 label="Celular"
-                                register={register}
+                                register={register("celular")}
                                 error={errors.celular?.message}
                             />
                         </div>
@@ -115,7 +115,7 @@ export default function ClienteCrear() {
                                 type="text"
                                 name="direccion"
                                 label="Dirección"
-                                register={register}
+                                register={register("direccion")}
                                 error={errors.direccion?.message}
                             />
                         </div>
