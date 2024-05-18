@@ -12,7 +12,7 @@ interface CustomCurrencyInputProps extends Omit<TextFieldProps, 'name' | 'onChan
 }
 
 const currencyMask = createNumberMask({
-  prefix: '$',
+  prefix: '',
   suffix: '',
   includeThousandsSeparator: true,
   thousandsSeparatorSymbol: '.',

@@ -1,10 +1,12 @@
 import dayjs from 'dayjs';
+import * as yup from 'yup';
 import db from '@firebaseConfig';
 import { useEffect } from 'react';
 import Select from '@mui/material/Select';
 import { useNavigate } from "react-router-dom";
 import { doc, Firestore } from 'firebase/firestore';
 import useClienteStore from '@stores/useClienteStore';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { FieldErrors, useForm } from 'react-hook-form';
 import useEmpleadoStore from '@stores/useEmpleadoStore';
 import usePrestamoStore from '@stores/usePrestamoStore';
@@ -17,17 +19,44 @@ import CustomCurrencyInput from '@components/form/CustomCurrencyInput';
 import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOptions';
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
 
+const fechaInicioTimestamp = new Date().getTime();
+const fechaFinalTimestamp = dayjs(fechaInicioTimestamp).add(30, 'day').valueOf();
+
 const defaultValues: Prestamo = {
     id: null,
     monto: null,
     interes: null,
-    fechaInicio: new Date().getTime(),
-    fechaFinal: new Date().getTime(),
+    fechaInicio: fechaInicioTimestamp,
+    fechaFinal: fechaFinalTimestamp,
     estado: "Activo",
     modalidadDePago: "Diario",
     clienteRef: null,
     empleadoRef: null,
-}
+};
+
+const schema = yup.object().shape({
+    clienteRef: yup.object().nullable().required('Cliente es requerido'),
+    empleadoRef: yup.object().nullable().required('Empleado es requerido'),
+    monto: yup
+        .string()
+        .test('required', 'Monto es requerido', function (value) {
+            return value !== undefined && value !== null && value.trim() !== '';
+        })
+        .test('numeric', 'El monto debe contener solo caracteres numéricos', function(value) {
+            if (typeof value === 'string' && value.trim() !== '') {
+                // Verifica si el valor contiene solo caracteres numéricos y opcionalmente separadores de miles y un punto decimal
+                return /^[0-9]+(\.[0-9]+)?(,[0-9]+)?$/.test(value.trim().replace(/\./g, ''));
+            }
+            // Si el valor no es una cadena válida, no cumple con la validación numérica
+            return false;
+        })                      
+        .nullable(),
+    interes: yup.number().nullable().positive('El interés debe ser mayor que cero'),
+    modalidadDePago: yup.string().required('Modalidad de pago es requerida'),
+    estado: yup.string().required('Estado es requerido'),
+    fechaInicio: yup.number().required('Fecha de inicio es requerida'),
+    fechaFinal: yup.number().required('Fecha límite es requerida').min(yup.ref('fechaInicio'), 'La fecha límite debe ser posterior a la fecha de inicio')
+});
 
 export default function PrestamoCrear() {
     const navigate = useNavigate();
@@ -38,6 +67,7 @@ export default function PrestamoCrear() {
     const form = useForm<Prestamo>({
         defaultValues,
         mode: "onTouched",
+        resolver: yupResolver(schema),
     });
 
     const { control, register, formState, handleSubmit } = form;
