@@ -103,14 +103,14 @@ export default function PrestamosAdminPage() {
     {
       field: 'clienteNombre',
       headerName: 'Cliente',
-      width: 240,
+      width: 180,
       editable: true,
       renderCell: handleDetails,
     },
     {
       field: 'empleadoNombre',
       headerName: 'Empleado',
-      width: 240,
+      width: 180,
       editable: true,
       renderCell: (params) => params.value,
     },
@@ -123,7 +123,7 @@ export default function PrestamosAdminPage() {
     {
       field: 'estado',
       headerName: 'Estado',
-      width: 110,
+      width: 140,
       editable: true,
     },
     {
@@ -135,14 +135,14 @@ export default function PrestamosAdminPage() {
     {
       field: 'fechaInicio',
       headerName: 'Fecha Inicial',
-      width: 250,
+      width: 150,
       editable: true,
       renderCell: ({ formattedValue }) => getHumanDate(formattedValue),
     },
     {
       field: 'fechaFinal',
       headerName: 'Fecha Límite',
-      width: 250,
+      width: 150,
       editable: true,
       renderCell: ({ formattedValue }) => getHumanDate(formattedValue),
     },
