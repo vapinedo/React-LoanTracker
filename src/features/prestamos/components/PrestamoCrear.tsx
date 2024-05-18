@@ -139,6 +139,7 @@ export default function PrestamoCrear() {
                             <Select
                                 defaultValue="Diario"
                                 name="modalidadDePago"
+                                label="Modalidad de pago"
                                 onChange={(event) => {
                                     const value = event?.target.value;
                                     form.setValue("modalidadDePago", value);
@@ -155,8 +156,9 @@ export default function PrestamoCrear() {
                         <FormControl fullWidth>
                             <InputLabel>Estado</InputLabel>
                             <Select
-                                defaultValue="Activo"
                                 name="estado"
+                                defaultValue="Activo"
+                                label="Estado"
                                 onChange={(event) => {
                                     const value = event?.target.value;
                                     form.setValue("estado", value);
