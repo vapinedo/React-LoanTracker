@@ -19,8 +19,8 @@ import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } fr
 
 const defaultValues: Prestamo = {
     id: null,
-    monto: 0,
-    interes: 0,
+    monto: null,
+    interes: null,
     fechaInicio: new Date().getTime(),
     fechaFinal: new Date().getTime(),
     estado: "Activo",
