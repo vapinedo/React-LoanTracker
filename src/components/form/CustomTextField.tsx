@@ -16,7 +16,6 @@ const CustomTextField: FC<InputProps> = ({ name, error, register, ...rest }) => 
             {...(register ? register : {})}
             name={name}
             sx={{ width: '100%' }}
-            InputLabelProps={{ shrink: true }}
             helperText={error && <span className="text-danger">{error}</span>}
             error={!!error}
         />
