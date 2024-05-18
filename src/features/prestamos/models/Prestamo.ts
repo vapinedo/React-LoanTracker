@@ -2,7 +2,7 @@ import { DocumentReference } from "firebase/firestore";
 
 export interface Prestamo {
     id: string | null;
-    monto: number | null;
+    monto: string | null;
     estado: string;
     interes: number | null;
     fechaFinal: number;
