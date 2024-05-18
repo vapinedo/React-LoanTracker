@@ -19,12 +19,15 @@ import CustomCurrencyInput from '@components/form/CustomCurrencyInput';
 import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOptions';
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
 
+const fechaInicioTimestamp = new Date().getTime();
+const fechaFinalTimestamp = dayjs(fechaInicioTimestamp).add(30, 'day').valueOf();
+
 const defaultValues: Prestamo = {
     id: null,
     monto: null,
     interes: null,
-    fechaInicio: new Date().getTime(),
-    fechaFinal: new Date().getTime(),
+    fechaInicio: fechaInicioTimestamp,
+    fechaFinal: fechaFinalTimestamp,
     estado: "Activo",
     modalidadDePago: "Diario",
     clienteRef: null,
