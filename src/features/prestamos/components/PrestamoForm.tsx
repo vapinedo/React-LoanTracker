@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import * as yup from 'yup';
 import db from '@firebaseConfig';
 import Select from '@mui/material/Select';
 import { useEffect, useState } from 'react';
@@ -15,6 +14,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Prestamo } from '@features/prestamos/models/Prestamo';
 import { Empleado } from '@features/empleados/models/Empleado';
 import CustomTextField from '@components/form/CustomTextField';
+import PrestamoFormSchema from '@features/prestamos/PrestamoFormSchema';
 import CustomCurrencyInput from '@app/components/form/CustomCurrencyInput';
 import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOptions';
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
@@ -30,21 +30,6 @@ const defaultValues: Prestamo = {
     clienteRef: null,
     empleadoRef: null,
 };
-
-const schema = yup.object().shape({
-    clienteRef: yup.object().nullable().required('Cliente es requerido'),
-    empleadoRef: yup.object().nullable().required('Empleado es requerido'),
-    monto: yup
-        .string()
-        .test('required', 'Monto es requerido', value => value && value.trim() !== '')
-        .test('numeric', 'El monto debe contener solo caracteres numéricos', value => /^[0-9]+(\.[0-9]+)?(,[0-9]+)?$/.test(value?.trim()?.replace(/\./g, '')))
-        .nullable(),
-    interes: yup.number().nullable().positive('El interés debe ser mayor que cero'),
-    modalidadDePago: yup.string().required('Modalidad de pago es requerida'),
-    estado: yup.string().required('Estado es requerido'),
-    fechaInicio: yup.number().required('Fecha de inicio es requerida'),
-    fechaFinal: yup.number().required('Fecha límite es requerida').min(yup.ref('fechaInicio'), 'La fecha límite debe ser posterior a la fecha de inicio')
-});
 
 interface PrestamoFormProps {
     isEditMode: boolean;
@@ -62,7 +47,7 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
     const form = useForm<Prestamo>({
         defaultValues: defaultValues,
         mode: "onTouched",
-        resolver: yupResolver(schema),
+        resolver: yupResolver(PrestamoFormSchema),
     });
 
     const { control, register, formState, handleSubmit, setValue, getValues, watch, reset } = form;
