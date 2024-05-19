@@ -115,7 +115,7 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
         }
     }, [empleados, getAllEmpleados]);
 
-    const handleClienteChange = (event: any, value: Cliente | null) => {
+    const handleClienteChange = (_event: any, value: Cliente | null) => {
         if (value) {
             const clienteRef = doc(db as Firestore, 'CLIENTES', value.id);
             setValue('clienteRef', clienteRef);
@@ -126,7 +126,7 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
         }
     };
 
-    const handleEmpleadoChange = (event: any, value: Empleado | null) => {
+    const handleEmpleadoChange = (_event: any, value: Empleado | null) => {
         if (value) {
             const empleadoRef = doc(db as Firestore, 'EMPLEADOS', value.id);
             setValue('empleadoRef', empleadoRef);
