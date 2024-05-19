@@ -187,8 +187,8 @@ export default function PrestamoCrear() {
                             <InputLabel>Estado</InputLabel>
                             <Select
                                 name="estado"
-                                defaultValue="Activo"
                                 label="Estado"
+                                defaultValue="Activo"
                                 onChange={(event) => {
                                     const value = event?.target.value;
                                     form.setValue("estado", value);
