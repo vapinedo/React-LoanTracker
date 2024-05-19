@@ -6,7 +6,7 @@ import { doc, getDocs, getDoc, setDoc, collection, runTransaction, deleteDoc, Do
 
 const COLLECTION = "PRESTAMOS";
 
-export default function usePrestamos() {
+export default function usePrestamoService() {
 
     const getAllPrestamos = async (): Promise<Prestamo[]> => {
         const prestamos: Prestamo[] = [];
