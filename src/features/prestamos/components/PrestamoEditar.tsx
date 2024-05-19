@@ -1,8 +1,10 @@
 import dayjs from 'dayjs';
+import * as yup from 'yup';
 import db from '@firebaseConfig';
 import Select from '@mui/material/Select';
 import { useEffect, useState } from 'react';
 import useClienteStore from '@stores/useClienteStore';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { FieldErrors, useForm } from 'react-hook-form';
 import useEmpleadoStore from '@stores/useEmpleadoStore';
 import usePrestamoStore from '@stores/usePrestamoStore';
@@ -13,20 +15,48 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Prestamo } from '@features/prestamos/models/Prestamo';
 import { Empleado } from '@features/empleados/models/Empleado';
 import CustomTextField from '@components/form/CustomTextField';
+import CustomCurrencyInput from '@app/components/form/CustomCurrencyInput';
 import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOptions';
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
 
+const fechaInicioTimestamp = new Date().getTime();
+const fechaFinalTimestamp = dayjs(fechaInicioTimestamp).add(30, 'day').valueOf();
+
 const defaultValues: Prestamo = {
     id: null,
-    monto: 0,
-    interes: 0,
-    fechaInicio: Date.now(),
-    fechaFinal: Date.now(),
+    monto: null,
+    interes: null,
+    fechaInicio: fechaInicioTimestamp,
+    fechaFinal: fechaFinalTimestamp,
     estado: "Activo",
     modalidadDePago: "Diario",
     clienteRef: null,
     empleadoRef: null,
 };
+
+const schema = yup.object().shape({
+    clienteRef: yup.object().nullable().required('Cliente es requerido'),
+    empleadoRef: yup.object().nullable().required('Empleado es requerido'),
+    monto: yup
+        .string()
+        .test('required', 'Monto es requerido', function (value) {
+            return value !== undefined && value !== null && value.trim() !== '';
+        })
+        .test('numeric', 'El monto debe contener solo caracteres numéricos', function(value) {
+            if (typeof value === 'string' && value.trim() !== '') {
+                // Verifica si el valor contiene solo caracteres numéricos y opcionalmente separadores de miles y un punto decimal
+                return /^[0-9]+(\.[0-9]+)?(,[0-9]+)?$/.test(value.trim().replace(/\./g, ''));
+            }
+            // Si el valor no es una cadena válida, no cumple con la validación numérica
+            return false;
+        })                      
+        .nullable(),
+    interes: yup.number().nullable().positive('El interés debe ser mayor que cero'),
+    modalidadDePago: yup.string().required('Modalidad de pago es requerida'),
+    estado: yup.string().required('Estado es requerido'),
+    fechaInicio: yup.number().required('Fecha de inicio es requerida'),
+    fechaFinal: yup.number().required('Fecha límite es requerida').min(yup.ref('fechaInicio'), 'La fecha límite debe ser posterior a la fecha de inicio')
+});
 
 export default function PrestamoEditar() {
     const navigate = useNavigate();
@@ -40,9 +70,10 @@ export default function PrestamoEditar() {
     const form = useForm<Prestamo>({
         defaultValues: defaultValues,
         mode: "onTouched",
+        resolver: yupResolver(schema),
     });
 
-    const { register, formState, handleSubmit, setValue, getValues, watch, reset } = form;
+    const { control, register, formState, handleSubmit, setValue, getValues, watch, reset } = form;
     const { errors, isSubmitting, isValid } = formState;
 
     useEffect(() => {
@@ -173,13 +204,12 @@ export default function PrestamoEditar() {
                     </div>
 
                     <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
+                        <CustomCurrencyInput
                             name="monto"
                             label="Monto"
-                            register={register("monto")}
-                            error={errors.monto?.message}
-                        />
+                            control={control}
+                            helperText={errors.monto?.message}
+                        />                        
                     </div>
 
                     <div className="col-md-8 mb-3">
@@ -196,6 +226,7 @@ export default function PrestamoEditar() {
                         <FormControl fullWidth>
                             <InputLabel>Modalidad de pago</InputLabel>
                             <Select
+                                label="Modalidad de pago"
                                 value={watch('modalidadDePago')}
                                 onChange={(event) => setValue('modalidadDePago', event.target.value)}
                             >
@@ -210,6 +241,7 @@ export default function PrestamoEditar() {
                         <FormControl fullWidth>
                             <InputLabel>Estado</InputLabel>
                             <Select
+                                label="Estado"
                                 value={watch('estado')}
                                 onChange={(event) => setValue('estado', event.target.value)}
                             >
