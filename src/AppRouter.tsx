@@ -4,11 +4,11 @@ import useAuth from "@services/useAuth";
 import { Toaster } from "react-hot-toast";
 import { Route, Routes } from "react-router-dom"
 import Breadcrumbs from "@components/Breadcrumbs";
-import ClientesRouter from "@routes/ClientesRouter";
 import NotFoundPage from "@components/NotFoundPage";
-import PrestamosRouter from "@routes/PrestamosRouter";
-import EmpleadosRouter from "@routes/EmpleadosRouter";
 import LoginPage from "@features/auth/pages/LoginPage";
+import ClientesRouter from "@app/features/clientes/ClientesRouter";
+import PrestamosRouter from "@app/features/prestamos/PrestamosRouter";
+import EmpleadosRouter from "@app/features/empleados/EmpleadosRouter";
 
 export default function AppRouter() {
 
