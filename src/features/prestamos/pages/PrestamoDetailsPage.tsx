@@ -1,14 +1,13 @@
-import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import usePrestamos from "@services/usePrestamos";
-import useDatetime from "@app/services/useDatetime";
+import useDatetime from "@services/useDatetime";
+import usePrestamoService from "@services/usePrestamoService";
 
 export default function PrestamoDetailsPage() {
 
     const params = useParams();
     const { getHumanDate } = useDatetime();
-    const { getPrestamoById } = usePrestamos();
+    const { getPrestamoById } = usePrestamoService();
     const [prestamo, setPrestamo] = useState<any>(null)
 
     useEffect(() => {

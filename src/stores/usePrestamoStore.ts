@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import usePrestamos from "@services/usePrestamos";
 import { firebaseApp } from "@app/firebaseConfig";
 import { doc, getFirestore  } from "firebase/firestore";
 import { persist, PersistStorage } from "zustand/middleware";
+import usePrestamoService from "@services/usePrestamoService";
 import { Prestamo } from "@features/prestamos/models/Prestamo";
 
 interface PrestamoStore {
@@ -72,7 +72,7 @@ const usePrestamoStore = create<PrestamoStore>()(
             fetchPrestamos: async () => {
                 set({ loading: true, error: null });
                 try {
-                    const prestamos = await usePrestamos().getAllPrestamos();
+                    const prestamos = await usePrestamoService().getAllPrestamos();
                     set({ prestamos, loading: false });
                 } catch (error: unknown) {
                     if (error instanceof Error) {
@@ -91,7 +91,7 @@ const usePrestamoStore = create<PrestamoStore>()(
             createPrestamo: async (prestamo: Prestamo) => {
                 set({ loading: true, error: null });
                 try {
-                    await usePrestamos().createPrestamo(prestamo);
+                    await usePrestamoService().createPrestamo(prestamo);
                     // Fetch the updated list of prestamos
                     await get().fetchPrestamos();
                 } catch (error: unknown) {
@@ -106,7 +106,7 @@ const usePrestamoStore = create<PrestamoStore>()(
             updatePrestamo: async (prestamo: Prestamo) => {
                 set({ loading: true, error: null });
                 try {
-                    await usePrestamos().updatePrestamo(prestamo);
+                    await usePrestamoService().updatePrestamo(prestamo);
                     // Fetch the updated list of prestamos
                     await get().fetchPrestamos();
                 } catch (error: unknown) {
@@ -121,7 +121,7 @@ const usePrestamoStore = create<PrestamoStore>()(
             deletePrestamo: async (id: string) => {
                 set({ loading: true, error: null });
                 try {
-                    await usePrestamos().deletePrestamo(id);
+                    await usePrestamoService().deletePrestamo(id);
                     // Fetch the updated list of prestamos
                     await get().fetchPrestamos();
                 } catch (error: unknown) {
@@ -131,7 +131,7 @@ const usePrestamoStore = create<PrestamoStore>()(
                         set({ error: String(error), loading: false });
                     }
                 }
-            },
+            }
         }),
         {
             name: "prestamos-store",

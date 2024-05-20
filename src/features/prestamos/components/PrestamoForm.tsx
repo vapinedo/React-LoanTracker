@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import * as yup from 'yup';
 import db from '@firebaseConfig';
 import Select from '@mui/material/Select';
 import { useEffect, useState } from 'react';
@@ -15,62 +14,40 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Prestamo } from '@features/prestamos/models/Prestamo';
 import { Empleado } from '@features/empleados/models/Empleado';
 import CustomTextField from '@components/form/CustomTextField';
+import PrestamoFormSchema from '@features/prestamos/PrestamoFormSchema';
 import CustomCurrencyInput from '@app/components/form/CustomCurrencyInput';
 import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOptions';
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
-
-const fechaInicioTimestamp = new Date().getTime();
-const fechaFinalTimestamp = dayjs(fechaInicioTimestamp).add(30, 'day').valueOf();
 
 const defaultValues: Prestamo = {
     id: null,
     monto: null,
     interes: null,
-    fechaInicio: fechaInicioTimestamp,
-    fechaFinal: fechaFinalTimestamp,
+    fechaInicio: new Date().getTime(),
+    fechaFinal: dayjs(new Date()).add(30, 'day').valueOf(),
     estado: "Activo",
     modalidadDePago: "Diario",
     clienteRef: null,
     empleadoRef: null,
 };
 
-const schema = yup.object().shape({
-    clienteRef: yup.object().nullable().required('Cliente es requerido'),
-    empleadoRef: yup.object().nullable().required('Empleado es requerido'),
-    monto: yup
-        .string()
-        .test('required', 'Monto es requerido', function (value) {
-            return value !== undefined && value !== null && value.trim() !== '';
-        })
-        .test('numeric', 'El monto debe contener solo caracteres numéricos', function(value) {
-            if (typeof value === 'string' && value.trim() !== '') {
-                // Verifica si el valor contiene solo caracteres numéricos y opcionalmente separadores de miles y un punto decimal
-                return /^[0-9]+(\.[0-9]+)?(,[0-9]+)?$/.test(value.trim().replace(/\./g, ''));
-            }
-            // Si el valor no es una cadena válida, no cumple con la validación numérica
-            return false;
-        })                      
-        .nullable(),
-    interes: yup.number().nullable().positive('El interés debe ser mayor que cero'),
-    modalidadDePago: yup.string().required('Modalidad de pago es requerida'),
-    estado: yup.string().required('Estado es requerido'),
-    fechaInicio: yup.number().required('Fecha de inicio es requerida'),
-    fechaFinal: yup.number().required('Fecha límite es requerida').min(yup.ref('fechaInicio'), 'La fecha límite debe ser posterior a la fecha de inicio')
-});
+interface PrestamoFormProps {
+    isEditMode: boolean;
+}
 
-export default function PrestamoEditar() {
+export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const { clientes, getAllClientes } = useClienteStore();
     const { empleados, getAllEmpleados } = useEmpleadoStore();
+    const { createPrestamo, updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
     const [cliente, setCliente] = useState<Cliente | null>(null);
     const [empleado, setEmpleado] = useState<Empleado | null>(null);
-    const { updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
 
     const form = useForm<Prestamo>({
         defaultValues: defaultValues,
         mode: "onTouched",
-        resolver: yupResolver(schema),
+        resolver: yupResolver(PrestamoFormSchema),
     });
 
     const { control, register, formState, handleSubmit, setValue, getValues, watch, reset } = form;
@@ -78,46 +55,38 @@ export default function PrestamoEditar() {
 
     useEffect(() => {
         const loadPrestamo = async () => {
-            try {
-                if (id) {
+            if (isEditMode && id) {
+                try {
                     const prestamo = await getPrestamo(id);
                     if (prestamo) {
                         reset({
-                            id: prestamo.id,
-                            monto: prestamo.monto,
-                            interes: prestamo.interes,
-                            fechaInicio: prestamo.fechaInicio,
-                            fechaFinal: prestamo.fechaFinal,
-                            estado: prestamo.estado,
-                            modalidadDePago: prestamo.modalidadDePago,
-                            clienteRef: prestamo.clienteRef,
-                            empleadoRef: prestamo.empleadoRef,
+                            ...prestamo,
+                            fechaInicio: dayjs(prestamo.fechaInicio).valueOf(),
+                            fechaFinal: dayjs(prestamo.fechaFinal).valueOf(),
                         });
 
                         if (prestamo.clienteRef) {
                             const clienteDoc = await getDoc(prestamo.clienteRef);
                             if (clienteDoc.exists()) {
-                                const clienteData = clienteDoc.data() as Cliente;
-                                setCliente(clienteData);
+                                setCliente(clienteDoc.data() as Cliente);
                             }
                         }
 
                         if (prestamo.empleadoRef) {
                             const empleadoDoc = await getDoc(prestamo.empleadoRef);
                             if (empleadoDoc.exists()) {
-                                const empleadoData = empleadoDoc.data() as Empleado;
-                                setEmpleado(empleadoData);
+                                setEmpleado(empleadoDoc.data() as Empleado);
                             }
                         }
                     }
+                } catch (error) {
+                    console.error("Error loading prestamo:", error);
                 }
-            } catch (error) {
-                console.error("Error loading prestamo:", error);
             }
         };
 
         loadPrestamo();
-    }, [id, reset, getPrestamo]);    
+    }, [isEditMode, id, reset, getPrestamo]);
 
     useEffect(() => {
         if (!clientes.length) {
@@ -131,10 +100,9 @@ export default function PrestamoEditar() {
         }
     }, [empleados, getAllEmpleados]);
 
-    const handleClienteChange = (event: any, value: Cliente | null) => {
-        if (value) {
-            const clienteId = value.id;
-            const clienteRef = doc(db as Firestore, 'CLIENTES', clienteId);
+    const handleClienteChange = (_event: any, value: Cliente & { id: string } | null) => {
+        if (value && value.id) {
+            const clienteRef = doc(db as Firestore, 'CLIENTES', value.id);
             setValue('clienteRef', clienteRef);
             setCliente(value);
         } else {
@@ -143,10 +111,9 @@ export default function PrestamoEditar() {
         }
     };
 
-    const handleEmpleadoChange = (event: any, value: Empleado | null) => {
-        if (value) {
-            const empleadoId = value.id;
-            const empleadoRef = doc(db as Firestore, 'EMPLEADOS', empleadoId);
+    const handleEmpleadoChange = (_event: any, value: Empleado & { id: string } | null) => {
+        if (value && value.id) {
+            const empleadoRef = doc(db as Firestore, 'EMPLEADOS', value.id);
             setValue('empleadoRef', empleadoRef);
             setEmpleado(value);
         } else {
@@ -160,7 +127,12 @@ export default function PrestamoEditar() {
         const empleadoRef = getValues('empleadoRef');
         const updatedPrestamo = { ...prestamo, clienteRef, empleadoRef };
 
-        await updatePrestamo(updatedPrestamo);
+        if (isEditMode) {
+            await updatePrestamo(updatedPrestamo);
+        } else {
+            await createPrestamo(updatedPrestamo);
+        }
+
         navigate("/prestamos");
     };
 
@@ -174,7 +146,7 @@ export default function PrestamoEditar() {
     return (
         <section>
             <header className='mb-4 d-flex justify-content-between align-items-center'>
-                <h2>Editar prestamo</h2>
+                <h2>{isEditMode ? 'Editar préstamo' : 'Nuevo préstamo'}</h2>
             </header>
 
             <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
@@ -260,8 +232,7 @@ export default function PrestamoEditar() {
                             minDate={dayjs(new Date())}
                             defaultValue={dayjs(new Date())}
                             onChange={(newDate) => {
-                                const selectedDate = dayjs(newDate);
-                                const timeStamp = selectedDate.valueOf();
+                                const timeStamp = dayjs(newDate).valueOf();
                                 setValue('fechaInicio', timeStamp);
                             }}
                         />
@@ -275,15 +246,19 @@ export default function PrestamoEditar() {
                             minDate={dayjs(new Date())}
                             defaultValue={dayjs(new Date())}
                             onChange={(newDate) => {
-                                const selectedDate = dayjs(newDate);
-                                const timeStamp = selectedDate.valueOf();
+                                const timeStamp = dayjs(newDate).valueOf();
                                 setValue('fechaFinal', timeStamp);
                             }}
                         />
                     </div>
                 </div>
-                <Button type="submit" sx={{ marginTop: 2 }} variant="contained" color="success" disabled={isSubmitting || !isValid}>
-                    Guardar
+                <Button 
+                    type="submit" 
+                    variant="contained" 
+                    sx={{ marginTop: 2 }} 
+                    disabled={isSubmitting || !isValid}
+                    color={isEditMode ? 'success' : 'primary'}>
+                    {isEditMode ? 'Actualizar' : 'Guardar'}
                 </Button>
             </form>
         </section>
