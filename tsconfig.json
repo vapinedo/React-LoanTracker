@@ -27,6 +27,7 @@
       "@stores/*": ["stores/*"],
       "@routes/*": ["routes/*"],
       "@models/*": ["models/*"],
+      "@layouts/*": ["layouts/*"],
       "@features/*": ["features/*"],
       "@services/*": ["services/*"],
       "@components/*": ["components/*"],

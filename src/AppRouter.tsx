@@ -18,7 +18,7 @@ export default function AppRouter() {
         <React.Fragment>
             {user && <Navbar />}
 
-            <section className="container-fluid mt-4 mb-5 px-5">
+            <section className="container mt-4 mb-5 px-5">
                 <Toaster />
                 <Breadcrumbs />
                 <Routes>

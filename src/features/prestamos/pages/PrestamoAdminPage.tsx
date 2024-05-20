@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import BoxShadow from "@layouts/BoxShadow";
 import { useEffect, useState } from "react";
 import { getDoc } from "firebase/firestore";
 import useDatetime from "@services/useDatetime";
@@ -103,46 +104,46 @@ export default function PrestamosAdminPage() {
     {
       field: 'clienteNombre',
       headerName: 'Cliente',
-      width: 180,
+      width: 170,
       editable: true,
       renderCell: handleDetails,
     },
     {
       field: 'empleadoNombre',
       headerName: 'Empleado',
-      width: 180,
+      width: 170,
       editable: true,
       renderCell: (params) => params.value,
     },
     {
       field: 'monto',
       headerName: 'Valor',
-      width: 120,
+      width: 110,
       editable: true,
     },
     {
       field: 'estado',
       headerName: 'Estado',
-      width: 140,
+      width: 130,
       editable: true,
     },
     {
       field: 'modalidadDePago',
       headerName: 'Modo de Pago',
-      width: 130,
+      width: 120,
       editable: true,
     },
     {
       field: 'fechaInicio',
       headerName: 'Fecha Inicial',
-      width: 150,
+      width: 140,
       editable: true,
       renderCell: ({ formattedValue }) => getHumanDate(formattedValue),
     },
     {
       field: 'fechaFinal',
       headerName: 'Fecha Límite',
-      width: 150,
+      width: 140,
       editable: true,
       renderCell: ({ formattedValue }) => getHumanDate(formattedValue),
     },
@@ -160,21 +161,21 @@ export default function PrestamosAdminPage() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div>
+    <BoxShadow>
       <header className="d-flex justify-content-between align-items-center">
         <h2>Lista de Prestamos</h2>
         <button onClick={() => navigate("/prestamos/nuevo")} className="btn btn-primary">Crear prestamo</button>
       </header>
 
-      <Box sx={{ height: "100%", width: '100%', marginTop: 3 }}>
+      <Box sx={{ height: "100%", width: '100%', marginTop: 1 }}>
         <DataGrid
-          rows={prestamosData}
           columns={columns}
           density="compact"
           checkboxSelection
-          disableColumnFilter={false}
-          pageSizeOptions={[12]}
+          disableColumnFilter
+          rows={prestamosData}
           disableColumnSelector
+          pageSizeOptions={[12]}
           disableDensitySelector
           disableRowSelectionOnClick
           slots={{ toolbar: GridToolbar }}
@@ -190,9 +191,22 @@ export default function PrestamosAdminPage() {
               },
             },
           }}
+          sx={{
+            border: "none",
+            overflowX: "hidden",
+            "& .css-128fb87-MuiDataGrid-toolbarContainer": {
+              display: "flex",
+              marginTop: "12px",
+              marginBottom: "22px",
+              flexDirection: "row-reverse",
+            }
+          }}
+          localeText={{
+            toolbarExport: "Exportar",
+            toolbarQuickFilterPlaceholder: "Buscar...",
+          }}
         />
       </Box>
-
-    </div>
+    </BoxShadow>
   )
 }

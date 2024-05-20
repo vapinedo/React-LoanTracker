@@ -1,11 +1,12 @@
 import * as Yup from "yup";
 import useAuth from "@services/useAuth";
+import BoxShadow from "@layouts/BoxShadow";
+import { Button, Grid } from "@mui/material";
 import { Auth } from "@features/auth/models/Auth";
 import { Link, useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
 import CustomTextField from "@components/form/CustomTextField";
-import { Box, Button, Container, CssBaseline, Grid, Typography } from "@mui/material";
 
 const defaultValues: Auth = {
     email: "",
@@ -49,21 +50,19 @@ export default function LoginPage() {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                }}
-            >
-                <Typography component="h1" variant="h5">
-                    Iniciar Sesión
-                </Typography>
+        <section style={{
+            display: "flex",
+            height: "100vh", 
+            marginTop: "-50px",
+            alignItems: "center",
+            justifyContent: "center",
+         }}>
+            <BoxShadow>
+                <h2 className="text-center">
+                    Loan Tracker
+                </h2>
 
-                <Box component="form" onSubmit={handleSubmit(onSubmit, onError)} sx={{ mt: 3 }} noValidate>
+                <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <CustomTextField
@@ -104,8 +103,8 @@ export default function LoginPage() {
                             </Link>
                         </Grid>
                     </Grid>
-                </Box>
-            </Box>
-        </Container>
+                </form>
+            </BoxShadow>
+        </section>
     )
 }

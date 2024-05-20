@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { Box } from '@mui/material';
-import useEmpleadoStore from '@app/stores/useEmpleadoStore';
+import BoxShadow from '@layouts/BoxShadow';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import useNotificaciones from "@services/useNotificaciones";
+import useEmpleadoStore from '@app/stores/useEmpleadoStore';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 
 export default function EmpleadosAdminPage() {
@@ -95,7 +96,7 @@ export default function EmpleadosAdminPage() {
   ];
 
   return (
-    <>
+    <BoxShadow>
       <header className="d-flex justify-content-between align-items-center">
         <h2>Lista de Empleados</h2>
         <button onClick={() => navigate('/empleados/nuevo')} className="btn btn-primary">
@@ -130,6 +131,6 @@ export default function EmpleadosAdminPage() {
         )}
       </Box>
 
-    </>
+    </BoxShadow>
   );
 }
