@@ -14,7 +14,6 @@ interface PrestamoStore {
     createPrestamo: (prestamo: Prestamo) => Promise<void>;
     updatePrestamo: (prestamo: Prestamo) => Promise<void>;
     deletePrestamo: (id: string) => Promise<void>;
-    reset: () => void;
 }
 
 const firestore = getFirestore(firebaseApp);
@@ -132,11 +131,7 @@ const usePrestamoStore = create<PrestamoStore>()(
                         set({ error: String(error), loading: false });
                     }
                 }
-            },
-
-            reset: () => {
-                set({ prestamos: [], loading: false, error: null });
-            },
+            }
         }),
         {
             name: "prestamos-store",
