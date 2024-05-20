@@ -1,7 +1,9 @@
 body, html {
     margin: 0;
     padding: 0;
-    background-color: #EBEBEB;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgb(238, 242, 246);
 }
 
 .grid-table-linkable-column {
@@ -21,8 +23,8 @@ body, html {
 }
 
 .box-shadow-layout {
-    padding: 1.4rem;
-    border-radius: 5px;
+    padding: 1.7rem;
+    border-radius: 7px;
     background-color: #fff;
     box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
 }

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import db from '@firebaseConfig';
 import Select from '@mui/material/Select';
+import BoxShadow from '@layouts/BoxShadow';
 import { useEffect, useState } from 'react';
 import useClienteStore from '@stores/useClienteStore';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -144,114 +145,127 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <section>
+        <BoxShadow>
             <header className='mb-4 d-flex justify-content-between align-items-center'>
                 <h2>{isEditMode ? 'Editar préstamo' : 'Nuevo préstamo'}</h2>
             </header>
 
             <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
                 <div className="row">
-                    <div className="col-md-8 mb-3">
-                        <Autocomplete
-                            fullWidth
-                            options={clientes}
-                            getOptionLabel={(cliente: Cliente) => `${cliente.nombres} ${cliente.apellidos}`}
-                            value={cliente}
-                            onChange={handleClienteChange}
-                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                            renderInput={(params) => <TextField {...params} label="Cliente" />}
-                        />
+                    <div className="col-md-6">
+                        <div className="col-md-12 mb-3">
+                            <Autocomplete
+                                fullWidth
+                                size='small'
+                                value={cliente}
+                                options={clientes}
+                                onChange={handleClienteChange}
+                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                renderInput={(params) => <TextField {...params} label="Cliente" />}
+                                getOptionLabel={(cliente: Cliente) => `${cliente.nombres} ${cliente.apellidos}`}
+                            />
+                        </div>
+
+                        <div className="col-md-12 mb-3">
+                            <Autocomplete
+                                fullWidth
+                                size='small'
+                                value={empleado}
+                                options={empleados}
+                                onChange={handleEmpleadoChange}
+                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                renderInput={(params) => <TextField {...params} label="Empleado" />}
+                                getOptionLabel={(empleado: Empleado) => `${empleado.nombres} ${empleado.apellidos}`}
+                            />
+                        </div>
+
+                        <div className="col-md-12 mb-3">
+                            <CustomCurrencyInput
+                                name="monto"
+                                label="Monto"
+                                size='small'
+                                control={control}
+                                helperText={errors.monto?.message}
+                            />                        
+                        </div>
+
+                        <div className="col-md-12 mb-3">
+                            <CustomTextField
+                                type="text"
+                                size='small'
+                                name="interes"
+                                label="Interés"
+                                register={register("interes")}
+                                error={errors.interes?.message}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-md-8 mb-3">
-                        <Autocomplete
-                            fullWidth
-                            options={empleados}
-                            getOptionLabel={(empleado: Empleado) => `${empleado.nombres} ${empleado.apellidos}`}
-                            value={empleado}
-                            onChange={handleEmpleadoChange}
-                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                            renderInput={(params) => <TextField {...params} label="Empleado" />}
-                        />
-                    </div>
+                    <div className="col-md-6">
+                        <div className="col-md-12 mb-3">
+                            <FormControl fullWidth>
+                                <InputLabel>Modalidad de pago</InputLabel>
+                                <Select
+                                    size='small'
+                                    label="Modalidad de pago"
+                                    value={watch('modalidadDePago')}
+                                    onChange={(event) => setValue('modalidadDePago', event.target.value)}
+                                >
+                                    {modalidadDePagoOptions.map((modalidad: string) => (
+                                        <MenuItem key={modalidad} value={modalidad}>{modalidad}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </div>
 
-                    <div className="col-md-8 mb-3">
-                        <CustomCurrencyInput
-                            name="monto"
-                            label="Monto"
-                            control={control}
-                            helperText={errors.monto?.message}
-                        />                        
-                    </div>
+                        <div className="col-md-12 mb-3">
+                            <FormControl fullWidth>
+                                <InputLabel>Estado</InputLabel>
+                                <Select
+                                    size='small'
+                                    label="Estado"
+                                    value={watch('estado')}
+                                    onChange={(event) => setValue('estado', event.target.value)}
+                                >
+                                    {estadoPrestamoOptions.map((estado: string) => (
+                                        <MenuItem key={estado} value={estado}>{estado}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </div>
 
-                    <div className="col-md-8 mb-3">
-                        <CustomTextField
-                            type="text"
-                            name="interes"
-                            label="Interés"
-                            register={register("interes")}
-                            error={errors.interes?.message}
-                        />
-                    </div>
+                        <div className="col-md-12 mb-3">
+                            <DatePicker
+                                name="fechaInicio"
+                                sx={{ width: "100%" }}
+                                label="Fecha de inicio"
+                                minDate={dayjs(new Date())}
+                                defaultValue={dayjs(new Date())}
+                                slotProps={{ textField: { size: 'small' } }}
+                                onChange={(newDate) => {
+                                    const timeStamp = dayjs(newDate).valueOf();
+                                    setValue('fechaInicio', timeStamp);
+                                }}
+                            />
+                        </div>
 
-                    <div className="col-md-8 mb-3">
-                        <FormControl fullWidth>
-                            <InputLabel>Modalidad de pago</InputLabel>
-                            <Select
-                                label="Modalidad de pago"
-                                value={watch('modalidadDePago')}
-                                onChange={(event) => setValue('modalidadDePago', event.target.value)}
-                            >
-                                {modalidadDePagoOptions.map((modalidad: string) => (
-                                    <MenuItem key={modalidad} value={modalidad}>{modalidad}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </div>
-
-                    <div className="col-md-8 mb-3">
-                        <FormControl fullWidth>
-                            <InputLabel>Estado</InputLabel>
-                            <Select
-                                label="Estado"
-                                value={watch('estado')}
-                                onChange={(event) => setValue('estado', event.target.value)}
-                            >
-                                {estadoPrestamoOptions.map((estado: string) => (
-                                    <MenuItem key={estado} value={estado}>{estado}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </div>
-
-                    <div className="col-md-8 mb-3">
-                        <DatePicker
-                            name="fechaInicio"
-                            sx={{ width: "100%" }}
-                            label="Fecha de inicio"
-                            minDate={dayjs(new Date())}
-                            defaultValue={dayjs(new Date())}
-                            onChange={(newDate) => {
-                                const timeStamp = dayjs(newDate).valueOf();
-                                setValue('fechaInicio', timeStamp);
-                            }}
-                        />
-                    </div>
-
-                    <div className="col-md-8 mb-3">
-                        <DatePicker
-                            name="fechaFinal"
-                            sx={{ width: "100%" }}
-                            label="Fecha de finalización"
-                            minDate={dayjs(new Date())}
-                            defaultValue={dayjs(new Date())}
-                            onChange={(newDate) => {
-                                const timeStamp = dayjs(newDate).valueOf();
-                                setValue('fechaFinal', timeStamp);
-                            }}
-                        />
+                        <div className="col-md-12 mb-3">
+                            <DatePicker
+                                name="fechaFinal"
+                                sx={{ width: "100%" }}
+                                label="Fecha de finalización"
+                                minDate={dayjs(new Date())}
+                                defaultValue={dayjs(new Date())}
+                                slotProps={{ textField: { size: 'small' } }}
+                                onChange={(newDate) => {
+                                    const timeStamp = dayjs(newDate).valueOf();
+                                    setValue('fechaFinal', timeStamp);
+                                }}
+                            />
+                        </div>
                     </div>
                 </div>
+                
                 <Button 
                     type="submit" 
                     variant="contained" 
@@ -261,6 +275,6 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
                     {isEditMode ? 'Actualizar' : 'Guardar'}
                 </Button>
             </form>
-        </section>
+        </BoxShadow>
     );
 }

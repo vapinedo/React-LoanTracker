@@ -104,46 +104,46 @@ export default function PrestamosAdminPage() {
     {
       field: 'clienteNombre',
       headerName: 'Cliente',
-      width: 180,
+      width: 170,
       editable: true,
       renderCell: handleDetails,
     },
     {
       field: 'empleadoNombre',
       headerName: 'Empleado',
-      width: 180,
+      width: 170,
       editable: true,
       renderCell: (params) => params.value,
     },
     {
       field: 'monto',
       headerName: 'Valor',
-      width: 120,
+      width: 110,
       editable: true,
     },
     {
       field: 'estado',
       headerName: 'Estado',
-      width: 140,
+      width: 130,
       editable: true,
     },
     {
       field: 'modalidadDePago',
       headerName: 'Modo de Pago',
-      width: 130,
+      width: 120,
       editable: true,
     },
     {
       field: 'fechaInicio',
       headerName: 'Fecha Inicial',
-      width: 150,
+      width: 140,
       editable: true,
       renderCell: ({ formattedValue }) => getHumanDate(formattedValue),
     },
     {
       field: 'fechaFinal',
       headerName: 'Fecha Límite',
-      width: 150,
+      width: 140,
       editable: true,
       renderCell: ({ formattedValue }) => getHumanDate(formattedValue),
     },
@@ -167,15 +167,15 @@ export default function PrestamosAdminPage() {
         <button onClick={() => navigate("/prestamos/nuevo")} className="btn btn-primary">Crear prestamo</button>
       </header>
 
-      <Box sx={{ height: "100%", width: '100%', marginTop: 3 }}>
+      <Box sx={{ height: "100%", width: '100%', marginTop: 1 }}>
         <DataGrid
-          rows={prestamosData}
           columns={columns}
           density="compact"
           checkboxSelection
-          disableColumnFilter={false}
-          pageSizeOptions={[12]}
+          disableColumnFilter
+          rows={prestamosData}
           disableColumnSelector
+          pageSizeOptions={[12]}
           disableDensitySelector
           disableRowSelectionOnClick
           slots={{ toolbar: GridToolbar }}
@@ -190,6 +190,20 @@ export default function PrestamosAdminPage() {
                 pageSize: 12,
               },
             },
+          }}
+          sx={{
+            border: "none",
+            overflowX: "hidden",
+            "& .css-128fb87-MuiDataGrid-toolbarContainer": {
+              display: "flex",
+              marginTop: "12px",
+              marginBottom: "22px",
+              flexDirection: "row-reverse",
+            }
+          }}
+          localeText={{
+            toolbarExport: "Exportar",
+            toolbarQuickFilterPlaceholder: "Buscar...",
           }}
         />
       </Box>
