@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import BoxShadow from "@layouts/BoxShadow";
 import { useEffect, useState } from "react";
 import { getDoc } from "firebase/firestore";
 import useDatetime from "@services/useDatetime";
@@ -160,7 +161,7 @@ export default function PrestamosAdminPage() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div>
+    <BoxShadow>
       <header className="d-flex justify-content-between align-items-center">
         <h2>Lista de Prestamos</h2>
         <button onClick={() => navigate("/prestamos/nuevo")} className="btn btn-primary">Crear prestamo</button>
@@ -192,7 +193,6 @@ export default function PrestamosAdminPage() {
           }}
         />
       </Box>
-
-    </div>
+    </BoxShadow>
   )
 }

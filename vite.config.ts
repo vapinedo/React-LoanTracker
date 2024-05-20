@@ -10,6 +10,7 @@ export default defineConfig({
       '@stores': '/src/stores',
       '@routes': '/src/routes',
       '@models': '/src/models',
+      '@layouts': '/src/layouts',
       '@features': '/src/features',
       '@services': '/src/services',
       '@components': '/src/components',

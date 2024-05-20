@@ -1,6 +1,7 @@
 body, html {
     margin: 0;
     padding: 0;
+    background-color: #EBEBEB;
 }
 
 .grid-table-linkable-column {
@@ -17,4 +18,11 @@ body, html {
 
 .breadcrumbs a {
     text-decoration: none;
+}
+
+.box-shadow-layout {
+    padding: 1.4rem;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
 }
