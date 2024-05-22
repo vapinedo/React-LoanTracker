@@ -3,119 +3,97 @@ import toast from 'react-hot-toast';
 import { v4 as createUuid } from 'uuid';
 import { Cliente } from "@features/clientes/models/Cliente";
 import { AutocompleteOption } from '@models/AutocompleteOption';
-import { doc, getDocs, getDoc, setDoc, collection, runTransaction, deleteDoc, DocumentSnapshot } from "firebase/firestore";
+import { doc, getDocs, getDoc, setDoc, collection, runTransaction, deleteDoc } from "firebase/firestore";
 
 const COLLECTION = "CLIENTES";
+
+const handleFirestoreError = (error: any, customMessage: string) => {
+    console.error(customMessage, error);
+    toast.error(customMessage);
+};
 
 export default function useClienteService() {
 
     const getAllClientes = async (): Promise<Cliente[]> => {
-        const collection: Cliente[] = [];
+        const clientes: Cliente[] = [];
         try {
             const querySnapshot = await getDocs(collection(db, COLLECTION));
             for (const docSnapshot of querySnapshot.docs) {
-                const documentData = docSnapshot.data() as Cliente;
-                collection.push(documentData);
+                const clienteData = docSnapshot.data() as Cliente;
+                clientes.push(clienteData);
             }
         } catch (error) {
-            console.log(error);
+            handleFirestoreError(error, "Error al obtener los clientes");
         }
-        return collection;
+        return clientes;
     };
 
-    const getClienteOptions = async () => {
-        const documents: AutocompleteOption[] = [];
+    const getClienteOptions = async (): Promise<AutocompleteOption[]> => {
+        const options: AutocompleteOption[] = [];
         try {
             const querySnapshot = await getDocs(collection(db, COLLECTION));
             querySnapshot.forEach((doc) => {
                 const option = {
                     label: `${doc.data().nombres} ${doc.data().apellidos}`,
                     value: doc.data().id
-                }
-                documents.push(option);
+                };
+                options.push(option);
             });
         } catch (error) {
-            console.log(error);
+            handleFirestoreError(error, "Error al obtener opciones de cliente");
         }
-        return documents;
+        return options;
     };
 
     const getClienteById = async (id: string): Promise<Cliente | null> => {
+        let cliente: Cliente | null = null;
         try {
             const docRef = doc(db, COLLECTION, id);
-            const docSnap: DocumentSnapshot = await getDoc(docRef);
-
+            const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
-                // Obtener los datos del documento
-                const clienteData = docSnap.data();
-
-                // Verificar si los datos cumplen con el tipo Cliente
-                if (clienteData && typeof clienteData === 'object') {
-                    const cliente: Cliente = {
-                        id: clienteData.id,
-                        nombres: clienteData.nombres,
-                        apellidos: clienteData.apellidos,
-                        correo: clienteData.correo,
-                        celular: clienteData.celular,
-                        direccion: clienteData.direccion,
-                    };
-
-                    return cliente;
-                } else {
-                    throw new Error(`El documento no contiene datos válidos para un cliente: ${id}`);
-                }
-            } else {
-                return null; // El cliente no existe
+                cliente = docSnap.data() as Cliente;
             }
         } catch (error) {
-            console.error(`Error al obtener cliente por ID ${id}:`, error);
-            throw error;
+            handleFirestoreError(error, `Error al obtener cliente por ID ${id}`);
         }
-    };    
+        return cliente;
+    };
 
-    const createCliente = async (document: Cliente) => {
+    const createCliente = async (cliente: Cliente) => {
         try {
-            if (!document.id) {
-                document.id = createUuid();
+            if (!cliente.id) {
+                cliente.id = createUuid();
             }
-            await setDoc(doc(db, COLLECTION, document.id), document);
+            await setDoc(doc(db, COLLECTION, cliente.id), cliente);
             toast.success("Cliente creado exitosamente!");
         } catch (error) {
-            console.log(error);
+            handleFirestoreError(error, "Error al crear cliente");
         }
     };
 
-    const updateCliente = async (document: Cliente) => {
-        const docRef = doc(db, COLLECTION, document.id);
+    const updateCliente = async (cliente: Cliente) => {
+        const docRef = doc(db, COLLECTION, cliente.id);
         try {
             await runTransaction(db, async (transaction) => {
                 const sfDoc = await transaction.get(docRef);
                 if (!sfDoc.exists()) {
                     throw new Error("No existe el cliente que quiere editar");
                 }
-                const updatedData = {
-                    id: document.id,
-                    nombres: document.nombres,
-                    apellidos: document.apellidos,
-                    correo: document.correo,
-                    celular: document.celular,
-                    direccion: document.direccion,
-                };
-                transaction.update(docRef, updatedData);
+                transaction.update(docRef, { ...cliente });
                 toast.success("Cliente actualizado exitosamente!");
             });
         } catch (error) {
-            console.error(error);
+            handleFirestoreError(error, "Error al actualizar cliente");
         }
     };
-    
-    const deleteCliente = async (documentId: string) => {
+
+    const deleteCliente = async (id: string) => {
         try {
-            const docRef = doc(db, COLLECTION, documentId);
+            const docRef = doc(db, COLLECTION, id);
             await deleteDoc(docRef);
             toast.success("Cliente eliminado exitosamente!");
         } catch (error) {
-            console.error(error);
+            handleFirestoreError(error, "Error al eliminar cliente");
         }
     };
 

@@ -12,12 +12,13 @@ const CustomTextField: FC<InputProps> = ({ name, error, register, ...rest }) => 
     return (
         <TextField
             {...rest}
-            label={rest.label}
-            {...(register ? register : {})}
             name={name}
-            sx={{ width: '100%' }}
-            helperText={error && <span className="text-danger">{error}</span>}
+            size="small"
             error={!!error}
+            label={rest.label}
+            sx={{ width: '100%' }}
+            {...(register ? register : {})}
+            helperText={error && <span className="text-danger">{error}</span>}
         />
     );
 }

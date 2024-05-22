@@ -38,12 +38,11 @@ export default function ClienteForm({ isEditMode }: ClienteFormProps) {
       if (isEditMode && id) {
         try {
           const cliente = await getCliente(id);
-          console.log({cliente});
-          // if (cliente) {
-          //   reset({
-          //     ...cliente
-          //   });
-          // }
+          if (cliente) {
+            reset({
+              ...cliente
+            });
+          }
         } catch (error) {
           console.error("Error loading cliente:", error);
         }
@@ -80,7 +79,7 @@ export default function ClienteForm({ isEditMode }: ClienteFormProps) {
 
       <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
         <div className="row">
-          <div className="col-md-8 mb-3">
+          <div className="col-md-12 mb-3">
             <CustomTextField
               autoFocus
               type="text"
@@ -91,7 +90,7 @@ export default function ClienteForm({ isEditMode }: ClienteFormProps) {
             />
           </div>
 
-          <div className="col-md-8 mb-3">
+          <div className="col-md-12 mb-3">
             <CustomTextField
               type="text"
               name="apellidos"
@@ -101,7 +100,7 @@ export default function ClienteForm({ isEditMode }: ClienteFormProps) {
             />
           </div>
 
-          <div className="col-md-8 mb-3">
+          <div className="col-md-12 mb-3">
             <CustomTextField
               type="text"
               name="correo"
@@ -111,7 +110,7 @@ export default function ClienteForm({ isEditMode }: ClienteFormProps) {
             />
           </div>
 
-          <div className="col-md-8 mb-3">
+          <div className="col-md-12 mb-3">
             <CustomTextField
               type="text"
               name="celular"
@@ -121,7 +120,7 @@ export default function ClienteForm({ isEditMode }: ClienteFormProps) {
             />
           </div>
 
-          <div className="col-md-8 mb-3">
+          <div className="col-md-12 mb-3">
             <CustomTextField
               type="text"
               name="direccion"
