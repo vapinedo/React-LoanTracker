@@ -9,17 +9,18 @@ const COLLECTION = "CLIENTES";
 
 export default function useClienteService() {
 
-    const getAllClientes = async () => {
-        const documents: any[] = [];
+    const getAllClientes = async (): Promise<Cliente[]> => {
+        const collection: Cliente[] = [];
         try {
             const querySnapshot = await getDocs(collection(db, COLLECTION));
-            querySnapshot.forEach((doc) => {
-                documents.push(doc.data());
-            });
+            for (const docSnapshot of querySnapshot.docs) {
+                const documentData = docSnapshot.data() as Cliente;
+                collection.push(documentData);
+            }
         } catch (error) {
             console.log(error);
         }
-        return documents;
+        return collection;
     };
 
     const getClienteOptions = async () => {
@@ -74,24 +75,33 @@ export default function useClienteService() {
 
     const createCliente = async (document: Cliente) => {
         try {
-            const documentId = createUuid();
-            document.id = documentId;
-            await setDoc(doc(db, COLLECTION, documentId), document);
+            if (!document.id) {
+                document.id = createUuid();
+            }
+            await setDoc(doc(db, COLLECTION, document.id), document);
             toast.success("Cliente creado exitosamente!");
         } catch (error) {
             console.log(error);
         }
     };
 
-    const updateCliente = async (document: any) => {
+    const updateCliente = async (document: Cliente) => {
         const docRef = doc(db, COLLECTION, document.id);
         try {
             await runTransaction(db, async (transaction) => {
                 const sfDoc = await transaction.get(docRef);
                 if (!sfDoc.exists()) {
-                    throw "No existe el cliente que quiere editar";
+                    throw new Error("No existe el cliente que quiere editar");
                 }
-                transaction.update(docRef, document);
+                const updatedData = {
+                    id: document.id,
+                    nombres: document.nombres,
+                    apellidos: document.apellidos,
+                    correo: document.correo,
+                    celular: document.celular,
+                    direccion: document.direccion,
+                };
+                transaction.update(docRef, updatedData);
                 toast.success("Cliente actualizado exitosamente!");
             });
         } catch (error) {
@@ -102,8 +112,7 @@ export default function useClienteService() {
     const deleteCliente = async (documentId: string) => {
         try {
             const docRef = doc(db, COLLECTION, documentId);
-            const response = await deleteDoc(docRef);
-            console.log({response});
+            await deleteDoc(docRef);
             toast.success("Cliente eliminado exitosamente!");
         } catch (error) {
             console.error(error);
