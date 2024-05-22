@@ -1,104 +1,145 @@
 import { create } from 'zustand';
-import useEmpleados from '@services/useEmpleados';
+import useEmpleadoService from '@services/useEmpleadoService';
+import { PersistStorage, persist } from 'zustand/middleware';
 import { Empleado } from '@features/empleados/models/Empleado';
 import { AutocompleteOption } from '@models/AutocompleteOption';
 
-interface EmpleadosState {
+interface EmpleadoStore {
   empleados: Empleado[];
   empleadoOptions: AutocompleteOption[];
   loading: boolean;
   error: string | null;
-  getAllEmpleados: () => Promise<void>;
+  fetchEmpleados: () => Promise<void>;
   getEmpleadoOptions: () => Promise<void>;
-  getEmpleadoById: (id: string) => Promise<void>;
+  getEmpleado: (id: string) => Empleado | undefined;
   createEmpleado: (empleado: Empleado) => Promise<void>;
   updateEmpleado: (empleado: Empleado) => Promise<void>;
   deleteEmpleado: (id: string) => Promise<void>;
 }
 
-const useEmpleadoStore = create<EmpleadosState>((set) => ({
-  empleados: [],
-  empleadoOptions: [],
-  loading: false,
-  error: null,
-  getAllEmpleados: async () => {
-    try {
-      set({ loading: true, error: null });
-      const empleados = await useEmpleados().getAllEmpleados();
-      set({ empleados, empleadoOptions: [], loading: false });
-    } catch (error) {
-      set({ loading: false, error: 'Error al obtener los empleados' });
-      console.error(error);
-    }
-  },
-  
-  getEmpleadoOptions: async () => {
-    try {
-      set({ loading: true, error: null });
-      const empleadoOptions = await useEmpleados().getEmpleadoOptions();
-      set({ empleados: [], empleadoOptions, loading: false });
-    } catch (error) {
-      set({ loading: false, error: 'Error al obtener opciones de empleados' });
-      console.error(error);
-    }
-  },
+const serialize = (document: Empleado): any => {
+  return {
+    ...document,
+  };
+};
 
-  getEmpleadoById: async (id: string) => {
-    try {
-      set({ loading: true, error: null });
-      const empleado = await useEmpleados().getEmpleadoById(id);
-      if (empleado) {
-        set({ empleados: [empleado], empleadoOptions: [], loading: false });
-      } else {
-        set({ loading: false, error: `No se encontró empleado con ID ${id}` });
-      }
-    } catch (error) {
-      set({ loading: false, error: `Error al obtener empleado con ID ${id}` });
-      console.error(error);
-    }
-  },
+const deserialize = (prestamo: any): Empleado => {
+  return {
+    ...prestamo,
+  };
+};
 
-  createEmpleado: async (empleado: Empleado) => {
-    try {
-      set({ loading: true, error: null });
-      await useEmpleados().createEmpleado(empleado);
-      set({ loading: false, error: null });
-    } catch (error) {
-      set({ loading: false, error: 'Error al crear empleado' });
-      console.error('Error al crear empleado:', error);
-      throw error;
+const storage: PersistStorage<EmpleadoStore> = {
+  getItem: (name) => {
+    const item = sessionStorage.getItem(name);
+    if (item) {
+      const parsed = JSON.parse(item);
+      return {
+        ...parsed,
+        state: {
+          ...parsed.state,
+          empleados: parsed.state.empleados.map(deserialize),
+        },
+      };
     }
+    return null;
   },
+  setItem: (name, value) => {
+    const serializedState = JSON.stringify({
+      ...value,
+      state: {
+        ...value.state,
+        empleados: value.state.empleados.map(serialize),
+      },
+    });
+    sessionStorage.setItem(name, serializedState);
+  },
+  removeItem: (name) => sessionStorage.removeItem(name),
+};
 
-  updateEmpleado: async (empleado: Empleado) => {
-    try {
-      set({ loading: true, error: null });
-      await useEmpleados().updateEmpleado(empleado);
-      set({ loading: false, error: null });
-    } catch (error) {
-      set({ loading: false, error: 'Error al actualizar empleado' });
-      console.error('Error al actualizar empleado:', error);
-      throw error;
+const useClienteStore = create<EmpleadoStore>()(
+  persist(
+    (set, get) => ({
+      empleados: [],
+      empleadoOptions: [],
+      loading: false,
+      error: null,
+
+      fetchEmpleados: async () => {
+        try {
+          set({ loading: true, error: null });
+          const empleados = await useEmpleadoService().getAllEmpleados();
+          set({ empleados, empleadoOptions: [], loading: false });
+        } catch (error) {
+          set({ loading: false, error: 'Error al obtener los empleados' });
+          console.error(error);
+        }
+      },
+
+      getEmpleadoOptions: async () => {
+        try {
+          set({ loading: true, error: null });
+          const empleadoOptions = await useEmpleadoService().getEmpleadoOptions();
+          set({ empleados: [], empleadoOptions, loading: false });
+        } catch (error) {
+          set({ loading: false, error: 'Error al obtener opciones de empleados' });
+          console.error(error);
+        }
+      },
+
+      getEmpleado: (id: string) => {
+        const { empleados } = get();
+        return empleados.find(empleado => empleado.id === id);
+      },
+
+      createEmpleado: async (empleado: Empleado) => {
+        set({ loading: true, error: null });
+        try {
+          await useEmpleadoService().createEmpleado(empleado);
+          await get().fetchEmpleados();
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            set({ error: error.message, loading: false });
+          } else {
+            set({ error: String(error), loading: false });
+          }
+        }
+      },
+
+      updateEmpleado: async (empleado: Empleado) => {
+        set({ loading: true, error: null });
+        try {
+          await useEmpleadoService().updateEmpleado(empleado);
+          await get().fetchEmpleados();
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            set({ error: error.message, loading: false });
+          } else {
+            set({ error: String(error), loading: false });
+          }
+        }
+      },
+
+      deleteEmpleado: async (id: string) => {
+        set({ loading: true, error: null });
+        try {
+            await useEmpleadoService().deleteEmpleado(id);
+            await get().fetchEmpleados();
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                set({ error: error.message, loading: false });
+            } else {
+                set({ error: String(error), loading: false });
+            }
+        }
     }
-  },
 
-  deleteEmpleado: async (id: string) => {
-    try {
-      set({ loading: true, error: null });
-      await useEmpleados().deleteEmpleado(id);
-      // Filtrar empleados en el estado para eliminar el empleado eliminado
-      set((state) => ({
-        empleados: state.empleados.filter((empleado) => empleado.id !== id),
-        empleadoOptions: [],
-        loading: false,
-        error: null,
-      }));
-    } catch (error) {
-      set({ loading: false, error: `Error al eliminar empleado con ID ${id}` });
-      console.error(`Error al eliminar empleado con ID ${id}:`, error);
-      throw error;
+    }),
+    {
+      name: "empleados-store",
+      storage,
     }
-  },
-}));
+  )
+);
 
-export default useEmpleadoStore;
+export default useClienteStore;

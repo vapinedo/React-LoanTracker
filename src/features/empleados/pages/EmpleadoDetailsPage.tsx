@@ -4,14 +4,14 @@ import useEmpleadoStore from "@app/stores/useEmpleadoStore";
 
 export default function EmpleadoDetailsPage() {
     const params = useParams();
-    const { getEmpleadoById, empleados, loading, error } = useEmpleadoStore();
+    const { getEmpleado, empleados, loading, error } = useEmpleadoStore();
 
     useEffect(() => {
         const empleadoId = params.id;
         if (empleadoId) {
-            getEmpleadoById(empleadoId);
+            getEmpleado(empleadoId);
         }
-    }, [getEmpleadoById, params.id]);
+    }, [getEmpleado, params.id]);
 
     const empleado = empleados.length > 0 ? empleados[0] : null;
 
