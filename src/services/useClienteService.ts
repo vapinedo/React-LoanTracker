@@ -1,8 +1,8 @@
 import db from '@firebaseConfig';
 import toast from 'react-hot-toast';
-import useFirestoreService from './useFirestoreService';
 import { getDocs, collection } from "firebase/firestore";
 import { Cliente } from "@features/clientes/models/Cliente";
+import useFirestoreService from '@services/useFirestoreService';
 import { AutocompleteOption } from '@models/AutocompleteOption';
 
 const COLLECTION = "CLIENTES";
