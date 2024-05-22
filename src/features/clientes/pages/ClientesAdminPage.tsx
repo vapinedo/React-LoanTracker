@@ -4,12 +4,12 @@ import BoxShadow from '@layouts/BoxShadow';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import useClienteStore from '@app/stores/useClienteStore';
-import useNotificaciones from "@services/useNotificaciones";
+import useNotification from '@services/useNotificationService';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 
 export default function ClientesAdminPage() {
   const navigate = useNavigate();
-  const { dialogConfirm } = useNotificaciones();
+  const { dialogConfirm } = useNotification();
 
   const {
     clientes,
@@ -44,16 +44,16 @@ export default function ClientesAdminPage() {
         color="#ff2825"
         cursor="pointer"
         style={{ marginLeft: 15 }}
-        onClick={() => handleDelete(params.id, params.row.nombres, params.row.apellidos)}
+        onClick={() => handleDelete(params)}
       />
     </>
   );
 
-  const handleDelete = async (id: string, nombres: string, apellidos: string) => {
-    const text = `Vas a eliminar a ${nombres} ${apellidos}`;
+  const handleDelete = async (params: any) => {
+    const text = `Vas a eliminar a ${params.row.nombres} ${params.row.apellidos}`;
     const { isConfirmed } = await dialogConfirm(text);
     if (isConfirmed) {
-      deleteCliente(id);
+      deleteCliente(params.row.id);
     }
   };
 

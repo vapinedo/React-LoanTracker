@@ -1,14 +1,10 @@
 import db from '@firebaseConfig';
-import toast from 'react-hot-toast';
 import { v4 as createUuid } from 'uuid';
+import useNotification from '@services/useNotificationService';
 import { doc, getDocs, getDoc, setDoc, collection, runTransaction, deleteDoc } from "firebase/firestore";
 
-const handleFirestoreError = (error: any, customMessage: string) => {
-    console.error(customMessage, error);
-    toast.error(customMessage);
-};
-
 export default function FirestoreGenericService<T>(COLLECTION: string) {
+    const { toastError, toastSuccess } = useNotification();
 
     const getAllDocuments = async (): Promise<T[]> => {
         const documents: T[] = [];
@@ -19,7 +15,7 @@ export default function FirestoreGenericService<T>(COLLECTION: string) {
                 documents.push(documentData);
             }
         } catch (error) {
-            handleFirestoreError(error, `Error al obtener los documentos de ${COLLECTION}`);
+            toastError(error, `Error al obtener los documentos de ${COLLECTION}`);
         }
         return documents;
     };
@@ -33,7 +29,7 @@ export default function FirestoreGenericService<T>(COLLECTION: string) {
                 document = docSnap.data() as T;
             }
         } catch (error) {
-            handleFirestoreError(error, `Error al obtener documento por ID ${id} de ${COLLECTION}`);
+            toastError(error, `Error al obtener documento por ID ${id} de ${COLLECTION}`);
         }
         return document;
     };
@@ -44,9 +40,9 @@ export default function FirestoreGenericService<T>(COLLECTION: string) {
                 document.id = createUuid();
             }
             await setDoc(doc(db, COLLECTION, document.id), document);
-            toast.success("Documento creado exitosamente!");
+            toastSuccess("Documento creado exitosamente!");
         } catch (error) {
-            handleFirestoreError(error, `Error al crear documento en ${COLLECTION}`);
+            toastError(error, `Error al crear documento en ${COLLECTION}`);
         }
     };
 
@@ -59,10 +55,10 @@ export default function FirestoreGenericService<T>(COLLECTION: string) {
                     throw new Error(`No existe el documento que quiere editar en ${COLLECTION}`);
                 }
                 transaction.update(docRef, { ...document });
-                toast.success("Documento actualizado exitosamente!");
+                toastSuccess("Documento actualizado exitosamente!");
             });
         } catch (error) {
-            handleFirestoreError(error, `Error al actualizar documento en ${COLLECTION}`);
+            toastError(error, `Error al actualizar documento en ${COLLECTION}`);
         }
     };
 
@@ -70,9 +66,9 @@ export default function FirestoreGenericService<T>(COLLECTION: string) {
         try {
             const docRef = doc(db, COLLECTION, id);
             await deleteDoc(docRef);
-            toast.success("Documento eliminado exitosamente!");
+            toastSuccess("Documento eliminado exitosamente!");
         } catch (error) {
-            handleFirestoreError(error, `Error al eliminar documento en ${COLLECTION}`);
+            toastError(error, `Error al eliminar documento en ${COLLECTION}`);
         }
     };
 
