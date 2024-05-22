@@ -1,12 +1,11 @@
 import db from '@firebaseConfig';
-import toast from 'react-hot-toast';
 import { getDocs, collection } from "firebase/firestore";
 import { Empleado } from "@features/empleados/models/Empleado";
-import useFirestoreService from '@services/useFirestoreService';
 import { AutocompleteOption } from '@models/AutocompleteOption';
+import FirestoreGenericService from '@services/FirestoreGenericService';
 
 const COLLECTION = "EMPLEADOS";
-const { getAllDocuments, getDocumentById, createDocument, updateDocument, deleteDocument } = useFirestoreService<Empleado>(COLLECTION);
+const { getAllDocuments, getDocumentById, createDocument, updateDocument, deleteDocument } = FirestoreGenericService<Empleado>(COLLECTION);
 
 const getEmpleadoOptions = async (): Promise<AutocompleteOption[]> => {
     const options: AutocompleteOption[] = [];
@@ -21,7 +20,6 @@ const getEmpleadoOptions = async (): Promise<AutocompleteOption[]> => {
         });
     } catch (error) {
         console.error("Error al obtener opciones de empleado", error);
-        toast.error("Error al obtener opciones de empleado");
     }
     return options;
 };

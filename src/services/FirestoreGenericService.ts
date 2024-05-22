@@ -8,7 +8,7 @@ const handleFirestoreError = (error: any, customMessage: string) => {
     toast.error(customMessage);
 };
 
-export default function useFirestoreService<T>(COLLECTION: string) {
+export default function FirestoreGenericService<T>(COLLECTION: string) {
 
     const getAllDocuments = async (): Promise<T[]> => {
         const documents: T[] = [];
