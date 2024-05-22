@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { Box } from '@mui/material';
-import useClienteStore from '@app/stores/useClienteStore';
+import BoxShadow from '@layouts/BoxShadow';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
+import useClienteStore from '@app/stores/useClienteStore';
 import useNotificaciones from "@services/useNotificaciones";
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 
@@ -95,7 +96,7 @@ export default function ClientesAdminPage() {
   ];
 
   return (
-    <>
+    <BoxShadow>
       <header className="d-flex justify-content-between align-items-center">
         <h2>Lista de Clientes</h2>
         <button onClick={() => navigate('/clientes/nuevo')} className="btn btn-primary">
@@ -126,10 +127,24 @@ export default function ClientesAdminPage() {
                 showQuickFilter: true,
               },
             }}
+            sx={{
+              border: "none",
+              overflowX: "hidden",
+              "& .css-128fb87-MuiDataGrid-toolbarContainer": {
+                display: "flex",
+                marginTop: "12px",
+                marginBottom: "22px",
+                flexDirection: "row-reverse",
+              }
+            }}
+            localeText={{
+              toolbarExport: "Exportar",
+              toolbarQuickFilterPlaceholder: "Buscar...",
+            }}
           />
         )}
       </Box>
 
-    </>
+    </BoxShadow>
   );
 }

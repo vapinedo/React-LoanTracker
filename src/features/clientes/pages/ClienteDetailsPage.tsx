@@ -1,6 +1,7 @@
 import { useEffect } from "react";
+import BoxShadow from "@layouts/BoxShadow";
 import { useParams } from "react-router-dom";
-import useClienteStore from "@app/stores/useClienteStore";
+import useClienteStore from "@stores/useClienteStore";
 
 export default function EmpleadoDetailsPage() {
     const params = useParams();
@@ -16,7 +17,7 @@ export default function EmpleadoDetailsPage() {
     const cliente = clientes.length > 0 ? clientes[0] : null;
 
     return (
-        <div>
+        <BoxShadow>
             <header className="d-flex justify-content-between align-items-center">
                 <h2>Detalles del cliente</h2>
             </header>
@@ -55,6 +56,6 @@ export default function EmpleadoDetailsPage() {
             ) : (
                 <p>No se encontró cliente con ID {params.id}</p>
             )}
-        </div>
+        </BoxShadow>
     );
 }
