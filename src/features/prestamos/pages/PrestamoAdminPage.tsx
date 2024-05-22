@@ -6,14 +6,14 @@ import useDatetime from "@services/useDatetime";
 import usePrestamoStore from "@stores/usePrestamoStore";
 import { NavLink, useNavigate } from "react-router-dom";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
-import useNotificaciones from "@services/useNotificaciones";
+import useNotification from '@services/useNotificationService';
 import { Prestamo } from "@features/prestamos/models/Prestamo";
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 
 export default function PrestamosAdminPage() {
   const navigate = useNavigate();
   const { getHumanDate } = useDatetime();
-  const { dialogConfirm } = useNotificaciones();
+  const { dialogConfirm } = useNotification();
   const { prestamos, loading, error, fetchPrestamos, deletePrestamo } = usePrestamoStore();
 
   const [prestamosData, setPrestamosData] = useState<Prestamo[]>([]);
@@ -72,8 +72,6 @@ export default function PrestamosAdminPage() {
   };
 
   const handleActions = (params: any) => {
-    const { id, row } = params;
-    const { nombres, apellidos } = row;
     return (
       <>
         <IconEdit
@@ -85,18 +83,17 @@ export default function PrestamosAdminPage() {
           color="#ff2825"
           cursor="pointer"
           style={{ marginLeft: 15 }}
-          onClick={() => handleDelete(params.id, params.row.nombres, params.row.apellidos)}
+          onClick={() => handleDelete(params)}
         />
       </>
     )
   };
 
-  const handleDelete = async (id: string, nombres: string, apellidos: string) => {
-    const text = `Vas a eliminar a ${nombres} ${apellidos}`;
+  const handleDelete = async (params: any) => {
+    const text = `Vas a eliminar a ${params.row.nombres} ${params.row.apellidos}`;
     const { isConfirmed } = await dialogConfirm(text);
     if (isConfirmed) {
-      await deletePrestamo(id);
-      fetchPrestamos();
+      deletePrestamo(params.row.id);
     }
   };
 
