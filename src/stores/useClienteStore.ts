@@ -1,104 +1,145 @@
 import { create } from 'zustand';
-import useClientes from '@services/useClientes';
 import { Cliente } from '@features/clientes/models/Cliente';
+import useClienteService from '@services/useClienteService';
+import { PersistStorage, persist } from 'zustand/middleware';
 import { AutocompleteOption } from '@models/AutocompleteOption';
 
-interface ClienteState {
+interface ClienteStore {
   clientes: Cliente[];
   clienteOptions: AutocompleteOption[];
   loading: boolean;
   error: string | null;
-  getAllClientes: () => Promise<void>;
+  fetchClientes: () => Promise<void>;
   getClienteOptions: () => Promise<void>;
-  getClienteById: (id: string) => Promise<void>;
+  getCliente: (id: string) => Cliente | undefined;
   createCliente: (cliente: Cliente) => Promise<void>;
   updateCliente: (cliente: Cliente) => Promise<void>;
   deleteCliente: (id: string) => Promise<void>;
 }
 
-const useClienteStore = create<ClienteState>((set) => ({
-  clientes: [],
-  clienteOptions: [],
-  loading: false,
-  error: null,
-  getAllClientes: async () => {
-    try {
-      set({ loading: true, error: null });
-      const clientes = await useClientes().getAllClientes();
-      set({ clientes, clienteOptions: [], loading: false });
-    } catch (error) {
-      set({ loading: false, error: 'Error al obtener los clientes' });
-      console.error(error);
-    }
-  },
-  
-  getClienteOptions: async () => {
-    try {
-      set({ loading: true, error: null });
-      const clienteOptions = await useClientes().getClienteOptions();
-      set({ clientes: [], clienteOptions, loading: false });
-    } catch (error) {
-      set({ loading: false, error: 'Error al obtener opciones de clientes' });
-      console.error(error);
-    }
-  },
+const serialize = (document: Cliente): any => {
+  return {
+    ...document,
+  };
+};
 
-  getClienteById: async (id: string) => {
-    try {
-      set({ loading: true, error: null });
-      const cliente = await useClientes().getClienteById(id);
-      if (cliente) {
-        set({ clientes: [cliente], clienteOptions: [], loading: false });
-      } else {
-        set({ loading: false, error: `No se encontró cliente con ID ${id}` });
-      }
-    } catch (error) {
-      set({ loading: false, error: `Error al obtener cliente con ID ${id}` });
-      console.error(error);
-    }
-  },
+const deserialize = (prestamo: any): Cliente => {
+  return {
+    ...prestamo,
+  };
+};
 
-  createCliente: async (cliente: Cliente) => {
-    try {
-      set({ loading: true, error: null });
-      await useClientes().createCliente(cliente);
-      set({ loading: false, error: null });
-    } catch (error) {
-      set({ loading: false, error: 'Error al crear cliente' });
-      console.error('Error al crear cliente:', error);
-      throw error;
+const storage: PersistStorage<ClienteStore> = {
+  getItem: (name) => {
+    const item = sessionStorage.getItem(name);
+    if (item) {
+      const parsed = JSON.parse(item);
+      return {
+        ...parsed,
+        state: {
+          ...parsed.state,
+          clientes: parsed.state.clientes.map(deserialize),
+        },
+      };
     }
+    return null;
   },
+  setItem: (name, value) => {
+    const serializedState = JSON.stringify({
+      ...value,
+      state: {
+        ...value.state,
+        clientes: value.state.clientes.map(serialize),
+      },
+    });
+    sessionStorage.setItem(name, serializedState);
+  },
+  removeItem: (name) => sessionStorage.removeItem(name),
+};
 
-  updateCliente: async (cliente: Cliente) => {
-    try {
-      set({ loading: true, error: null });
-      await useClientes().updateCliente(cliente);
-      set({ loading: false, error: null });
-    } catch (error) {
-      set({ loading: false, error: 'Error al actualizar cliente' });
-      console.error('Error al actualizar cliente:', error);
-      throw error;
-    }
-  },
+const useClienteStore = create<ClienteStore>()(
+  persist(
+    (set, get) => ({
+      clientes: [],
+      clienteOptions: [],
+      loading: false,
+      error: null,
 
-  deleteCliente: async (id: string) => {
-    try {
-      set({ loading: true, error: null });
-      await useClientes().deleteCliente(id);
-      // Filtrar clientes en el estado para eliminar el cliente eliminado
-      set((state) => ({
-        clientes: state.clientes.filter((cliente) => cliente.id !== id),
-        clienteOptions: [],
-        loading: false,
-        error: null,
-      }));
-    } catch (error) {
-      set({ loading: false, error: `Error al eliminar cliente con ID ${id}` });
-      console.error(`Error al eliminar cliente con ID ${id}:`, error);
-      throw error;
+      fetchClientes: async () => {
+        try {
+          set({ loading: true, error: null });
+          const clientes = await useClienteService().getAllClientes();
+          set({ clientes, clienteOptions: [], loading: false });
+        } catch (error) {
+          set({ loading: false, error: 'Error al obtener los clientes' });
+          console.error(error);
+        }
+      },
+
+      getClienteOptions: async () => {
+        try {
+          set({ loading: true, error: null });
+          const clienteOptions = await useClienteService().getClienteOptions();
+          set({ clientes: [], clienteOptions, loading: false });
+        } catch (error) {
+          set({ loading: false, error: 'Error al obtener opciones de clientes' });
+          console.error(error);
+        }
+      },
+
+      getCliente: (id: string) => {
+        const { clientes } = get();
+        return clientes.find(cliente => cliente.id === id);
+      },
+
+      createCliente: async (cliente: Cliente) => {
+        set({ loading: true, error: null });
+        try {
+          await useClienteService().createCliente(cliente);
+          await get().fetchClientes();
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            set({ error: error.message, loading: false });
+          } else {
+            set({ error: String(error), loading: false });
+          }
+        }
+      },
+
+      updateCliente: async (cliente: Cliente) => {
+        set({ loading: true, error: null });
+        try {
+          await useClienteService().updateCliente(cliente);
+          await get().fetchClientes();
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            set({ error: error.message, loading: false });
+          } else {
+            set({ error: String(error), loading: false });
+          }
+        }
+      },
+
+      deleteCliente: async (id: string) => {
+        set({ loading: true, error: null });
+        try {
+            await useClienteService().deleteCliente(id);
+            await get().fetchClientes();
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                set({ error: error.message, loading: false });
+            } else {
+                set({ error: String(error), loading: false });
+            }
+        }
     }
-  },
-}));
+
+    }),
+    {
+      name: "clientes-store",
+      storage,
+    }
+  )
+);
 
 export default useClienteStore;

@@ -92,7 +92,6 @@ const usePrestamoStore = create<PrestamoStore>()(
                 set({ loading: true, error: null });
                 try {
                     await usePrestamoService().createPrestamo(prestamo);
-                    // Fetch the updated list of prestamos
                     await get().fetchPrestamos();
                 } catch (error: unknown) {
                     if (error instanceof Error) {

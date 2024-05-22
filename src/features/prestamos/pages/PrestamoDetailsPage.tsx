@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import BoxShadow from "@layouts/BoxShadow";
 import { useParams } from "react-router-dom";
 import useDatetime from "@services/useDatetime";
 import usePrestamoService from "@services/usePrestamoService";
@@ -24,7 +25,7 @@ export default function PrestamoDetailsPage() {
     }
 
     return (
-        <div>
+        <BoxShadow>
             <header className="d-flex justify-content-between align-items-center">
                 <h2>Detalles del prestamo</h2>
             </header>
@@ -71,6 +72,6 @@ export default function PrestamoDetailsPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </BoxShadow>
     )
 }

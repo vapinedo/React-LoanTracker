@@ -1,15 +1,13 @@
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import BoxShadow from "@layouts/BoxShadow";
 import { useEffect, useState } from "react";
 import { getDoc } from "firebase/firestore";
-import AddIcon from '@mui/icons-material/Add';
 import useDatetime from "@services/useDatetime";
-import EditIcon from '@mui/icons-material/Edit';
 import usePrestamoStore from "@stores/usePrestamoStore";
 import { NavLink, useNavigate } from "react-router-dom";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
 import useNotificaciones from "@services/useNotificaciones";
 import { Prestamo } from "@features/prestamos/models/Prestamo";
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 
 export default function PrestamosAdminPage() {
@@ -71,19 +69,24 @@ export default function PrestamosAdminPage() {
         {params.value}
       </NavLink>
     );
-  };  
+  };
 
   const handleActions = (params: any) => {
     const { id, row } = params;
     const { nombres, apellidos } = row;
     return (
       <>
-        <EditIcon
-          color="primary"
-          style={{ cursor: "pointer", marginRight: "10px" }}
+        <IconEdit
+          color="#00abfb"
+          cursor="pointer"
           onClick={() => navigate(`/prestamos/editar/${params.id}`)}
         />
-        <DeleteForeverIcon style={{ cursor: "pointer" }} color="error" onClick={() => handleDelete(id, nombres, apellidos)} />
+        <IconTrash
+          color="#ff2825"
+          cursor="pointer"
+          style={{ marginLeft: 15 }}
+          onClick={() => handleDelete(params.id, params.row.nombres, params.row.apellidos)}
+        />
       </>
     )
   };
@@ -161,9 +164,9 @@ export default function PrestamosAdminPage() {
     <BoxShadow>
       <header className="d-flex justify-content-between align-items-center">
         <h2>Lista de Prestamos</h2>
-        <Button variant="contained" startIcon={ <AddIcon /> } onClick={() => navigate("/prestamos/nuevo")} className="btn btn-primary">
+        <button onClick={() => navigate('/prestamos/nuevo')} className="btn btn-primary">
           Crear prestamo
-        </Button>
+        </button>
       </header>
 
       <Box sx={{ height: "100%", width: '100%', marginTop: 1 }}>

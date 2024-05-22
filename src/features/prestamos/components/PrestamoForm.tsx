@@ -39,7 +39,7 @@ interface PrestamoFormProps {
 export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
-    const { clientes, getAllClientes } = useClienteStore();
+    const { clientes, fetchClientes: getAllClientes } = useClienteStore();
     const { empleados, getAllEmpleados } = useEmpleadoStore();
     const { createPrestamo, updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
     const [cliente, setCliente] = useState<Cliente | null>(null);
