@@ -14,7 +14,7 @@ export default function ClientesAdminPage() {
     clientes,
     loading,
     error,
-    getAllClientes,
+    fetchClientes: getAllClientes,
     deleteCliente,
   } = useClienteStore();
 

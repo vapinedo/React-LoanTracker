@@ -38,7 +38,7 @@ const validationSchema = Yup.object().shape({
 export default function EmpleadoEditar() {
     const params = useParams();
     const navigate = useNavigate();
-    const { getClienteById, updateCliente, loading, error } = useClienteStore();
+    const { getCliente: getClienteById, updateCliente, loading, error } = useClienteStore();
 
     const form = useForm<Cliente>({
         defaultValues,

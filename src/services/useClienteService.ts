@@ -7,7 +7,7 @@ import { doc, getDocs, getDoc, setDoc, collection, runTransaction, deleteDoc, Do
 
 const COLLECTION = "CLIENTES";
 
-export default function useClientes() {
+export default function useClienteService() {
 
     const getAllClientes = async () => {
         const documents: any[] = [];

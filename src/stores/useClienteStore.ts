@@ -8,9 +8,9 @@ interface ClienteState {
   clienteOptions: AutocompleteOption[];
   loading: boolean;
   error: string | null;
-  getAllClientes: () => Promise<void>;
+  fetchClientes: () => Promise<void>;
   getClienteOptions: () => Promise<void>;
-  getClienteById: (id: string) => Promise<void>;
+  getCliente: (id: string) => Promise<void>;
   createCliente: (cliente: Cliente) => Promise<void>;
   updateCliente: (cliente: Cliente) => Promise<void>;
   deleteCliente: (id: string) => Promise<void>;
@@ -21,7 +21,7 @@ const useClienteStore = create<ClienteState>((set) => ({
   clienteOptions: [],
   loading: false,
   error: null,
-  getAllClientes: async () => {
+  fetchClientes: async () => {
     try {
       set({ loading: true, error: null });
       const clientes = await useClientes().getAllClientes();
@@ -43,7 +43,7 @@ const useClienteStore = create<ClienteState>((set) => ({
     }
   },
 
-  getClienteById: async (id: string) => {
+  getCliente: async (id: string) => {
     try {
       set({ loading: true, error: null });
       const cliente = await useClientes().getClienteById(id);

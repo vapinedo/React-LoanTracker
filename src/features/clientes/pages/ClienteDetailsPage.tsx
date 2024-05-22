@@ -4,7 +4,7 @@ import useClienteStore from "@app/stores/useClienteStore";
 
 export default function EmpleadoDetailsPage() {
     const params = useParams();
-    const { getClienteById, clientes, loading, error } = useClienteStore();
+    const { getCliente: getClienteById, clientes, loading, error } = useClienteStore();
 
     useEffect(() => {
         const clienteId = params.id;
