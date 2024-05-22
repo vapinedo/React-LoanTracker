@@ -15,13 +15,13 @@ export default function EmpleadosAdminPage() {
     empleados,
     loading,
     error,
-    getAllEmpleados,
+    fetchEmpleados,
     deleteEmpleado,
   } = useEmpleadoStore();
 
   useEffect(() => {
-    getAllEmpleados(); // Cargar empleados al montar el componente
-  }, [getAllEmpleados]);
+    fetchEmpleados(); // Cargar empleados al montar el componente
+  }, [fetchEmpleados]);
 
   const handleDetails = (params: any) => (
     <NavLink
@@ -126,6 +126,20 @@ export default function EmpleadosAdminPage() {
               toolbar: {
                 showQuickFilter: true,
               },
+            }}
+            sx={{
+              border: "none",
+              overflowX: "hidden",
+              "& .css-128fb87-MuiDataGrid-toolbarContainer": {
+                display: "flex",
+                marginTop: "12px",
+                marginBottom: "22px",
+                flexDirection: "row-reverse",
+              }
+            }}
+            localeText={{
+              toolbarExport: "Exportar",
+              toolbarQuickFilterPlaceholder: "Buscar...",
             }}
           />
         )}

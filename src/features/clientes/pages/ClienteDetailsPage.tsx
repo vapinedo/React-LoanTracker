@@ -5,14 +5,14 @@ import useClienteStore from "@stores/useClienteStore";
 
 export default function EmpleadoDetailsPage() {
     const params = useParams();
-    const { getCliente: getClienteById, clientes, loading, error } = useClienteStore();
+    const { getCliente, clientes, loading, error } = useClienteStore();
 
     useEffect(() => {
         const clienteId = params.id;
         if (clienteId) {
-            getClienteById(clienteId);
+            getCliente(clienteId);
         }
-    }, [getClienteById, params.id]);
+    }, [getCliente, params.id]);
 
     const cliente = clientes.length > 0 ? clientes[0] : null;
 
