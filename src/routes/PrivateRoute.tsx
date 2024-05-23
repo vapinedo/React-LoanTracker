@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useAuth from "@services/useAuth";
+import useAuthService from "@services/useAuthService";
 
 const PrivateRoute = ({ Component }) => {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user } = useAuthService();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {

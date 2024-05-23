@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "@components/Navbar";
-import useAuth from "@services/useAuth";
 import { Toaster } from "react-hot-toast";
 import { Route, Routes } from "react-router-dom";
 import Breadcrumbs from "@components/Breadcrumbs";
 import PrivateRoute from "@app/routes/PrivateRoute";
 import NotFoundPage from "@components/NotFoundPage";
 import HomePage from "@features/home/pages/HomePage";
+import useAuthService from "@services/useAuthService";
 import LoginPage from "@features/auth/pages/LoginPage";
 import ClientesRouter from "@app/features/clientes/ClientesRouter";
 import PrestamosRouter from "@app/features/prestamos/PrestamosRouter";
 import EmpleadosRouter from "@app/features/empleados/EmpleadosRouter";
 
 export default function AppRouter() {
-    const { user } = useAuth();
+    const { user } = useAuthService();
     const [isAuthChecked, setIsAuthChecked] = useState(false);
 
     useEffect(() => {
