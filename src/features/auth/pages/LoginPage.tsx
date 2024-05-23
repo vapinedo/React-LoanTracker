@@ -1,9 +1,9 @@
 import * as Yup from "yup";
-import useAuth from "@services/useAuth";
 import BoxShadow from "@layouts/BoxShadow";
 import { Button, Grid } from "@mui/material";
 import { Auth } from "@features/auth/models/Auth";
 import { Link, useNavigate } from "react-router-dom";
+import useAuthService from "@services/useAuthService";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FieldErrors, useForm } from 'react-hook-form';
 import CustomTextField from "@components/form/CustomTextField";
@@ -25,7 +25,7 @@ const validationSchema = Yup.object().shape({
 
 export default function LoginPage() {
 
-    const { signIn } = useAuth();
+    const { signIn } = useAuthService();
     const navigate = useNavigate();
 
     const form = useForm<Auth>({

@@ -1,9 +1,9 @@
-import useAuth from "@services/useAuth";
+import useAuthService from "@services/useAuthService";
 import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
 
-    const { user, logout } = useAuth();
+    const { user, logout } = useAuthService();
     const navigate = useNavigate();
 
     const handleLogout = async () => {

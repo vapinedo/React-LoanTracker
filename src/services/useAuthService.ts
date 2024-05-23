@@ -4,7 +4,7 @@ import { getAuth, signOut, createUserWithEmailAndPassword, signInWithEmailAndPas
 
 const auth = getAuth(firebaseApp);
 
-export default function useAuth() {
+export default function useAuthService() {
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
