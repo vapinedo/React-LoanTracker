@@ -1,22 +1,45 @@
 import { useEffect, useState } from "react";
 import BoxShadow from "@layouts/BoxShadow";
 import { useParams } from "react-router-dom";
+import { getDoc } from "firebase/firestore";
 import useDatetime from "@services/useDatetime";
 import usePrestamoStore from "@app/stores/usePrestamoStore";
 
 export default function PrestamoDetailsPage() {
-
     const params = useParams();
     const { getHumanDate } = useDatetime();
     const { getPrestamo, loading, error } = usePrestamoStore();
-    const [prestamo, setPrestamo] = useState<any>(null)
+    const [prestamo, setPrestamo] = useState<any>(null);
+    const [cliente, setCliente] = useState<any>(null);
+    const [empleado, setEmpleado] = useState<any>(null);
 
     useEffect(() => {
         const prestamoId = params.id;
         if (prestamoId) {
             const newPrestamo = getPrestamo(prestamoId);
             setPrestamo(newPrestamo);
-            console.log({newPrestamo});
+            if (newPrestamo?.clienteRef) {
+                getDoc(newPrestamo.clienteRef).then((doc) => {
+                    if (doc.exists()) {
+                        setCliente(doc.data());
+                    } else {
+                        console.log("No such document!");
+                    }
+                }).catch((error) => {
+                    console.error("Error getting document:", error);
+                });
+            }
+            if (newPrestamo?.empleadoRef) {
+                getDoc(newPrestamo.empleadoRef).then((doc) => {
+                    if (doc.exists()) {
+                        setEmpleado(doc.data());
+                    } else {
+                        console.log("No such document!");
+                    }
+                }).catch((error) => {
+                    console.error("Error getting document:", error);
+                });
+            }
         }
     }, [getPrestamo, params.id]);
 
@@ -38,11 +61,11 @@ export default function PrestamoDetailsPage() {
                                 <tbody>
                                     <tr>
                                         <th>Cliente</th>
-                                        <td>{prestamo?.clienteNombre}</td>
+                                        <td>{cliente?.nombres} {cliente?.apellidos}</td>
                                     </tr>
                                     <tr>
-                                        <th>Responsable</th>
-                                        <td>{prestamo?.empleadoNombre}</td>
+                                        <th>Empleado Responsable</th>
+                                        <td>{empleado?.nombres} {empleado?.apellidos}</td>
                                     </tr>
                                     <tr>
                                         <th>Valor</th>
