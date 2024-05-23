@@ -8,9 +8,9 @@ import PrivateRoute from "@app/routes/PrivateRoute";
 import HomePage from "@features/home/pages/HomePage";
 import useAuthService from "@services/useAuthService";
 import LoginPage from "@features/auth/pages/LoginPage";
-import ClientesRouter from "@app/features/clientes/ClientesRouter";
-import PrestamosRouter from "@app/features/prestamos/PrestamosRouter";
-import EmpleadosRouter from "@app/features/empleados/EmpleadosRouter";
+import ClientesRouter from "@features/clientes/ClientesRouter";
+import PrestamosRouter from "@features/prestamos/PrestamosRouter";
+import EmpleadosRouter from "@features/empleados/EmpleadosRouter";
 
 export default function AppRouter() {
     const { user } = useAuthService();
