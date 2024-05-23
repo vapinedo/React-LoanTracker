@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthService from "@services/useAuthService";
+import LoginPage from "@features/auth/pages/LoginPage";
 
 const PrivateRoute = ({ Component }) => {
     const navigate = useNavigate();
@@ -11,14 +12,13 @@ const PrivateRoute = ({ Component }) => {
         if (user !== null) {
             setIsAuthenticated(true);
             if (!user) {
-                navigate("/");
+                navigate("/login");
             }
         }
     }, [user, navigate]);
 
     if (isAuthenticated === false) {
-        // Mostrar un indicador de carga u otra lógica mientras se verifica el estado de autenticación
-        return null;
+        return <LoginPage />;
     }
 
     return isAuthenticated ? <Component /> : null;

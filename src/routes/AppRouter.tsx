@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
 import Navbar from "@components/Navbar";
 import { Toaster } from "react-hot-toast";
 import { Route, Routes } from "react-router-dom";
 import Breadcrumbs from "@components/Breadcrumbs";
-import PrivateRoute from "@app/routes/PrivateRoute";
+import React, { useEffect, useState } from "react";
 import NotFoundPage from "@components/NotFoundPage";
+import PrivateRoute from "@app/routes/PrivateRoute";
 import HomePage from "@features/home/pages/HomePage";
 import useAuthService from "@services/useAuthService";
 import LoginPage from "@features/auth/pages/LoginPage";
