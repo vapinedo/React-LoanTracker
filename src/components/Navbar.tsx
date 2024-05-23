@@ -9,7 +9,7 @@ export default function Navbar() {
     const handleLogout = async () => {
         const logoutResponse = await logout();
         if (logoutResponse === undefined) {
-            navigate("/");
+            navigate("/login");
         }
     }
 
@@ -27,7 +27,7 @@ export default function Navbar() {
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
 
                         <li className="nav-item">
-                            <NavLink className="nav-link active" aria-current="page" to="/">Inicio</NavLink>
+                            <NavLink className="nav-link" aria-current="page" to="/">Inicio</NavLink>
                         </li>
 
                         <li className="nav-item">
