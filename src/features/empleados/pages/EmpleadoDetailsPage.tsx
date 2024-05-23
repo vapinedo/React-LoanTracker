@@ -1,20 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import BoxShadow from "@layouts/BoxShadow";
 import { useParams } from "react-router-dom";
 import useEmpleadoStore from "@stores/useEmpleadoStore";
 
 export default function EmpleadoDetailsPage() {
     const params = useParams();
-    const { getEmpleado, empleados, loading, error } = useEmpleadoStore();
+    const { getEmpleado, loading, error } = useEmpleadoStore();
+    const [empleado, setEmpleado] = useState<any>(null);
 
     useEffect(() => {
         const empleadoId = params.id;
         if (empleadoId) {
-            getEmpleado(empleadoId);
+            const newEmpleado = getEmpleado(empleadoId);
+            setEmpleado(newEmpleado);
         }
     }, [getEmpleado, params.id]);
-
-    const empleado = empleados.length > 0 ? empleados[0] : null;
 
     return (
         <BoxShadow>
