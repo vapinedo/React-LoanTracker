@@ -14,7 +14,7 @@ export default function Navbar() {
     }
 
     return (
-        <nav className="navbar navbar-expand-lg bg-body-tertiary bg-dark" data-bs-theme="dark">
+        <nav className="navbar navbar-expand-lg bg-body-tertiary bg-dark animate__animated animate__fadeInDown animate_faster" data-bs-theme="dark">
             <div className="container-fluid">
 
                 <NavLink className="navbar-brand" to="/">Loan Tracker</NavLink>
