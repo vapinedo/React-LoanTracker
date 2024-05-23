@@ -1,5 +1,5 @@
 export interface Empleado {
-    id: string | null;
+    id: string;
     nombres: string;
     apellidos: string;
     correo?: string | null;

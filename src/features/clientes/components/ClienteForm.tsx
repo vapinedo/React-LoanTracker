@@ -8,7 +8,7 @@ import { Cliente } from '@features/clientes/models/Cliente';
 import CustomTextField from '@components/form/CustomTextField';
 
 const defaultValues: Cliente = {
-  id: null,
+  id: '',
   nombres: '',
   apellidos: '',
   correo: null,

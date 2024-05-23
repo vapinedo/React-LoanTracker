@@ -10,6 +10,7 @@ export default function EmpleadoDetailsPage() {
     useEffect(() => {
         const clienteId = params.id;
         if (clienteId) {
+            console.log({clienteId});
             getCliente(clienteId);
         }
     }, [getCliente, params.id]);

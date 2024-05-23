@@ -9,7 +9,7 @@ import { Empleado } from '@features/empleados/models/Empleado';
 import CustomTextField from '@components/form/CustomTextField';
 
 const defaultValues: Empleado = {
-  id: null,
+  id: '',
   nombres: '',
   apellidos: '',
   correo: null,
