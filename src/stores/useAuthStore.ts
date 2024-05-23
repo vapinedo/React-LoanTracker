@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { User } from 'firebase/auth';
 import useAuthService from '@services/useAuthService';
+import { PersistStorage, persist } from 'zustand/middleware';
 
 interface AuthStore {
   user: User | null;
@@ -12,62 +13,83 @@ interface AuthStore {
   verifyToken: (token: string) => Promise<void>;
 }
 
-const useAuthStore = create<AuthStore>((set) => ({
-  user: null,
-  loading: false,
-  error: null,
-  signIn: async (email: string, password: string) => {
-    try {
-      set({ loading: true, error: null });
-      await useAuthService().signIn(email, password);
-      set({ user: useAuthService().user, loading: false });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        set({ error: error.message, loading: false });
-      } else {
-        set({ error: String(error), loading: false });
-      }
-    }
+const storage: PersistStorage<AuthStore> = {
+  getItem: (name) => {
+    const item = sessionStorage.getItem(name);
+    return item ? JSON.parse(item) : null;
   },
-  signUp: async (email: string, password: string) => {
-    try {
-      set({ loading: true, error: null });
-      await useAuthService().signUp(email, password);
-      set({ user: useAuthService().user, loading: false });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        set({ error: error.message, loading: false });
-      } else {
-        set({ error: String(error), loading: false });
-      }
-    }
+  setItem: (name, value) => {
+    sessionStorage.setItem(name, JSON.stringify(value));
   },
-  logout: async () => {
-    try {
-      set({ loading: true, error: null });
-      await useAuthService().logout();
-      set({ user: null, loading: false });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        set({ error: error.message, loading: false });
-      } else {
-        set({ error: String(error), loading: false });
-      }
-    }
+  removeItem: (name) => {
+    sessionStorage.removeItem(name);
   },
-  verifyToken: async (token: string) => {
-    try {
-      set({ loading: true, error: null });
-      await useAuthService().verifyToken(token);
-      set({ user: useAuthService().user, loading: false });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        set({ error: error.message, loading: false });
-      } else {
-        set({ error: String(error), loading: false });
-      }
+};
+
+const useAuthStore = create<AuthStore>()(
+  persist(
+    (set) => ({
+      user: null,
+      loading: false,
+      error: null,
+      signIn: async (email: string, password: string) => {
+        try {
+          set({ loading: true, error: null });
+          await useAuthService().signIn(email, password);
+          set({ user: useAuthService().user, loading: false });
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            set({ error: error.message, loading: false });
+          } else {
+            set({ error: String(error), loading: false });
+          }
+        }
+      },
+      signUp: async (email: string, password: string) => {
+        try {
+          set({ loading: true, error: null });
+          await useAuthService().signUp(email, password);
+          set({ user: useAuthService().user, loading: false });
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            set({ error: error.message, loading: false });
+          } else {
+            set({ error: String(error), loading: false });
+          }
+        }
+      },
+      logout: async () => {
+        try {
+          set({ loading: true, error: null });
+          await useAuthService().logout();
+          set({ user: null, loading: false });
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            set({ error: error.message, loading: false });
+          } else {
+            set({ error: String(error), loading: false });
+          }
+        }
+      },
+      verifyToken: async (token: string) => {
+        try {
+          set({ loading: true, error: null });
+          await useAuthService().verifyToken(token);
+          set({ user: useAuthService().user, loading: false });
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            set({ error: error.message, loading: false });
+          } else {
+            set({ error: String(error), loading: false });
+          }
+        }
+      },
+    }),
+    {
+      name: "auth-store",
+      storage,
     }
-  },
-}));
+  )
+);
 
 export default useAuthStore;
