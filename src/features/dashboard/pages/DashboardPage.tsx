@@ -5,7 +5,7 @@ export default function DashboardPage() {
     return (
         <section>
             <div className="row">
-                <div className="col-md-3">
+                <div className="col-md-4">
                     <MiniCard
                         data="200"
                         title="Clientes"
@@ -13,7 +13,7 @@ export default function DashboardPage() {
                     />
                 </div>
 
-                <div className="col-md-3">
+                <div className="col-md-4">
                     <MiniCard
                         data="12"
                         title="Empleados"
@@ -21,7 +21,7 @@ export default function DashboardPage() {
                     />
                 </div>
 
-                <div className="col-md-3">
+                <div className="col-md-4">
                     <MiniCard
                         data="270"
                         title="Prestamos"
