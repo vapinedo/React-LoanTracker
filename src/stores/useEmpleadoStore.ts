@@ -1,8 +1,11 @@
 import { create } from 'zustand';
-import useEmpleadoService from '@services/useEmpleadoService';
 import { PersistStorage, persist } from 'zustand/middleware';
+import useEmpleadoService from '@services/useEmpleadoService';
 import { Empleado } from '@features/empleados/models/Empleado';
 import { AutocompleteOption } from '@models/AutocompleteOption';
+
+// crear instancia unica del servicio empleados
+const empleadoService = useEmpleadoService();
 
 interface EmpleadoStore {
   empleados: Empleado[];
@@ -68,7 +71,7 @@ const useClienteStore = create<EmpleadoStore>()(
       fetchEmpleados: async () => {
         try {
           set({ loading: true, error: null });
-          const empleados = await useEmpleadoService().getAllEmpleados();
+          const empleados = await empleadoService.getAllEmpleados();
           set({ empleados, empleadoOptions: [], loading: false });
         } catch (error) {
           set({ loading: false, error: 'Error al obtener los empleados' });
@@ -79,7 +82,7 @@ const useClienteStore = create<EmpleadoStore>()(
       getEmpleadoOptions: async () => {
         try {
           set({ loading: true, error: null });
-          const empleadoOptions = await useEmpleadoService().getEmpleadoOptions();
+          const empleadoOptions = await empleadoService.getEmpleadoOptions();
           set({ empleados: [], empleadoOptions, loading: false });
         } catch (error) {
           set({ loading: false, error: 'Error al obtener opciones de empleados' });
@@ -95,7 +98,7 @@ const useClienteStore = create<EmpleadoStore>()(
       createEmpleado: async (empleado: Empleado) => {
         set({ loading: true, error: null });
         try {
-          await useEmpleadoService().createEmpleado(empleado);
+          await empleadoService.createEmpleado(empleado);
           await get().fetchEmpleados();
         } catch (error: unknown) {
           if (error instanceof Error) {
@@ -109,7 +112,7 @@ const useClienteStore = create<EmpleadoStore>()(
       updateEmpleado: async (empleado: Empleado) => {
         set({ loading: true, error: null });
         try {
-          await useEmpleadoService().updateEmpleado(empleado);
+          await empleadoService.updateEmpleado(empleado);
           await get().fetchEmpleados();
         } catch (error: unknown) {
           if (error instanceof Error) {
@@ -123,7 +126,7 @@ const useClienteStore = create<EmpleadoStore>()(
       deleteEmpleado: async (id: string) => {
         set({ loading: true, error: null });
         try {
-            await useEmpleadoService().deleteEmpleado(id);
+            await empleadoService.deleteEmpleado(id);
             await get().fetchEmpleados();
         } catch (error: unknown) {
             if (error instanceof Error) {
