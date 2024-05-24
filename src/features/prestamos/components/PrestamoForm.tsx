@@ -40,7 +40,7 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const { clientes, fetchClientes: getAllClientes } = useClienteStore();
-    const { empleados, getAllEmpleados } = useEmpleadoStore();
+    const { empleados, fetchEmpleados } = useEmpleadoStore();
     const { createPrestamo, updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
     const [cliente, setCliente] = useState<Cliente | null>(null);
     const [empleado, setEmpleado] = useState<Empleado | null>(null);
@@ -65,14 +65,14 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
                             fechaInicio: dayjs(prestamo.fechaInicio).valueOf(),
                             fechaFinal: dayjs(prestamo.fechaFinal).valueOf(),
                         });
-
+                        
                         if (prestamo.clienteRef) {
                             const clienteDoc = await getDoc(prestamo.clienteRef);
                             if (clienteDoc.exists()) {
                                 setCliente(clienteDoc.data() as Cliente);
                             }
                         }
-
+                        
                         if (prestamo.empleadoRef) {
                             const empleadoDoc = await getDoc(prestamo.empleadoRef);
                             if (empleadoDoc.exists()) {
@@ -97,9 +97,9 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
 
     useEffect(() => {
         if (!empleados.length) {
-            getAllEmpleados();
+            fetchEmpleados();
         }
-    }, [empleados, getAllEmpleados]);
+    }, [empleados, fetchEmpleados]);
 
     const handleClienteChange = (_event: any, value: Cliente & { id: string } | null) => {
         if (value && value.id) {
@@ -239,8 +239,8 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
                                 name="fechaInicio"
                                 sx={{ width: "100%" }}
                                 label="Fecha de inicio"
-                                minDate={dayjs(new Date())}
                                 defaultValue={dayjs(new Date())}
+                                value={dayjs(form.getValues("fechaInicio"))}
                                 slotProps={{ textField: { size: 'small' } }}
                                 onChange={(newDate) => {
                                     const timeStamp = dayjs(newDate).valueOf();
@@ -254,8 +254,7 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
                                 name="fechaFinal"
                                 sx={{ width: "100%" }}
                                 label="Fecha de finalización"
-                                minDate={dayjs(new Date())}
-                                defaultValue={dayjs(new Date())}
+                                value={dayjs(form.getValues("fechaFinal"))}
                                 slotProps={{ textField: { size: 'small' } }}
                                 onChange={(newDate) => {
                                     const timeStamp = dayjs(newDate).valueOf();
