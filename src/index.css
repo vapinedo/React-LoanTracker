@@ -28,3 +28,18 @@ body, html {
     background-color: #fff;
     box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
 }
+
+.mini-card {
+    padding: 16px 20px;
+    border-radius: 7px;
+    background-color: #fff;
+    box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
+}
+.mini-card .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.mini-card .title {
+    color: rgb(140, 140, 140)
+}

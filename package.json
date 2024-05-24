@@ -28,6 +28,7 @@
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.23.0",
     "react-text-mask": "^5.4.3",
+    "recharts": "^2.12.7",
     "sweetalert2": "^11.10.8",
     "text-mask-addons": "^3.8.0",
     "uuid": "^9.0.1",
