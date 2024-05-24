@@ -4,6 +4,9 @@ import useClienteService from '@services/useClienteService';
 import { PersistStorage, persist } from 'zustand/middleware';
 import { AutocompleteOption } from '@models/AutocompleteOption';
 
+// crear instancia única del servicio de clientes
+const clienteService = useClienteService();
+
 interface ClienteStore {
   clientes: Cliente[];
   clienteOptions: AutocompleteOption[];
@@ -68,7 +71,7 @@ const useClienteStore = create<ClienteStore>()(
       fetchClientes: async () => {
         try {
           set({ loading: true, error: null });
-          const clientes = await useClienteService().getAllClientes();
+          const clientes = await clienteService.getAllClientes();
           set({ clientes, clienteOptions: [], loading: false });
         } catch (error) {
           set({ loading: false, error: 'Error al obtener los clientes' });
@@ -79,7 +82,7 @@ const useClienteStore = create<ClienteStore>()(
       getClienteOptions: async () => {
         try {
           set({ loading: true, error: null });
-          const clienteOptions = await useClienteService().getClienteOptions();
+          const clienteOptions = await clienteService.getClienteOptions();
           set({ clientes: [], clienteOptions, loading: false });
         } catch (error) {
           set({ loading: false, error: 'Error al obtener opciones de clientes' });
@@ -95,7 +98,7 @@ const useClienteStore = create<ClienteStore>()(
       createCliente: async (cliente: Cliente) => {
         set({ loading: true, error: null });
         try {
-          await useClienteService().createCliente(cliente);
+          await clienteService.createCliente(cliente);
           await get().fetchClientes();
         } catch (error: unknown) {
           if (error instanceof Error) {
@@ -109,7 +112,7 @@ const useClienteStore = create<ClienteStore>()(
       updateCliente: async (cliente: Cliente) => {
         set({ loading: true, error: null });
         try {
-          await useClienteService().updateCliente(cliente);
+          await clienteService.updateCliente(cliente);
           await get().fetchClientes();
         } catch (error: unknown) {
           if (error instanceof Error) {
@@ -123,7 +126,7 @@ const useClienteStore = create<ClienteStore>()(
       deleteCliente: async (id: string) => {
         set({ loading: true, error: null });
         try {
-            await useClienteService().deleteCliente(id);
+            await clienteService.deleteCliente(id);
             await get().fetchClientes();
         } catch (error: unknown) {
             if (error instanceof Error) {
