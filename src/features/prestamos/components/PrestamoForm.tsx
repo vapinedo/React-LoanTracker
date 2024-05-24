@@ -21,7 +21,7 @@ import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOp
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
 
 const defaultValues: Prestamo = {
-    id: null,
+    id: '',
     monto: null,
     interes: null,
     fechaInicio: new Date().getTime(),
