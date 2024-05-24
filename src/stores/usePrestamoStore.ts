@@ -5,6 +5,9 @@ import { persist, PersistStorage } from "zustand/middleware";
 import usePrestamoService from "@services/usePrestamoService";
 import { Prestamo } from "@features/prestamos/models/Prestamo";
 
+// crear instancia unica de servicio prestamo
+const prestamoService = usePrestamoService();
+
 interface PrestamoStore {
     prestamos: Prestamo[];
     loading: boolean;
@@ -72,7 +75,7 @@ const usePrestamoStore = create<PrestamoStore>()(
             fetchPrestamos: async () => {
                 set({ loading: true, error: null });
                 try {
-                    const prestamos = await usePrestamoService().getAllPrestamos();
+                    const prestamos = await prestamoService.getAllPrestamos();
                     set({ prestamos, loading: false });
                 } catch (error: unknown) {
                     if (error instanceof Error) {
@@ -91,7 +94,7 @@ const usePrestamoStore = create<PrestamoStore>()(
             createPrestamo: async (prestamo: Prestamo) => {
                 set({ loading: true, error: null });
                 try {
-                    await usePrestamoService().createPrestamo(prestamo);
+                    await prestamoService.createPrestamo(prestamo);
                     await get().fetchPrestamos();
                 } catch (error: unknown) {
                     if (error instanceof Error) {
@@ -105,7 +108,7 @@ const usePrestamoStore = create<PrestamoStore>()(
             updatePrestamo: async (prestamo: Prestamo) => {
                 set({ loading: true, error: null });
                 try {
-                    await usePrestamoService().updatePrestamo(prestamo);
+                    await prestamoService.updatePrestamo(prestamo);
                     // Fetch the updated list of prestamos
                     await get().fetchPrestamos();
                 } catch (error: unknown) {
@@ -120,7 +123,7 @@ const usePrestamoStore = create<PrestamoStore>()(
             deletePrestamo: async (id: string) => {
                 set({ loading: true, error: null });
                 try {
-                    await usePrestamoService().deletePrestamo(id);
+                    await prestamoService.deletePrestamo(id);
                     // Fetch the updated list of prestamos
                     await get().fetchPrestamos();
                 } catch (error: unknown) {

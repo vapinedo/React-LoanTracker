@@ -1,7 +1,7 @@
 import { DocumentReference } from "firebase/firestore";
 
 export interface Prestamo {
-    id: string | null;
+    id: string;
     monto: string | null;
     estado: string;
     interes: number | null;
