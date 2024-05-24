@@ -1,6 +1,6 @@
 // import useAuth from "@services/useAuth";
 import { Route, Routes } from 'react-router-dom';
-import HomePage from "@features/home/pages/HomePage";
+import HomePage from "@app/features/home/dashboard/HomePage";
 // import LoginPage from "@features/auth/pages/LoginPage";
 
 export default function AuthRouter() {
