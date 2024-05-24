@@ -59,14 +59,14 @@ export default function PrestamosAdminPage() {
     fetchRelatedData();
   }, [prestamos]);
 
-  const handleDetails = (params: any) => {
+  const handleDetails = ({ row }: any) => {
     return (
       <NavLink
-        title={`Ver detalles de ${params.value}`}
+        title={`Ver detalles de ${row.clienteNombre}`}
         className="grid-table-linkable-column"
-        to={`/prestamos/detalles/${params.id}`}
+        to={`/prestamos/detalles/${row.id}`}
       >
-        {params.value}
+        {row.clienteNombre}
       </NavLink>
     );
   };
@@ -90,7 +90,7 @@ export default function PrestamosAdminPage() {
   };
 
   const handleDelete = async (params: any) => {
-    const text = `Vas a eliminar a ${params.row.nombres} ${params.row.apellidos}`;
+    const text = `Vas a eliminar un prestamo a ${params.row.clienteNombre}`;
     const { isConfirmed } = await dialogConfirm(text);
     if (isConfirmed) {
       deletePrestamo(params.row.id);
