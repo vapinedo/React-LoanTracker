@@ -113,7 +113,7 @@ export default function PrestamosAdminPage() {
       renderCell: (params) => params.value,
     },
     {
-      field: 'monto',
+      field: 'monto_prestado',
       headerName: 'Valor',
       width: 110,
       editable: true,

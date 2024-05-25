@@ -22,14 +22,16 @@ import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } fr
 
 const defaultValues: Prestamo = {
     id: '',
-    monto: null,
     interes: null,
-    fechaInicio: new Date().getTime(),
-    fechaFinal: dayjs(new Date()).add(30, 'day').valueOf(),
     estado: "Activo",
-    modalidadDePago: "Diario",
     clienteRef: null,
     empleadoRef: null,
+    monto_prestado: null,
+    monto_abonado: null,
+    monto_adeudado: null,
+    modalidadDePago: "Diario",
+    fechaInicio: new Date().getTime(),
+    fechaFinal: dayjs(new Date()).add(30, 'day').valueOf(),
 };
 
 interface PrestamoFormProps {
@@ -181,11 +183,11 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
 
                         <div className="col-md-12 mb-3">
                             <CustomCurrencyInput
-                                name="monto"
-                                label="Monto"
                                 size='small'
                                 control={control}
-                                helperText={errors.monto?.message}
+                                name="monto_prestado"
+                                label="Monto prestado"
+                                helperText={errors.monto_prestado?.message}
                             />                        
                         </div>
 
@@ -199,9 +201,31 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
                                 error={errors.interes?.message}
                             />
                         </div>
+
+                        <div className="col-md-12 mb-3">
+                            <CustomCurrencyInput
+                                disabled
+                                size='small'
+                                control={control}
+                                name="monto_abonado"
+                                label="Monto abonado"
+                                helperText={errors.monto_abonado?.message}
+                            />                        
+                        </div>                       
                     </div>
 
                     <div className="col-md-6">
+                        <div className="col-md-12 mb-3">
+                            <CustomCurrencyInput
+                                disabled
+                                size='small'
+                                control={control}
+                                name="monto_adeudado"
+                                label="Monto adeudado"
+                                helperText={errors.monto_adeudado?.message}
+                            />                        
+                        </div> 
+
                         <div className="col-md-12 mb-3">
                             <FormControl fullWidth>
                                 <InputLabel>Modalidad de pago</InputLabel>
