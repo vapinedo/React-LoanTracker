@@ -24,7 +24,7 @@ export default function AppRouter() {
         <React.Fragment>
             {isAuthChecked && user && <Navbar /> }
 
-            <section className="container mt-5 mb-5 px-5">
+            <section className="container-fluid mt-5 mb-5 px-5">
                 {isAuthChecked && user && <Toaster />}
                 {isAuthChecked && user &&  <Breadcrumbs />}
                 
