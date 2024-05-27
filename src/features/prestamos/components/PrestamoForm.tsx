@@ -19,6 +19,7 @@ import PrestamoFormSchema from '@features/prestamos/PrestamoFormSchema';
 import CustomCurrencyInput from '@app/components/form/CustomCurrencyInput';
 import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOptions';
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
+import usePrestamoHelper from '../helpers/usePrestamoHelper';
 
 const defaultValues: Prestamo = {
     id: '',
@@ -41,11 +42,12 @@ interface PrestamoFormProps {
 export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
-    const { clientes, fetchClientes: getAllClientes } = useClienteStore();
+    const { getMontoAdeudado } = usePrestamoHelper();
     const { empleados, fetchEmpleados } = useEmpleadoStore();
-    const { createPrestamo, updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
     const [cliente, setCliente] = useState<Cliente | null>(null);
     const [empleado, setEmpleado] = useState<Empleado | null>(null);
+    const { clientes, fetchClientes: getAllClientes } = useClienteStore();
+    const { createPrestamo, updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
 
     const form = useForm<Prestamo>({
         defaultValues: defaultValues,
@@ -128,6 +130,8 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
     const onSubmit = async (prestamo: Prestamo) => {
         const clienteRef = getValues('clienteRef');
         const empleadoRef = getValues('empleadoRef');
+        const montoAdeudado = getMontoAdeudado(prestamo);
+        prestamo.monto_adeudado = montoAdeudado;
         const updatedPrestamo = { ...prestamo, clienteRef, empleadoRef };
 
         if (isEditMode) {
