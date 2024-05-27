@@ -3,7 +3,7 @@ import * as yup from 'yup';
 const PrestamoFormSchema = yup.object().shape({
     clienteRef: yup.object().nullable().required('Cliente es requerido'),
     empleadoRef: yup.object().nullable().required('Empleado es requerido'),
-    monto: yup
+    monto_prestado: yup
         .string()
         .test('required', 'Monto es requerido', value => value && value.trim() !== '')
         .test('numeric', 'El monto debe contener solo caracteres numéricos', value => /^[0-9]+(\.[0-9]+)?(,[0-9]+)?$/.test(value?.trim()?.replace(/\./g, '')))

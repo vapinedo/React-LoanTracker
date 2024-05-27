@@ -68,8 +68,8 @@ export default function PrestamoDetailsPage() {
                                         <td>{empleado?.nombres} {empleado?.apellidos}</td>
                                     </tr>
                                     <tr>
-                                        <th>Valor</th>
-                                        <td>{prestamo?.monto}</td>
+                                        <th>Valor prestado</th>
+                                        <td>{prestamo?.monto_prestado}</td>
                                     </tr>
                                     <tr>
                                         <th>Interés</th>

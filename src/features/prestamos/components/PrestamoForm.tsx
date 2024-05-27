@@ -19,17 +19,20 @@ import PrestamoFormSchema from '@features/prestamos/PrestamoFormSchema';
 import CustomCurrencyInput from '@app/components/form/CustomCurrencyInput';
 import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOptions';
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
+import usePrestamoHelper from '../helpers/usePrestamoHelper';
 
 const defaultValues: Prestamo = {
     id: '',
-    monto: null,
     interes: null,
-    fechaInicio: new Date().getTime(),
-    fechaFinal: dayjs(new Date()).add(30, 'day').valueOf(),
     estado: "Activo",
-    modalidadDePago: "Diario",
     clienteRef: null,
     empleadoRef: null,
+    monto_prestado: '',
+    monto_abonado: '',
+    monto_adeudado: '',
+    modalidadDePago: "Diario",
+    fechaInicio: new Date().getTime(),
+    fechaFinal: dayjs(new Date()).add(30, 'day').valueOf(),
 };
 
 interface PrestamoFormProps {
@@ -39,11 +42,12 @@ interface PrestamoFormProps {
 export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
-    const { clientes, fetchClientes: getAllClientes } = useClienteStore();
+    const { getMontoAdeudado } = usePrestamoHelper();
     const { empleados, fetchEmpleados } = useEmpleadoStore();
-    const { createPrestamo, updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
     const [cliente, setCliente] = useState<Cliente | null>(null);
     const [empleado, setEmpleado] = useState<Empleado | null>(null);
+    const { clientes, fetchClientes: getAllClientes } = useClienteStore();
+    const { createPrestamo, updatePrestamo, getPrestamo, loading, error } = usePrestamoStore();
 
     const form = useForm<Prestamo>({
         defaultValues: defaultValues,
@@ -126,6 +130,8 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
     const onSubmit = async (prestamo: Prestamo) => {
         const clienteRef = getValues('clienteRef');
         const empleadoRef = getValues('empleadoRef');
+        const montoAdeudado = getMontoAdeudado(prestamo);
+        prestamo.monto_adeudado = montoAdeudado;
         const updatedPrestamo = { ...prestamo, clienteRef, empleadoRef };
 
         if (isEditMode) {
@@ -181,11 +187,11 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
 
                         <div className="col-md-12 mb-3">
                             <CustomCurrencyInput
-                                name="monto"
-                                label="Monto"
                                 size='small'
                                 control={control}
-                                helperText={errors.monto?.message}
+                                name="monto_prestado"
+                                label="Monto prestado"
+                                helperText={errors.monto_prestado?.message}
                             />                        
                         </div>
 
@@ -199,9 +205,31 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
                                 error={errors.interes?.message}
                             />
                         </div>
+
+                        <div className="col-md-12 mb-3">
+                            <CustomCurrencyInput
+                                disabled
+                                size='small'
+                                control={control}
+                                name="monto_abonado"
+                                label="Monto abonado"
+                                helperText={errors.monto_abonado?.message}
+                            />                        
+                        </div>                       
                     </div>
 
                     <div className="col-md-6">
+                        <div className="col-md-12 mb-3">
+                            <CustomCurrencyInput
+                                disabled
+                                size='small'
+                                control={control}
+                                name="monto_adeudado"
+                                label="Monto adeudado"
+                                helperText={errors.monto_adeudado?.message}
+                            />                        
+                        </div> 
+
                         <div className="col-md-12 mb-3">
                             <FormControl fullWidth>
                                 <InputLabel>Modalidad de pago</InputLabel>
