@@ -7,9 +7,9 @@ export interface Prestamo {
     fechaInicio: number;
     interes: number | null;
     modalidadDePago: string;
-    monto_prestado: string | null;
-    monto_adeudado: string | null;
-    monto_abonado: string | null;
+    monto_prestado: string;
+    monto_adeudado: string;
+    monto_abonado: string;
     clienteRef: DocumentReference | null;
     empleadoRef: DocumentReference | null;
 }
