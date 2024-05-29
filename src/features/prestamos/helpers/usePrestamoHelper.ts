@@ -1,3 +1,4 @@
+import { EstadoPrestamo } from "@mocks/DropdownOptions";
 import { Prestamo } from "@features/prestamos/models/Prestamo";
 
 export default function usePrestamoHelper() {
@@ -25,6 +26,25 @@ export default function usePrestamoHelper() {
 
         return montoSinSigno;
     };
+    
+    const getClassByState = (state: EstadoPrestamo): string => {
+        let className = '';
+        switch (state) {
+            case EstadoPrestamo.Activo:
+                className = 'badge text-bg-primary';
+                break;
+            case EstadoPrestamo.CerradoExitoso:
+                className = 'badge text-bg-success';
+                break;
+            case EstadoPrestamo.CerradoFallido:
+                className = 'badge text-bg-danger';
+                break;
+            default:
+                className = 'badge text-bg-default';
+                break;
+        }
+        return className;
+    }
 
-    return { getMontoAdeudado };
+    return { getMontoAdeudado, getClassByState };
 }
