@@ -5,7 +5,7 @@ import { AutocompleteOption } from '@models/AutocompleteOption';
 import FirestoreGenericService from '@services/FirestoreGenericService';
 
 const COLLECTION = "CLIENTES";
-const { getAllDocuments, getDocumentById, createDocument, updateDocument, deleteDocument, getTotalDocuments } = FirestoreGenericService<Cliente>(COLLECTION);
+const { getAllDocuments, getDocumentById, createDocument, updateDocument, deleteDocument, getTotalRecords } = FirestoreGenericService<Cliente>(COLLECTION);
 
 const getClienteOptions = async (): Promise<AutocompleteOption[]> => {
     const options: AutocompleteOption[] = [];
@@ -31,7 +31,7 @@ export default function useClienteService() {
         createCliente: createDocument,
         updateCliente: updateDocument,
         deleteCliente: deleteDocument,
-        getTotalClientes: getTotalDocuments,
+        getTotalRecords,
         getClienteOptions,
     };
 }
