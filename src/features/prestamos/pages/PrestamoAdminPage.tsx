@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import BoxShadow from "@layouts/BoxShadow";
 import { useEffect, useState } from "react";
 import { getDoc } from "firebase/firestore";
-import useDatetime from "@app/hooks/useDatetime";
+import useDatetime from "@hooks/useDatetime";
 import usePrestamoStore from "@stores/usePrestamoStore";
 import { NavLink, useNavigate } from "react-router-dom";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
@@ -12,7 +12,7 @@ import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 
 export default function PrestamosAdminPage() {
   const navigate = useNavigate();
-  const { getHumanDate } = useDatetime();
+  const { differenceInDays } = useDatetime();
   const { dialogConfirm } = useNotification();
   const { prestamos, loading, error, fetchPrestamos, deletePrestamo } = usePrestamoStore();
 
@@ -143,18 +143,11 @@ export default function PrestamosAdminPage() {
       editable: true,
     },
     {
-      field: 'fechaInicio',
-      headerName: 'Fecha Inicial',
-      width: 140,
-      editable: true,
-      renderCell: ({ formattedValue }) => getHumanDate(formattedValue),
-    },
-    {
       field: 'fechaFinal',
-      headerName: 'Fecha Límite',
-      width: 140,
+      headerName: 'Días restantes',
+      width: 120,
       editable: true,
-      renderCell: ({ formattedValue }) => getHumanDate(formattedValue),
+      renderCell: ({ row }) => differenceInDays(row.fechaInicio, row.fechaFinal)
     },
     {
       field: " ",
