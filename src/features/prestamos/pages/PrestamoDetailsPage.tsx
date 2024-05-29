@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import BoxShadow from "@layouts/BoxShadow";
 import { useParams } from "react-router-dom";
 import { getDoc } from "firebase/firestore";
-import useDatetime from "@services/useDatetime";
+import useDatetime from "@app/hooks/useDatetime";
 import usePrestamoStore from "@app/stores/usePrestamoStore";
 
 export default function PrestamoDetailsPage() {

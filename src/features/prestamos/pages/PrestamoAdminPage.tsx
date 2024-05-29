@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import BoxShadow from "@layouts/BoxShadow";
 import { useEffect, useState } from "react";
 import { getDoc } from "firebase/firestore";
-import useDatetime from "@services/useDatetime";
+import useDatetime from "@app/hooks/useDatetime";
 import usePrestamoStore from "@stores/usePrestamoStore";
 import { NavLink, useNavigate } from "react-router-dom";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
