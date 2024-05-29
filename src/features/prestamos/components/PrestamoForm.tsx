@@ -208,7 +208,6 @@ export default function PrestamoForm({ isEditMode }: PrestamoFormProps) {
 
                         <div className="col-md-12 mb-3">
                             <CustomCurrencyInput
-                                disabled
                                 size='small'
                                 control={control}
                                 name="monto_abonado"
