@@ -5,7 +5,7 @@ import { AutocompleteOption } from '@models/AutocompleteOption';
 import FirestoreGenericService from '@services/FirestoreGenericService';
 
 const COLLECTION = "EMPLEADOS";
-const { getAllDocuments, getDocumentById, createDocument, updateDocument, deleteDocument } = FirestoreGenericService<Empleado>(COLLECTION);
+const { getAllDocuments, getDocumentById, createDocument, updateDocument, deleteDocument, getTotalRecords } = FirestoreGenericService<Empleado>(COLLECTION);
 
 const getEmpleadoOptions = async (): Promise<AutocompleteOption[]> => {
     const options: AutocompleteOption[] = [];
@@ -31,6 +31,7 @@ export default function useEmpleadoService() {
         createEmpleado: createDocument,
         updateEmpleado: updateDocument,
         deleteEmpleado: deleteDocument,
+        getTotalRecords,
         getEmpleadoOptions,
     };
 }

@@ -1,6 +1,6 @@
 interface MiniCardProps {
     title: string;
-    data: string;
+    data: string | number;
     icon: JSX.Element;
 }
 

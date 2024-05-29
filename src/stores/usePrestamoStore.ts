@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { firebaseApp } from "@app/firebaseConfig";
-import { doc, getFirestore  } from "firebase/firestore";
+import { doc, getFirestore } from "firebase/firestore";
 import { persist, PersistStorage } from "zustand/middleware";
 import usePrestamoService from "@services/usePrestamoService";
 import { Prestamo } from "@features/prestamos/models/Prestamo";
@@ -10,6 +10,7 @@ const prestamoService = usePrestamoService();
 
 interface PrestamoStore {
     prestamos: Prestamo[];
+    totalRecords: number;
     loading: boolean;
     error: string | null;
     fetchPrestamos: () => Promise<void>;
@@ -17,6 +18,7 @@ interface PrestamoStore {
     createPrestamo: (prestamo: Prestamo) => Promise<void>;
     updatePrestamo: (prestamo: Prestamo) => Promise<void>;
     deletePrestamo: (id: string) => Promise<void>;
+    getTotalRecords: () => Promise<void>;
 }
 
 const firestore = getFirestore(firebaseApp);
@@ -69,6 +71,7 @@ const usePrestamoStore = create<PrestamoStore>()(
     persist(
         (set, get) => ({
             prestamos: [],
+            totalRecords: 0,
             loading: false,
             error: null,
 
@@ -133,7 +136,19 @@ const usePrestamoStore = create<PrestamoStore>()(
                         set({ error: String(error), loading: false });
                     }
                 }
+            },
+
+            getTotalRecords: async () => {
+                try {
+                    set({ loading: true, error: null });
+                    const totalRecords = await prestamoService.getTotalRecords();
+                    set({ totalRecords, loading: false });
+                } catch (error) {
+                    set({ loading: false, error: 'Error al obtener el total de prestamos' });
+                    console.error(error);
+                }
             }
+
         }),
         {
             name: "prestamos-store",

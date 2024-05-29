@@ -10,6 +10,7 @@ const empleadoService = useEmpleadoService();
 interface EmpleadoStore {
   empleados: Empleado[];
   empleadoOptions: AutocompleteOption[];
+  totalRecords: number;
   loading: boolean;
   error: string | null;
   fetchEmpleados: () => Promise<void>;
@@ -18,6 +19,7 @@ interface EmpleadoStore {
   createEmpleado: (empleado: Empleado) => Promise<void>;
   updateEmpleado: (empleado: Empleado) => Promise<void>;
   deleteEmpleado: (id: string) => Promise<void>;
+  getTotalRecords: () => Promise<void>;
 }
 
 const serialize = (document: Empleado): any => {
@@ -60,11 +62,12 @@ const storage: PersistStorage<EmpleadoStore> = {
   removeItem: (name) => sessionStorage.removeItem(name),
 };
 
-const useClienteStore = create<EmpleadoStore>()(
+const useEmpleadoStore = create<EmpleadoStore>()(
   persist(
     (set, get) => ({
       empleados: [],
       empleadoOptions: [],
+      totalRecords: 0,
       loading: false,
       error: null,
 
@@ -126,16 +129,27 @@ const useClienteStore = create<EmpleadoStore>()(
       deleteEmpleado: async (id: string) => {
         set({ loading: true, error: null });
         try {
-            await empleadoService.deleteEmpleado(id);
-            await get().fetchEmpleados();
+          await empleadoService.deleteEmpleado(id);
+          await get().fetchEmpleados();
         } catch (error: unknown) {
-            if (error instanceof Error) {
-                set({ error: error.message, loading: false });
-            } else {
-                set({ error: String(error), loading: false });
-            }
+          if (error instanceof Error) {
+            set({ error: error.message, loading: false });
+          } else {
+            set({ error: String(error), loading: false });
+          }
         }
-    }
+      },
+
+      getTotalRecords: async () => {
+        try {
+          set({ loading: true, error: null });
+          const totalRecords = await empleadoService.getTotalRecords();
+          set({ totalRecords, loading: false });
+        } catch (error) {
+          set({ loading: false, error: 'Error al obtener el total de empleados' });
+          console.error(error);
+        }
+      }
 
     }),
     {
@@ -145,4 +159,4 @@ const useClienteStore = create<EmpleadoStore>()(
   )
 );
 
-export default useClienteStore;
+export default useEmpleadoStore;

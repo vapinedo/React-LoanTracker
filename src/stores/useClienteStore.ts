@@ -4,12 +4,13 @@ import useClienteService from '@services/useClienteService';
 import { PersistStorage, persist } from 'zustand/middleware';
 import { AutocompleteOption } from '@models/AutocompleteOption';
 
-// crear instancia única del servicio de clientes
+// Crear instancia única del servicio de clientes
 const clienteService = useClienteService();
 
 interface ClienteStore {
   clientes: Cliente[];
   clienteOptions: AutocompleteOption[];
+  totalRecords: number;
   loading: boolean;
   error: string | null;
   fetchClientes: () => Promise<void>;
@@ -18,6 +19,7 @@ interface ClienteStore {
   createCliente: (cliente: Cliente) => Promise<void>;
   updateCliente: (cliente: Cliente) => Promise<void>;
   deleteCliente: (id: string) => Promise<void>;
+  getTotalRecords: () => Promise<void>;
 }
 
 const serialize = (document: Cliente): any => {
@@ -65,6 +67,7 @@ const useClienteStore = create<ClienteStore>()(
     (set, get) => ({
       clientes: [],
       clienteOptions: [],
+      totalRecords: 0,
       loading: false,
       error: null,
 
@@ -135,7 +138,18 @@ const useClienteStore = create<ClienteStore>()(
                 set({ error: String(error), loading: false });
             }
         }
-    }
+      },
+      
+      getTotalRecords: async () => {
+        try {
+          set({ loading: true, error: null });
+          const totalRecords = await clienteService.getTotalRecords();
+          set({ totalRecords, loading: false });
+        } catch (error) {
+          set({ loading: false, error: 'Error al obtener el total de clientes' });
+          console.error(error);
+        }
+      }
 
     }),
     {
