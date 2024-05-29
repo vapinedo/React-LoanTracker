@@ -17,9 +17,9 @@ import { Empleado } from '@features/empleados/models/Empleado';
 import CustomTextField from '@components/form/CustomTextField';
 import PrestamoFormSchema from '@features/prestamos/PrestamoFormSchema';
 import CustomCurrencyInput from '@app/components/form/CustomCurrencyInput';
+import usePrestamoHelper from '@features/prestamos/helpers/usePrestamoHelper';
 import { estadoPrestamoOptions, modalidadDePagoOptions } from '@mocks/DropdownOptions';
 import { Autocomplete, Button, FormControl, InputLabel, MenuItem, TextField } from '@mui/material';
-import usePrestamoHelper from '../helpers/usePrestamoHelper';
 
 const defaultValues: Prestamo = {
     id: '',

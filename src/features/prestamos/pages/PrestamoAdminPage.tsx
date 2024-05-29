@@ -9,11 +9,13 @@ import { IconEdit, IconTrash } from "@tabler/icons-react";
 import useNotification from '@services/useNotificationService';
 import { Prestamo } from "@features/prestamos/models/Prestamo";
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
+import usePrestamoHelper from "../helpers/usePrestamoHelper";
 
 export default function PrestamosAdminPage() {
   const navigate = useNavigate();
   const { differenceInDays } = useDatetime();
   const { dialogConfirm } = useNotification();
+  const { getClassByState } = usePrestamoHelper();
   const { prestamos, loading, error, fetchPrestamos, deletePrestamo } = usePrestamoStore();
 
   const [prestamosData, setPrestamosData] = useState<Prestamo[]>([]);
@@ -119,14 +121,14 @@ export default function PrestamosAdminPage() {
       editable: true,
     },
     {
-      field: 'monto_adeudado',
-      headerName: 'Adeudado',
+      field: 'monto_abonado',
+      headerName: 'Abonado',
       width: 110,
       editable: true,
     },
     {
-      field: 'monto_abonado',
-      headerName: 'Abonado',
+      field: 'monto_adeudado',
+      headerName: 'Adeudado',
       width: 110,
       editable: true,
     },
@@ -135,6 +137,10 @@ export default function PrestamosAdminPage() {
       headerName: 'Estado',
       width: 130,
       editable: true,
+      renderCell: ({ row }) => {
+        const className = getClassByState(row.estado);
+        return <span className={className}>{row.estado}</span>;
+      }
     },
     {
       field: 'modalidadDePago',
