@@ -10,6 +10,7 @@ const empleadoService = useEmpleadoService();
 interface EmpleadoStore {
   empleados: Empleado[];
   empleadoOptions: AutocompleteOption[];
+  totalEmpleados: number;
   loading: boolean;
   error: string | null;
   fetchEmpleados: () => Promise<void>;
@@ -18,6 +19,7 @@ interface EmpleadoStore {
   createEmpleado: (empleado: Empleado) => Promise<void>;
   updateEmpleado: (empleado: Empleado) => Promise<void>;
   deleteEmpleado: (id: string) => Promise<void>;
+  getTotalEmpleados: () => Promise<void>;
 }
 
 const serialize = (document: Empleado): any => {
@@ -65,6 +67,7 @@ const useClienteStore = create<EmpleadoStore>()(
     (set, get) => ({
       empleados: [],
       empleadoOptions: [],
+      totalEmpleados: 0,
       loading: false,
       error: null,
 
@@ -126,16 +129,27 @@ const useClienteStore = create<EmpleadoStore>()(
       deleteEmpleado: async (id: string) => {
         set({ loading: true, error: null });
         try {
-            await empleadoService.deleteEmpleado(id);
-            await get().fetchEmpleados();
+          await empleadoService.deleteEmpleado(id);
+          await get().fetchEmpleados();
         } catch (error: unknown) {
-            if (error instanceof Error) {
-                set({ error: error.message, loading: false });
-            } else {
-                set({ error: String(error), loading: false });
-            }
+          if (error instanceof Error) {
+            set({ error: error.message, loading: false });
+          } else {
+            set({ error: String(error), loading: false });
+          }
         }
-    }
+      },
+
+      getTotalEmpleados: async () => {
+        try {
+          set({ loading: true, error: null });
+          const totalEmpleados = await empleadoService.getTotalEmpleados();
+          set({ totalEmpleados, loading: false });
+        } catch (error) {
+          set({ loading: false, error: 'Error al obtener el total de empleados' });
+          console.error(error);
+        }
+      }
 
     }),
     {
