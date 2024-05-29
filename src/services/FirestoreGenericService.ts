@@ -72,11 +72,22 @@ export default function FirestoreGenericService<T>(COLLECTION: string) {
         }
     };
 
+    const getTotalDocuments = async (): Promise<number> => {
+        try {
+            const querySnapshot = await getDocs(collection(db, COLLECTION));
+            return querySnapshot.size;
+        } catch (error) {
+            toastError(error, `Error al obtener el total de documentos de ${COLLECTION}`);
+            return 0;
+        }
+    };
+
     return {
         getAllDocuments,
         getDocumentById,
         createDocument,
         updateDocument,
         deleteDocument,
+        getTotalDocuments,
     };
 }

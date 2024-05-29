@@ -2,6 +2,9 @@ import IconSVG from "@components/IconSVG";
 import MiniCard from "@features/dashboard/components/MiniCard";
 
 export default function DashboardPage() {
+
+    
+
     return (
         <section>
             <div className="row">

@@ -3,7 +3,7 @@ import { DocumentReference, getDoc } from "firebase/firestore";
 import FirestoreGenericService from '@services/FirestoreGenericService';
 
 const COLLECTION = "PRESTAMOS";
-const { getAllDocuments, getDocumentById, createDocument, updateDocument, deleteDocument } = FirestoreGenericService<Prestamo>(COLLECTION);
+const { getAllDocuments, getDocumentById, createDocument, updateDocument, deleteDocument, getTotalDocuments } = FirestoreGenericService<Prestamo>(COLLECTION);
 
 const getClienteAndEmpleadoData = async (prestamo: Prestamo) => {
     const clienteData = (await getDoc(prestamo.clienteRef as DocumentReference)).data();
@@ -18,6 +18,7 @@ export default function usePrestamoService() {
         createPrestamo: createDocument,
         updatePrestamo: updateDocument,
         deletePrestamo: deleteDocument,
+        getTotalPrestamo: getTotalDocuments,
         getClienteAndEmpleadoData,
     };
 }
