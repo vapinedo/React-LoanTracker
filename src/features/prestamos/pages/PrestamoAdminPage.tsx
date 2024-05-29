@@ -119,14 +119,14 @@ export default function PrestamosAdminPage() {
       editable: true,
     },
     {
-      field: 'monto_abonado',
-      headerName: 'Abonado',
+      field: 'monto_adeudado',
+      headerName: 'Adeudado',
       width: 110,
       editable: true,
     },
     {
-      field: 'monto_adeudado',
-      headerName: 'Adeudado',
+      field: 'monto_abonado',
+      headerName: 'Abonado',
       width: 110,
       editable: true,
     },
