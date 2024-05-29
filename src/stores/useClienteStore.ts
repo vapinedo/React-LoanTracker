@@ -10,7 +10,7 @@ const clienteService = useClienteService();
 interface ClienteStore {
   clientes: Cliente[];
   clienteOptions: AutocompleteOption[];
-  totalClientes: number; // Agregar totalClientes al store
+  totalRegistros: number; // Agregar totalClientes al store
   loading: boolean;
   error: string | null;
   fetchClientes: () => Promise<void>;
@@ -19,7 +19,7 @@ interface ClienteStore {
   createCliente: (cliente: Cliente) => Promise<void>;
   updateCliente: (cliente: Cliente) => Promise<void>;
   deleteCliente: (id: string) => Promise<void>;
-  getTotalClientes: () => Promise<void>; // Agregar método getTotalClientes al store
+  getTotalRecords: () => Promise<void>;
 }
 
 const serialize = (document: Cliente): any => {
@@ -67,7 +67,7 @@ const useClienteStore = create<ClienteStore>()(
     (set, get) => ({
       clientes: [],
       clienteOptions: [],
-      totalClientes: 0, // Inicializar totalClientes
+      totalRegistros: 0,
       loading: false,
       error: null,
 
@@ -140,11 +140,11 @@ const useClienteStore = create<ClienteStore>()(
         }
       },
       
-      getTotalClientes: async () => {
+      getTotalRecords: async () => {
         try {
           set({ loading: true, error: null });
-          const totalClientes = await clienteService.getTotalClientes();
-          set({ totalClientes, loading: false });
+          const totalRegistros = await clienteService.getTotalRecords();
+          set({ totalRegistros, loading: false });
         } catch (error) {
           set({ loading: false, error: 'Error al obtener el total de clientes' });
           console.error(error);
