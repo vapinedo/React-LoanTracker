@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "yarn vite",
     "build": "yarn tsc && yarn vite build",
-    "lint": "yarn eslint . --ext js,jsx,ts,tsx, --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --ext js,jsx,ts,tsx, --fix",
-    "format": "prettier --write . --ext js,jsx,ts,tsx,json,css,scss,md",
+    "lint": "yarn eslint 'src/**/*.{js,jsx,ts,tsx}' --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "yarn eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
+    "format": "yarn prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "preview": "yarn vite preview"
   },
   "dependencies": {
