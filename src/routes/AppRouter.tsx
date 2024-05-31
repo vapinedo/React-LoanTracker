@@ -29,8 +29,10 @@ export default function AppRouter() {
                 {isAuthChecked && user &&  <Breadcrumbs />}
                 
                 <Routes>
+                    {/* public routes */}
                     <Route path="/login" element={<LoginPage />} />
                     
+                    {/* private routes */}
                     <Route path="/" element={<PrivateRoute Component={DashboardPage} />} />
                     <Route path="/clientes/*" element={<PrivateRoute Component={ClientesRouter} />} />
                     <Route path="/empleados/*" element={<PrivateRoute Component={EmpleadosRouter} />} />
