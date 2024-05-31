@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "yarn vite",
     "build": "yarn tsc && yarn vite build",
-    "lint": "yarn eslint 'src/**/*.{js,jsx,ts,tsx}' --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "yarn eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
-    "format": "yarn prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "lint": "eslint 'src/**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0 --no-ignore",
+    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix --no-ignore",
+    "format": "prettier --write 'src/**/*.{ts,tsx,json,css,scss,md}'",
     "preview": "yarn vite preview"
-  },
+  },    
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
