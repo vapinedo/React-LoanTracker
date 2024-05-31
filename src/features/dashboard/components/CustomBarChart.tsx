@@ -25,7 +25,7 @@ const data = [
 const CustomBarChart = () => {
   return (
     <BoxShadow>
-      <h4 className='text-muted mb-4 text-center'>Nuevos clientes por año</h4>
+      <h4 className='text-muted mb-4 text-center'>Comparativa clientes 2023 vs 2024</h4>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart
           width={500}

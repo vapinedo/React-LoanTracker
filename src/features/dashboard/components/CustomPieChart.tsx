@@ -22,7 +22,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 const CustomPieChart = () => {
   return (
     <BoxShadow>
-      <h4 className='text-muted mb-4 text-center'>Estado de los Prestamos</h4>
+      <h4 className='text-muted mb-4 text-center'>Estado de los Prestamos 2024</h4>
       <ResponsiveContainer width="100%" height={400}>
         <PieChart>
           <Pie

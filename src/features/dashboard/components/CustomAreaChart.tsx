@@ -24,7 +24,7 @@ const data = [
 const CustomAreaChart = () => {
   return (
     <BoxShadow>
-      <h4 className='text-muted mb-4 text-center'>Nuevos clientes por año</h4>
+      <h4 className='text-muted mb-4 text-center'>Comparativa ingresos 2023 vs 2024</h4>
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart
           width={500}
@@ -39,8 +39,8 @@ const CustomAreaChart = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Area type="monotone" dataKey="pv" stroke="#8884d8" fill="#8884d8" />
-          <Area type="monotone" dataKey="uv" stroke="#82ca9d" fill="#82ca9d" />
+          <Area type="monotone" dataKey="pv" stroke="#8884d8" fill="#5C2FC2" />
+          <Area type="monotone" dataKey="uv" stroke="#82ca9d" fill="#FFFDB5" />
         </AreaChart>
       </ResponsiveContainer>
     </BoxShadow>
