@@ -1,9 +1,13 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthService from "@services/useAuthService";
 import LoginPage from "@features/auth/pages/LoginPage";
+import { ComponentType, useEffect, useState } from "react";
 
-const PrivateRoute = ({ Component }) => {
+interface PrivateRouteProps {
+    Component: ComponentType<any>;
+}
+
+const PrivateRoute = ({ Component }: PrivateRouteProps) => {
     const navigate = useNavigate();
     const { user } = useAuthService();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
